@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-xxl ">
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                    <a aria-current="page" href="{% url 'login' %}">Войти</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-xxl main-title">
+            <p>Вы вышли из аккаунта</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

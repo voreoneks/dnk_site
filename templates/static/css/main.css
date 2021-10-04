@@ -1,0 +1,106 @@
+/* Главные секции */
+
+body{
+    background-color: black;
+}
+
+section{
+    padding-top: 7%;
+}
+
+/* Блоки */
+
+.modal-content{
+    background-color: rgb(29, 24, 24);
+}
+
+/* Ссылки */
+
+a:link{
+    text-decoration: none;
+    color: white;
+}
+
+a:visited{
+    color: white;
+    text-decoration: none;
+}
+
+a:hover{
+    color: white;
+    text-decoration: underline;
+}
+
+a:focus{
+    text-decoration: underline;
+    outline: none;
+}
+
+/* Текст */
+
+.main-title{
+    padding-top: 5%;
+    color: white;
+    text-align: center;
+}
+
+.main-title h1, h2{
+    font-family: var(--oswald_bold);
+    font-size: 80px;
+    
+}
+
+.main-title p{
+    font-family: var(--oswald_bold);
+    font-size: 56px;
+}
+
+.nav-item{
+    padding: 20px;
+    font-family: var(--oswald_regular);
+    color: white;
+}
+
+.news{
+    color: white;
+}
+
+.news h3{
+    font-family: var(--oswald_semi_bold);
+}
+
+.news p{
+    font-family: var(--montserrat_regular);
+    margin-top: 20px;
+}
+
+.news-footer{
+    padding: 5px 0px 60px 0px;
+    font-family: var(--montserrat_regular);
+    color: white;
+    font-size: 13px;
+    position: relative;
+}
+
+.middle-text{
+    font-family: var(--oswald_regular);
+    color: white;
+}
+
+/* Кнопки */
+
+.button{
+    border: 1px solid;
+}
+
+.news-footer button{
+    position: absolute;
+    right: 20px;
+    top: -5px;
+}
+
+/* Картинки */
+
+.news img{
+    margin-bottom: 10px;
+}

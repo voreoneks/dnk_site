@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="container-xxl !direction !spacing">    
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+
+            {% if form.errors %}
+                <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
+                    
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <p>Your account doesn't have access to this page. To proceed,
+                    please login with an account that has access.</p>
+                {% else %}
+                    <p>Please login to see this page.</p>
+                {% endif %}
+            {% endif %}
+
+            <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    {% for item in form %}
+                        <p class="middle-text">{{ item.label_tag }}</p>
+                        <p>{{ item }}</p>
+                    {% endfor %}
+                    <button class="btn button middle-text" type="submit">Submit form</button>
+                    <input type="hidden" name="next" value="{{ next }}">
+            </form>
+
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+
+
+{% endblock %}
