@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block header %}
 
 {% if not user.is_authenticated %}
-    <div class="container-xxl !direction !spacing">
+    <div class="container-fluid !direction !spacing">
         <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-            <div class="col-xxl ">
+            <div class="col-md-xxl">
                 <ul class="nav justify-content-end">
                     <li class="nav-item">
                         <a aria-current="page" href="{% url 'login' %}">Войти</a>
@@ -15,89 +16,52 @@
         </div>
     </div>
 {% else %}
-    <div class="container-xxl !direction !spacing">
-        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-            <div class="col-md-6 nav-block-left">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <p>Здравствуйте, {{ user.get_username }}!</p>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-md-6 nav-block-right">
-                <ul class="nav justify-content-end">
-                    <li class="nav-item">
-                        <a aria-current="page" href="{% url 'logout' %}">Выйти</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    {% include 'inc/_nav.html' %}
 {% endif %}
-
 
 {% endblock %}
 
+
+
+
 {% block body %}
 
-{% if user.is_authenticated %}
-    <div class="container-xxl !direction !spacing">
-        <div class="row">
-            <div class="col"></div>
-            <div class="col-md-6 news">
-                {% for item in news %}
-                    {% if item.is_published %}
-                        <div>
-                            {% if item.image %}
-                                <img class="img-fluid img-thumbnail" src="{{ item.image.url }}" alt="">    
-                            {% endif %}
-                            <h3>{{ item.title }}</h3>
-                            <p>{{ item.content|linebreaks|truncatewords:50 }}</p>
-                            <div class="row news-footer">
-                                <div class="col-md-6 text-muted">
-                                    {{ item.created_at }}
-                                </div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn button middle-text" data-bs-toggle="modal" data-bs-target="#fullPost{{ item.id }}">
-                                        Читать пост
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal fade" id="fullPost{{ item.id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h3 class="modal-title" id="fullPostLabel">{{ item.title }}</h3>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        {% if item.image %}
-                                            <img class="img-fluid img-thumbnail" src="{{ item.image.url }}" alt="">    
-                                        {% endif %}
-                                        <p>{{ item.content|linebreaks }}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn button middle-text" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <div class="col"></div>
-        </div>
-    </div>
-{% else %}
-    <div class="container-xxl !direction !spacing">
-        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-            <div class="col-xxl main-title">
-                <h1>DNK</h1>
-                <h2>MUSIC</h2>
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-xxl main-logo">
+            <div class="col-3">
+                <img src="{% static '/images/icon_white.png' %}" alt="">
+                <img src="{% static '/images/dot_white.png' %}" alt="">
             </div>
         </div>
     </div>
-{% endif %}
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-xxl main-title">
+            <div class="col-5 ">
+                <img src="{% static '/images/title_white.png' %}" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-xxl main-title">
+            <div class="col-7">
+                <p>Музыкальное издательство</p> 
+            </div>
+        </div>
+    </div>
+    {% if user.is_authenticated %}
+        <div class="container-xxl !direction !spacing">
+            <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+                <div class="col-xxl main-btn">
+                    <div class="col-3">
+                        <button type="button" class="btn button"><a href="#">Документы</a></button>
+                        <button type="button" class="btn button"><a href="#">Релиз</a></button>
+                        <button type="button" class="btn button"><a href="#">Маркетинг</a></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
 
 {% endblock %}

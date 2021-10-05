@@ -1,0 +1,31 @@
+<div class="container-fluid !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-md-6 nav-block-left">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a aria-current="page" href="{% url 'main' %}">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Личный кабинет</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Калькулятор авансов</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'news' %}">Новости</a>
+                </li>
+                
+            </ul>
+        </div>
+        <div class="col-md-6 nav-block-right">
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                    <p>Здравствуйте, {{ user.get_username }}!</p>
+                </li>
+                <li class="nav-item">
+                    <a aria-current="page" href="{% url 'logout' %}">Выход</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

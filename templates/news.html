@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include 'inc/_nav.html' %}
+{% endblock %}
+
+{% block body %}
+
+
+{% if news %}
+    <div class="container-xxl !direction !spacing">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-md-6 news">
+                {% for item in news %}
+                    {% if item.is_published %}
+                        <div>
+                            {% if item.image %}
+                                <img class="img-fluid img-thumbnail" src="{{ item.image.url }}" alt="">    
+                            {% endif %}
+                            <h3>{{ item.title }}</h3>
+                            <p>{{ item.content|linebreaks|truncatewords:50 }}</p>
+                            <div class="row news-footer">
+                                <div class="col-md-6 text-muted">
+                                    {{ item.created_at }}
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn button middle-text" data-bs-toggle="modal" data-bs-target="#fullPost{{ item.id }}">
+                                        Читать пост
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="fullPost{{ item.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title" id="fullPostLabel">{{ item.title }}</h3>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% if item.image %}
+                                            <img class="img-fluid img-thumbnail" src="{{ item.image.url }}" alt="">    
+                                        {% endif %}
+                                        <p>{{ item.content|linebreaks }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn button middle-text" data-bs-dismiss="modal">Закрыть</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+{% else %}
+        <div class="container-xxl !direction !spacing">
+            <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+                <div class="col-xxl main-title">
+                    <p>Здесь пока нет новостей</p>
+                </div>
+            </div>
+        </div>
+{% endif %}
+
+
+{% endblock %}

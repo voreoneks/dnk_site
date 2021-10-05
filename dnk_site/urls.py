@@ -24,7 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', LoginView.as_view(), name='login'),
     path('accounts/logout/', LogoutPage.as_view(), name='logout'),
-    path('', MainPage.as_view(), name='main'),
+    path('', MainPage, name='main'),
+    path('news/', NewsPage.as_view(), name = 'news'),
 ]
 
 if settings.DEBUG:
