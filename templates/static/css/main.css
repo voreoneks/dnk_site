@@ -34,6 +34,21 @@ section{
     margin: 27px auto 20px;
     position: relative;
 }
+
+.release-form{
+    width: 400px;
+    margin: auto;
+}
+
+.release-form div{
+    width: auto;
+    border: solid 1px white; 
+    border-radius: 5px;
+    background-color: #0f0f0f;
+    margin-bottom: 40px;
+    font-family: var(--oswald_light);
+    color: white;
+}
 /* Ссылки */
 
 a:link{
@@ -149,3 +164,8 @@ a:focus{
     font-family: var(--oswald_regular);
     color: white;
 }
+
+.release-form p{
+    margin: 20px 20px 20px 20px;
+}
+

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+
+{% include '_nav.html' %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <form method="POST" action="">
+            {% for item in form %}
+                <div class="col-xxl release-form">
+                    <div class="col-5 ">
+                        <p>{{ item.label }}</p>
+                        <p>{{ item }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="col-xxl">
+                <div class="col-5">
+                    <button class="btn button" type="submit">Далее</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
