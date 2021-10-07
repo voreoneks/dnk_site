@@ -12,6 +12,7 @@
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <form method="POST" action="">
+            {% csrf_token %}
             {% for item in form %}
                 <div class="col-xxl release-form">
                     <div class="col-5 ">
@@ -23,6 +24,7 @@
             <div class="col-xxl">
                 <div class="col-5">
                     <button class="btn button" type="submit">Далее</button>
+                    <input type="hidden" name="next" value="{{ next }}">
                 </div>
             </div>
         </form>

@@ -17,7 +17,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
-from django.urls import path
+from django.urls import path, include
 from news.views import *
 from release.views import *
 
@@ -26,8 +26,8 @@ urlpatterns = [
     path('accounts/login/', LoginView.as_view(), name='login'),
     path('accounts/logout/', LogoutPage.as_view(), name='logout'),
     path('', MainPage, name='main'),
-    path('news/', NewsPage.as_view(), name = 'news'),
-    path('release/', MainInfoView.as_view(), name='release'),
+    path('news/', include('news.urls')),
+    path('release/', include('release.urls')),
 ]
 
 if settings.DEBUG:

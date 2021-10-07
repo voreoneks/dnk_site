@@ -15,7 +15,7 @@ class LogoutPage(LogoutView):
         return context
 
 class NewsPage(ListView):
-    template_name = 'news.html'
+    template_name = 'news/news.html'
     context_object_name = 'news'
 
     def get_queryset(self):
