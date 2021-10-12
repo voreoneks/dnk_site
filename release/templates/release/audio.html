@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block header %}
+
+{% include '_nav.html' %}
+
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-xxl ">
+            <div class="col-3 ">
+                {% for item in form %}
+                    {% if item.name == 'album_title' %}
+                        {{ item.label }}
+                        {{ item }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-xxl">
+            <div class="col-12 ">
+                <tr>
+                    {% for item in formset.form %}
+                        <th>{{ item.label }}</th>
+                    {% endfor %}
+                </tr>
+                {% for forma in formset %}
+                    <tr>
+                        {% for item in forma %}
+                            <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

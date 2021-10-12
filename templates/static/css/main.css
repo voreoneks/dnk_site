@@ -49,6 +49,18 @@ section{
     font-family: var(--oswald_light);
     color: white;
 }
+
+.errors div{
+    width: 400px;
+    margin: auto;
+    margin-bottom: 40px;
+    color: brown;
+}
+
+.release-button div{
+    width: 400px;
+    margin: auto;
+}
 /* Ссылки */
 
 a:link{
@@ -109,6 +121,7 @@ a:focus{
     color: white;
     text-transform: uppercase;
 }
+
 
 /* Кнопки */
 
