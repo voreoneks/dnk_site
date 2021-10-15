@@ -1,11 +1,13 @@
+from typing import TypedDict
+from django.db.models.enums import ChoicesMeta
 from django.forms import ModelForm, RadioSelect
-from django.forms.widgets import HiddenInput
+from django.forms.widgets import ChoiceWidget, HiddenInput, Select, TextInput
 from .models import *
 
 class MainInfoForm(ModelForm):
     class Meta:
         model = MainInfo
-        fields = ['name', 'phone_number', 'email', 'is_update_photo', 'photo_link', 'photo', 'content_type', 'user']
+        fields = ['name', 'phone_number', 'email', 'is_update_photo', 'photo_link', 'photo', 'content_type', 'num_songs', 'user']
         widgets = {
             'is_update_photo': RadioSelect,
             'content_type': RadioSelect,
@@ -21,7 +23,7 @@ class MainInfoForm(ModelForm):
 class AudioForm(ModelForm):
     class Meta:
         model = Audio
-        fields = ['songer', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'cover', 'cover_psd', 'audio', 'audio_link', 'clean_link', 'song_text', 'release_year', 'add_video', 'user']
+        fields = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'cover', 'cover_psd', 'audio', 'audio_link', 'clean_link', 'song_text', 'release_year', 'add_video', 'user']
         widgets = {
             'user': HiddenInput,
         }

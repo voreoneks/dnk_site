@@ -144,6 +144,27 @@ a:focus{
     top: -5px;
 }
 
+
+.audio-button div{
+    width: 400px;
+    margin: auto;
+    margin-top: 150px;
+}
+
+.audio-button button{
+    width: 300px;
+    height: 70px;
+    margin: auto;
+    display: block;
+}
+
+.modal-body input[type = 'image']{
+    width: 20px;
+    height: 20px;
+    
+}
+
+
 /* Картинки */
 
 .news img{
@@ -180,5 +201,11 @@ a:focus{
 
 .release-form p{
     margin: 20px 20px 20px 20px;
+}
+
+.modal-body table td, th{
+    border: solid 1px white;
+    padding: 10px;
+    color: white;
 }
 

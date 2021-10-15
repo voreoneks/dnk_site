@@ -28,6 +28,7 @@ class MainInfoView(LoginRequiredMixin, FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
+        print(request.POST)
         if form.is_valid():
             try:
                 main_info = MainInfo.objects.filter(user_id = user.id)
@@ -48,12 +49,14 @@ class MainInfoView(LoginRequiredMixin, FormView):
 class AudioView(LoginRequiredMixin, FormView):
     template_name = 'release/audio.html'
     form_class = AudioForm
-    
     def get(self, request, *args, **kwargs):
+        fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'clean_link', 'release_year', 'add_video']
         content_type = request.POST.get('c', False)
-        audio_formset = formset_factory(self.form_class, extra=3)
+        user = User.objects.get(username = request.user)
+        num_songs = MainInfo.objects.get(user_id = user.id).num_songs
+        audio_formset = formset_factory(self.form_class, extra=num_songs)
         formset = audio_formset()
-        return render(request, self.template_name, {'formset': formset})
+        return render(request, self.template_name, {'formset': formset, 'button':fields_for_button}) 
 
     def post(self, request, *args, **kwargs):
         return render(request, self.template_name)

@@ -12,6 +12,7 @@ class MainInfo(models.Model):
         ('ALBUM', 'Альбом'),
         ('CLIP', 'Видеоклип'),
     ]
+    integer_choices = [(i, i) for i in range(1, 101)]
 
     name = models.CharField(max_length=150, verbose_name='Имя артиста')
     phone_number = models.CharField(max_length=10, verbose_name='Телефон')
@@ -20,6 +21,7 @@ class MainInfo(models.Model):
     photo_link = models.URLField(verbose_name='Ссылка на скачивание фото', null=True, blank=True)
     photo = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Прикрепить фото', blank=True, null=True)
     content_type = models.CharField(max_length=9, choices=content_choices, verbose_name='Тип релиза', default='SINGLE')
+    num_songs = models.IntegerField(choices=integer_choices, null=True, default=1, verbose_name='Количество песен для отправки')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class Audio(models.Model):
@@ -43,7 +45,7 @@ class Audio(models.Model):
         ('NO', 'Нет'),
         ('YES', 'Да'),
     ]
-    songer = models.CharField(max_length=100, verbose_name='Исполнитель')
+    songers = models.CharField(max_length=100, verbose_name='Исполнитель')
     song_title = models.CharField(max_length=100, verbose_name='Название песни')
     album_title = models.CharField(max_length=100, verbose_name='Название альбома')
     feat = models.CharField(max_length=100, verbose_name='feat.', blank=True, null=True)
