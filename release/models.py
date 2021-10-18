@@ -21,6 +21,8 @@ class MainInfo(models.Model):
     photo_link = models.URLField(verbose_name='Ссылка на скачивание фото', null=True, blank=True)
     photo = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Прикрепить фото', blank=True, null=True)
     content_type = models.CharField(max_length=9, choices=content_choices, verbose_name='Тип релиза', default='SINGLE')
+    cover = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка (jpg 3000x3000)', blank=True, null=True)
+    cover_psd = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка в слоях (PSD)', blank=True, null=True)
     num_songs = models.IntegerField(choices=integer_choices, null=True, default=1, verbose_name='Количество песен для отправки')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
@@ -45,6 +47,7 @@ class Audio(models.Model):
         ('NO', 'Нет'),
         ('YES', 'Да'),
     ]
+    
     songers = models.CharField(max_length=100, verbose_name='Исполнитель')
     song_title = models.CharField(max_length=100, verbose_name='Название песни')
     album_title = models.CharField(max_length=100, verbose_name='Название альбома')
@@ -58,12 +61,10 @@ class Audio(models.Model):
     timing = models.CharField(max_length=5, verbose_name='Хронометраж')
     song_preview = models.CharField(max_length=15, verbose_name='Превью песни')
     lexis = models.CharField(max_length=15, choices=exist_choices, verbose_name='Ненормативная лексика в песне')
-    cover = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка (jpg 3000x3000)')
-    cover_psd = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка песни в слоях (PSD)', blank=True, null=True)
     audio = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Аудио (WAV)', blank=True, null=True)
     audio_link = models.URLField(blank=True, null=True, verbose_name='Аудио (WAV)')
     clean_link = models.URLField(verbose_name='Clean version трека (WAV)')
-    song_text = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Текст песни')
+    song_text = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Текст песни', blank=True, null=True)
     release_year = models.CharField(max_length=4, verbose_name='Год выпуска')
-    add_video = models.CharField(max_length=3, choices=bool_choices, default='NO')
+    add_video = models.CharField(max_length=3, choices=bool_choices, default='NO', verbose_name='Добавить видеоклип')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

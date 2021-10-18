@@ -15,7 +15,9 @@
             {% csrf_token %}
             <div class="col-xxl errors">
                 <div class="col-5">
-                    {{ form.non_field_errors }}
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
                 </div>
             </div>
             {% for item in form.visible_fields %}

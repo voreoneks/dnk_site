@@ -27,46 +27,65 @@
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <div class="col-xxl">
             <div class="col-12">
+
+
             <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-fullscreen">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <table>
-                                    <tr>
-                                        {% for item in formset.form.visible_fields %}
-                                            <th>{{ item.label }}</th>
-                                            {% if item.name in button %}
-                                            <th></th>
-                                            {% endif %}
+                <form method="POST" enctype="multipart/form-data" action="" id="audio-form">
+                    {% csrf_token %}
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-fullscreen">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                
+                                <div class="modal-body">
+                                    <table>
+                                        {% for error in formset.non_form_errors %}
+                                            {{ error }}
                                         {% endfor %}
-                                    </tr>
-                                    {% for forma in formset %}
+                                        {{ formset.management_form }}
                                         <tr>
-                                            {% for item in forma.visible_fields %}
-                                                <td>{{ item }}</td>
+                                            <th></th>
+                                            {% for item in formset.form.visible_fields %}
+                                            
+                                                <th><p>{{ item.label }}</p><p style="font-size: 10px;">{{ item.help_text }}</p></th>
                                                 {% if item.name in button %}
-                                                    <td><input class="copy" type="image" src="{% static '/images/angle-down.png' %}"></td>
+                                                <th></th>
                                                 {% endif %}
-                                            {% endfor %}
-                                            {% for item in forma.hidden_fields %}
-                                                {{ item }}
+                                            
                                             {% endfor %}
                                         </tr>
-                                    {% endfor %}
-                                </table>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                                        {% for form in formset %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                {% for item in form.visible_fields %}
+                                                    <td>{{ item }}</td>
+                                                    {% if item.name in button %}
+                                                        <td><input class="copy" type="image" onclick="return false;" src="{% static '/images/angle-down.png' %}"></td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% for item in form.hidden_fields %}
+                                                    {{ item }}
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn button" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn button" form="audio-form">Save changes</button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
+
+                
             </div>
         </div>
     </div>

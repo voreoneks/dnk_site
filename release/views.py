@@ -1,7 +1,10 @@
+from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.http.response import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import request
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, resolve_url
+from django.urls.base import reverse_lazy
 from django.views.generic.edit import FormView
 from django.forms import formset_factory
 
@@ -28,7 +31,6 @@ class MainInfoView(LoginRequiredMixin, FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
-        print(request.POST)
         if form.is_valid():
             try:
                 main_info = MainInfo.objects.filter(user_id = user.id)
@@ -41,7 +43,7 @@ class MainInfoView(LoginRequiredMixin, FormView):
                 self.next = 'audio'
             else:
                 self.next = 'video'
-            return HttpResponseRedirect(self.next + '?c=' + form.cleaned_data['content_type'])
+            return HttpResponseRedirect(self.next)
         else:
             return render(request, self.template_name, {'form': form})
 
@@ -49,14 +51,44 @@ class MainInfoView(LoginRequiredMixin, FormView):
 class AudioView(LoginRequiredMixin, FormView):
     template_name = 'release/audio.html'
     form_class = AudioForm
+    fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'clean_link', 'release_year', 'add_video',]
+
     def get(self, request, *args, **kwargs):
-        fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'clean_link', 'release_year', 'add_video']
-        content_type = request.POST.get('c', False)
         user = User.objects.get(username = request.user)
         num_songs = MainInfo.objects.get(user_id = user.id).num_songs
-        audio_formset = formset_factory(self.form_class, extra=num_songs)
-        formset = audio_formset()
-        return render(request, self.template_name, {'formset': formset, 'button':fields_for_button}) 
+        audio_formset = formset_factory(self.form_class)
+        data = {
+            'form-TOTAL_FORMS': str(num_songs),
+            'form-INITIAL_FORMS': str(num_songs),
+        }
+        try:
+            audio = Audio.objects.filter(user_id = user.id)
+            for song in range(len(audio)):
+                for field in AudioForm._meta.fields:
+                    data['form-' + str(song) + '-' + field] = getattr(audio[song], field)
+        except:
+            for num in range(num_songs):
+                data['form-' + str(num) + '-user'] = user.id
+        formset = audio_formset(data)
+        return render(request, self.template_name, {'button': self.fields_for_button, 'formset': formset})
 
     def post(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        user = User.objects.get(username = request.user)
+        audio_formset = formset_factory(self.form_class)
+        formset = audio_formset(data = self.request.POST, files = self.request.FILES)
+        if formset.is_valid():
+            try:
+                audio = Audio.objects.filter(user_id = user.id)
+                for song in audio:
+                    song.delete()
+            except:
+                pass
+            for form in formset:
+                form.save()
+            return HttpResponseRedirect(reverse_lazy('success'))
+        else:
+            return render(request, self.template_name, {'button': self.fields_for_button, 'formset': formset})
+
+
+def success_page(request):
+    return render(request, 'release/success.html')
