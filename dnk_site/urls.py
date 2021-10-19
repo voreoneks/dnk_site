@@ -28,6 +28,7 @@ urlpatterns = [
     path('', MainPage, name='main'),
     path('news/', include('news.urls')),
     path('release/', include('release.urls')),
+    path('documents/', include('documents.urls')),
 ]
 
 if settings.DEBUG:

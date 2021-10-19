@@ -35,13 +35,9 @@ section{
     position: relative;
 }
 
-.release-form{
+.release-form div{
     width: 400px;
     margin: auto;
-}
-
-.release-form div{
-    width: auto;
     border: solid 1px white; 
     border-radius: 5px;
     background-color: #0f0f0f;
@@ -152,9 +148,10 @@ a:focus{
 }
 
 .audio-button button{
-    width: 300px;
+    width: 400px;
     height: 70px;
     margin: auto;
+    margin-bottom: 40px;
     display: block;
 }
 

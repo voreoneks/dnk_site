@@ -1,9 +1,8 @@
-from typing import TypedDict
-from django.db.models.enums import ChoicesMeta
 from django.forms import ModelForm, RadioSelect
-from django.forms.models import ModelMultipleChoiceField
-from django.forms.widgets import ChoiceWidget, HiddenInput, MultipleHiddenInput, Select, TextInput
+from django.forms.widgets import HiddenInput
+
 from .models import *
+
 
 class MainInfoForm(ModelForm):
     class Meta:
@@ -24,7 +23,7 @@ class MainInfoForm(ModelForm):
 class AudioForm(ModelForm):
     class Meta:
         model = Audio
-        fields = ('songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio', 'audio_link', 'clean_link', 'song_text', 'release_year', 'add_video', 'user')
+        fields = ('songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio', 'audio_link', 'clean_link', 'song_text', 'release_year', 'user')
         help_texts = {
             'songers':'Написать имя исполнителя в том виде, в каком оно будет отражено на площадках. Если в песне несколько основных исполнителей, просьба заполнить всех основных исполнителей через запятую. Пример: "Джиган, Тимати, Егор Крид"',
             'feat': 'Если в песне присутствует артист на фите, просьба ответить в формате: "_________ (feat. _______)". Пример: МИШКА (feat. KATERINA).',
@@ -35,5 +34,23 @@ class AudioForm(ModelForm):
         
         widgets = {
             'user': HiddenInput,
-            'id': MultipleHiddenInput,
+        }
+
+class VideoForm(ModelForm):
+    class Meta:
+        model = Video
+        fields = ('songers', 'video_title', 'feat', 'words_author', 'music_author', 'lexis', 'director', 'timing', 'release_year', 'video_link', 'video_preview', 'production_country', 'user')
+
+        help_texts = {
+            'songers': 'Написать имя исполнителя в том виде, в каком оно будет отражено на площадках. Если в песне несколько основных исполнителей, просьба заполнить всех основных исполнителей через запятую. Пример: "Джиган, Тимати, Егор Крид"',
+            'feat': 'Если в видео присутствует артист на фите, просьба ответить в формате: "_________ (feat. _______)". Пример: МИШКА (feat. KATERINA).',
+            'words_author': 'ФИО Автора слов',
+            'music_author': 'ФИО Автора музыки',
+            'director': 'ФИО Режиссёра',
+            'video_link': 'Используйте Google Drive или Яндекс Диск. Использовать облачные хранилища, в которых материал удаляется через неделю - запрещено.',
+            'video_preview': 'Загрузите картинку, которая станет обложкой вашего клипа. Это может быть кадр из клипа или фотография.',
+        }
+
+        widgets = {
+            'user': HiddenInput,
         }

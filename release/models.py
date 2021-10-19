@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.base import Model
 
 class MainInfo(models.Model):
     bool_choices = [
@@ -66,5 +65,25 @@ class Audio(models.Model):
     clean_link = models.URLField(verbose_name='Clean version трека (WAV)')
     song_text = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Текст песни', blank=True, null=True)
     release_year = models.CharField(max_length=4, verbose_name='Год выпуска')
-    add_video = models.CharField(max_length=3, choices=bool_choices, default='NO', verbose_name='Добавить видеоклип')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+
+class Video(models.Model):
+    exist_choices = [
+        ('NO', 'Отсутствует'),
+        ('YES', 'Присутствует'),
+    ]
+
+    songers = models.CharField(max_length=100, verbose_name='Исполнитель')
+    video_title = models.CharField(max_length=100, verbose_name='Название видео')
+    feat = models.CharField(max_length=100, verbose_name='feat.', blank=True, null=True)
+    words_author = models.CharField(max_length=100, verbose_name='Автор слов')
+    music_author = models.CharField(max_length=100, verbose_name='Автор музыки')
+    lexis = models.CharField(max_length=15, choices=exist_choices, verbose_name='Ненормативная лексика в песне')
+    director = models.CharField(max_length=100, verbose_name='Режиссер')
+    timing = models.CharField(max_length=5, verbose_name='Хронометраж')
+    release_year = models.CharField(max_length=4, verbose_name='Год выпуска')
+    video_link = models.URLField(blank=True, null=True, verbose_name='Ссылка на видео')
+    video_preview = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Превью клипа', blank=True, null=True)
+    production_country = models.CharField(max_length=100, verbose_name='Страна производства')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

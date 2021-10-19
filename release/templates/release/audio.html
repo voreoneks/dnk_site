@@ -25,12 +25,12 @@
 
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-xxl">
-            <div class="col-12">
+        <form method="POST" enctype="multipart/form-data" action="" id="audio-form">
+            <div class="col-xxl">
+                <div class="col-12">
 
 
             <!-- Modal -->
-                <form method="POST" enctype="multipart/form-data" action="" id="audio-form">
                     {% csrf_token %}
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-fullscreen">
@@ -76,19 +76,40 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <button type="button" class="btn button" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn button" form="audio-form">Save changes</button>
+                                    <button type="button" class="btn button" data-bs-dismiss="modal">Закрыть</button>
                                 </div>
 
                             </div>
                         </div>
                     </div>
-                </form>
-
-                
+                    
+                    
+                </div>
             </div>
-        </div>
+            
+            <div class="col-xxl release-form">
+                <div class="col-4 ">
+                    <p>Добавить видеоклип?</p>
+                    <p>
+                        <input type="radio" id="video_choice_1" name="add_video" value="NO" checked>
+                        <label for="video_choice_1">Нет</label>
+                    </p>
+                    <p>
+                        <input type="radio" id="video_choice_2" name="add_video" value="YES">
+                        <label for="video_choice_2">Да</label>
+                    </p>
+                </div>
+            </div>
+            <div class="col-xxl release-button">
+                <div class="col-5">
+                    <button class="btn button" form="audio-form" type="submit">Далее</button>
+                </div>
+            </div>
+            
+        </form>
     </div>
 </div>
+
+
 
 {% endblock %}

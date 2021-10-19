@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+
+{% include '_nav.html' %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <form method="POST" action="" novalidate enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-xxl errors">
+                <div class="col-5">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            </div>
+            {% for item in form.visible_fields %}
+                <div class="col-xxl release-form">
+                    <div class="col-5 ">
+                        <p>{{ item.label }}</p>
+                        <p>{{ item.errors }}</p>
+                        {% autoescape off %}
+                        <p style="font-size: 15px;">{{ item.help_text }}</p>
+                        {% endautoescape %}
+                        <p>{{ item }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            {% for item in form.hidden_fields %}
+                {{ item }}
+            {% endfor %}
+            <div class="col-xxl release-button">
+                <div class="col-5">
+                    <button class="btn button" type="submit">Далее</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
