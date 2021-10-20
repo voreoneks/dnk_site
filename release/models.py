@@ -49,7 +49,7 @@ class Audio(models.Model):
     
     songers = models.CharField(max_length=100, verbose_name='Исполнитель')
     song_title = models.CharField(max_length=100, verbose_name='Название песни')
-    album_title = models.CharField(max_length=100, verbose_name='Название альбома')
+    album_title = models.CharField(max_length=100, verbose_name='Название альбома', blank=True, null=True)
     feat = models.CharField(max_length=100, verbose_name='feat.', blank=True, null=True)
     genre = models.CharField(max_length=11, choices=genre_choices, verbose_name='Жанр')
     fio_songer = models.CharField(max_length=100, verbose_name='ФИО Исполнителя')

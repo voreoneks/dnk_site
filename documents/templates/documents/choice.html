@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+
+{% include '_nav.html' %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <form method="POST" action="" novalidate enctype="multipart/form-data">
+            {% csrf_token %}
+                <div class="col-xxl release-form">
+                    <div class="col-5 ">
+                        <p>{{ form_title }}</p>
+                        {% autoescape off %}
+                        <p>{{ form }}</p>
+                        {% endautoescape %}
+                    </div>
+                </div>
+            <div class="col-xxl release-button">
+                <div class="col-5">
+                    <button class="btn button" type="submit">Далее</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
