@@ -29,6 +29,7 @@ urlpatterns = [
     path('news/', include('news.urls')),
     path('release/', include('release.urls')),
     path('documents/', include('documents.urls')),
+    path('marketing/', include('marketing.urls')),
 ]
 
 if settings.DEBUG:

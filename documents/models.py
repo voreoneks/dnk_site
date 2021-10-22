@@ -18,7 +18,7 @@ class MainInfoDocs(models.Model):
     artist_fio = models.CharField(max_length=100, verbose_name='ФИО Артиста')
     phone_number = models.CharField(max_length=10, verbose_name='Телефон для связи')
     email = models.EmailField(verbose_name='E-mail')
-    socials = models.CharField(max_length=500, verbose_name='Социальные сети')
+    socials = models.CharField(max_length=500, verbose_name='Социальные сети', blank=True, null=True)
     cover = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка (jpg 3000x3000)', blank=True, null=True)
     num_songs = models.IntegerField(choices=integer_choices, null=True, default=1, verbose_name='Количество песен для отправки')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -60,9 +60,9 @@ class OrgInfoSam(models.Model):
     bik = models.CharField(max_length=100, verbose_name='БИК')
     inn_bank = models.CharField(max_length=100, verbose_name='ИНН Банка')
     k_s = models.CharField(max_length=100, verbose_name='Корреспондентский счет')
-    inn = models.CharField(max_length=100, verbose_name='ИНН')
-    snils = models.CharField(max_length=100, verbose_name='СНИЛС')
-    skan_passport = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Скан паспорта')
+    inn = models.CharField(max_length=100, verbose_name='ИНН', blank=True, null=True)
+    snils = models.CharField(max_length=100, verbose_name='СНИЛС', blank=True, null=True)
+    skan_passport = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Скан паспорта',  blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class OrgInfoOoo(models.Model):
@@ -152,6 +152,44 @@ class WordsCitizen(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class WordsForeign(models.Model):
+    fio = models.CharField(max_length=100, verbose_name='ФИО')
+    birthday = models.DateField(verbose_name='Дата рождения')
+    citizen = models.CharField(max_length=100, verbose_name='Гражданство')
+    passport = models.CharField(max_length=2024, verbose_name='Паспортные данные')
+    author_email = models.EmailField(verbose_name='Электронная почта автора')
+    fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с автором музыки')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+class Others(models.Model):
+    creative_name = models.CharField(max_length=100, verbose_name='Творческий псевдоним', blank=True, null=True)
+    songs = models.CharField(max_length=500, verbose_name='Песня, в которой этот исполнитель учавствует', blank=True, null=True)
+    fio = models.CharField(max_length=100, verbose_name='ФИО', blank=True, null=True)
+    citizen = models.CharField(max_length=100, verbose_name='Гражданство', blank=True, null=True)
+    birthday = models.DateField(verbose_name='Дата рождения', blank=True, null=True)
+    series_num = models.CharField(max_length=100, verbose_name='Серия и номер паспорта', blank=True, null=True)
+    id_number = models.CharField(max_length=100, verbose_name='Идентификационный номер', blank=True, null=True)
+    who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', blank=True, null=True)
+    when_issued = models.DateField(verbose_name='Дата выдачи', blank=True, null=True)
+    code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', blank=True, null=True)
+    birth_place = models.CharField(max_length=2024, verbose_name='Место рождения', blank=True, null=True)
+    reg = models.CharField(max_length=2024, verbose_name='Регистрация', blank=True, null=True)
+    fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с автором музыки', blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+class PhonMakerCitizen(models.Model):
+    fio = models.CharField(max_length=100, verbose_name='ФИО')
+    birthday = models.DateField(verbose_name='Дата рождения')
+    series_num = models.CharField(max_length=100, verbose_name='Серия и номер паспорта')
+    who_issued = models.CharField(max_length=500, verbose_name='Кем выдан')
+    when_issued = models.DateField(verbose_name='Дата выдачи')
+    code_pod = models.CharField(max_length=100, verbose_name='Код подразделения')
+    birth_place = models.CharField(max_length=2024, verbose_name='Место рождения')
+    reg = models.CharField(max_length=2024, verbose_name='Регистрация')
+    author_email = models.EmailField(verbose_name='Электронная почта автора')
+    fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с автором музыки')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+class PhonMakerForeign(models.Model):
     fio = models.CharField(max_length=100, verbose_name='ФИО')
     birthday = models.DateField(verbose_name='Дата рождения')
     citizen = models.CharField(max_length=100, verbose_name='Гражданство')

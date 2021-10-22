@@ -15,7 +15,7 @@
             {% csrf_token %}
                 <div class="col-xxl release-form">
                     <div class="col-5 ">
-                        <p>{{ form_title }}</p>
+                        <p>{{ field_title }}</p>
                         {% autoescape off %}
                         <p>{{ form }}</p>
                         {% endautoescape %}
@@ -23,6 +23,7 @@
                 </div>
             <div class="col-xxl release-button">
                 <div class="col-5">
+                    <button class="btn button" type="button" onclick="history.back();">Назад</button>
                     <button class="btn button" type="submit">Далее</button>
                 </div>
             </div>

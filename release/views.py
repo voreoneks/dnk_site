@@ -122,4 +122,4 @@ class VideoView(LoginRequiredMixin, FormView):
             
 
 def success_page(request):
-    return render(request, 'release/success.html')
+    return render(request, 'success.html')

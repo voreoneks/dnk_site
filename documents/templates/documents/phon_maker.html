@@ -1,15 +1,13 @@
-<div class="container-xxl !direction !spacing">
-    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-xxl release-header">
-            <div class="col-4 ">
-                <h5>{{ form_title }}</h5>
-                {% autoescape off %}
-                <p>{{ form_description }}</p>
-                {% endautoescape %}
-            </div>
-        </div>
-    </div>
-</div>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+
+{% include '_nav.html' %}
+
+{% endblock %}
+
+{% block body %}
 
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
@@ -34,6 +32,21 @@
                     </div>
                 </div>
             {% endfor %}
+            <div class="col-xxl release-form">
+                <div class="col-5">
+                    <p>Добавить еще одного изготовителя фонограммы?</p>
+                    <p>
+                        <ul id="id_music_author">
+                            <li>
+                                <label for="id_music_author_0"><input type="radio" name="one_more" value="ONE_MORE_NO" required id="id_music_author_0" checked>Нет</label>
+                            </li>
+                            <li>
+                                <label for="id_music_author_1"><input type="radio" name="one_more" value="ONE_MORE_YES" required id="id_music_author_1">Да</label>
+                            </li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
             {% for item in form.hidden_fields %}
                 {{ item }}
             {% endfor %}
@@ -46,3 +59,5 @@
         </form>
     </div>
 </div>
+
+{% endblock %}

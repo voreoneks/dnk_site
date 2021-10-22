@@ -35,16 +35,24 @@ section{
     position: relative;
 }
 
+.release-header div{
+    width: 600px;
+    margin: auto;
+    font-family: var(--oswald_light);
+    color: white;
+}
+
 .release-form div{
-    width: 400px;
+    width: 600px;
     margin: auto;
     border: solid 1px white; 
     border-radius: 5px;
     background-color: #0f0f0f;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
     font-family: var(--oswald_light);
     color: white;
 }
+
 
 .errors div{
     width: 400px;
@@ -54,8 +62,11 @@ section{
 }
 
 .release-button div{
-    width: 400px;
+    display: flex;
+    width: 600px;
     margin: auto;
+    margin-bottom: 40px;
+    justify-content: space-between;
 }
 /* Ссылки */
 
@@ -205,4 +216,3 @@ a:focus{
     padding: 10px;
     color: white;
 }
-
