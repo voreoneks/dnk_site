@@ -16,13 +16,13 @@ class MainInfoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        main_info = MainInfo.objects.filter(user_id = user.id).values()
-        if len(main_info) != 0:
+        try:
+            main_info = MainInfo.objects.filter(user_id = user.id).values()
             for item in main_info:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form})
 
@@ -30,10 +30,12 @@ class MainInfoView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            main_info = MainInfo.objects.filter(user_id = user.id)
-            if len(main_info) != 0:
+            try:
+                main_info = MainInfo.objects.filter(user_id = user.id)
                 for item in main_info:
                     item.delete()
+            except:
+                pass
             form.save()
             if form.cleaned_data['content_type'] == 'SINGLE' or form.cleaned_data['content_type'] == 'ALBUM':
                 self.next = 'audio'
@@ -96,13 +98,13 @@ class VideoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        video = Video.objects.filter(user_id = user.id).values()
-        if len(video) != 0:
+        try:
+            video = Video.objects.filter(user_id = user.id).values()
             for item in video:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form})
 
@@ -110,10 +112,12 @@ class VideoView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            video = Video.objects.filter(user_id = user.id)
-            if len(video) != 0:
+            try:
+                video = Video.objects.filter(user_id = user.id)
                 for item in video:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect(reverse_lazy('success'))
         else:

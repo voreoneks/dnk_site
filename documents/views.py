@@ -10,19 +10,6 @@ from .forms import *
 from .models import *
 
 
-def method_get(request, model, form_class, template_name):
-    user = User.objects.get(username = request.user)
-    objects = model.objects.filter(user_id = user.id).values()
-    if len(objects) != 0:
-        for item in objects:
-            data = item
-        data['user'] = user
-        form = form_class(initial = data)
-    else:
-        form = form_class(initial = {'user': user})
-    return render(request, template_name, {'form': form})
-
-
 class MainInfoDocsView(LoginRequiredMixin, FormView):
     template_name = 'documents/documents.html'
     form_class = MainInfoDocsForm
@@ -30,13 +17,13 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = MainInfoDocs.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = MainInfoDocs.objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -44,10 +31,12 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = MainInfoDocs.objects.filter(user_id = user.id)
-            if len(objects) != 0:
+            try:
+                objects = MainInfoDocs.objects.filter(user_id = user.id)
                 for item in objects:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect('orginfo')
         else:
@@ -88,13 +77,13 @@ class OrgInfoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = self.get_model().objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = self.get_model().objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.get_form_class()(initial = data)
-        else:
+        except:
             form = self.get_form_class()(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -102,10 +91,12 @@ class OrgInfoView(LoginRequiredMixin, FormView):
         form = self.get_form_class()(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            org_info = self.get_model().objects.filter(user_id = user.id)
-            if len(org_info) != 0:
+            try:
+                org_info = self.get_model().objects.filter(user_id = user.id)
                 for item in org_info:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect(reverse('choice', args=[1]))
         else:
@@ -156,7 +147,6 @@ def choice(request, id):
         elif choice == 'WORDS_FOREIGN':
             return HttpResponseRedirect(reverse('words_author', args=['foreign']))
         elif choice == 'PHON_MAKER_CITIZEN':
-            print(request.POST)
             return HttpResponseRedirect(reverse('phon_maker', args=['citizen']))
         elif choice == 'PHON_MAKER_FOREIGN':
             return HttpResponseRedirect(reverse('phon_maker', args=['foreign']))
@@ -217,13 +207,13 @@ class VideoDocsView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = VideoDocs.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = VideoDocs.objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -231,10 +221,12 @@ class VideoDocsView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            video = VideoDocs.objects.filter(user_id = user.id)
-            if len(video) != 0:
+            try:
+                video = VideoDocs.objects.filter(user_id = user.id)
                 for item in video:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect(reverse('licence'))
         else:
@@ -249,13 +241,13 @@ class LicenceView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = Licence.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = Licence.objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
 
@@ -263,10 +255,12 @@ class LicenceView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            licence = Licence.objects.filter(user_id = user.id)
-            if len(licence) != 0:
+            try:
+                licence = Licence.objects.filter(user_id = user.id)
                 for item in licence:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect(reverse('choice', args=[2]))
         else:
@@ -281,26 +275,26 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
         if author == 'citizen':
             self.form_title = 'Гражданин РФ'
             user = User.objects.get(username = request.user)
-            objects = MusicCitizen.objects.filter(user_id = user.id).values()
-            if len(objects) != 0:
+            try:
+                objects = MusicCitizen.objects.filter(user_id = user.id).values()
                 for item in objects:
                     data = item
                 data['user'] = user
                 form = MusicCitizenForm(initial = data)
-            else:
+            except:
                 form = MusicCitizenForm(initial = {'user': user})
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
         elif author == 'foreign':
             self.form_title = 'Иностранный гражданин'
             user = User.objects.get(username = request.user)
-            objects = MusicForeign.objects.filter(user_id = user.id).values()
-            if len(objects) != 0:
+            try:
+                objects = MusicForeign.objects.filter(user_id = user.id).values()
                 for item in objects:
                     data = item
                 data['user'] = user
                 form = MusicForeignForm(initial = data)
-            else:
+            except:
                 form = MusicForeignForm(initial = {'user': user})
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -312,10 +306,12 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
             form = MusicCitizenForm(data = request.POST, files = request.FILES)
             user = User.objects.get(username = request.user)
             if form.is_valid():
-                objects = MusicCitizen.objects.filter(user_id = user.id)
-                if len(objects) != 0:
+                try:
+                    objects = MusicCitizen.objects.filter(user_id = user.id)
                     for item in objects:
                         item.delete()
+                except:
+                    pass
                 form.save()
                 return HttpResponseRedirect(reverse('choice', args=[3]))
             else:
@@ -326,10 +322,12 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
             form = MusicForeignForm(data = request.POST, files = request.FILES)
             user = User.objects.get(username = request.user)
             if form.is_valid():
-                objects = MusicForeign.objects.filter(user_id = user.id)
-                if len(objects) != 0:
+                try:
+                    objects = MusicForeign.objects.filter(user_id = user.id)
                     for item in objects:
                         item.delete()
+                except:
+                    pass
                 form.save()
                 return HttpResponseRedirect(reverse('choice', args=[3]))
             else:
@@ -344,26 +342,26 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
         if author == 'citizen':
             self.form_title = 'Гражданин РФ'
             user = User.objects.get(username = request.user)
-            objects = WordsCitizen.objects.filter(user_id = user.id).values()
-            if len(objects) != 0:
+            try:
+                objects = WordsCitizen.objects.filter(user_id = user.id).values()
                 for item in objects:
                     data = item
                 data['user'] = user
                 form = WordsCitizenForm(initial = data)
-            else:
+            except:
                 form = WordsCitizenForm(initial = {'user': user})
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
         elif author == 'foreign':
             self.form_title = 'Иностранный гражданин'
             user = User.objects.get(username = request.user)
-            objects = WordsForeign.objects.filter(user_id = user.id).values()
-            if len(objects) != 0:
+            try:
+                objects = WordsForeign.objects.filter(user_id = user.id).values()
                 for item in objects:
                     data = item
                 data['user'] = user
                 form = WordsForeignForm(initial = data)
-            else:
+            except:
                 form = WordsForeignForm(initial = {'user': user})
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -375,10 +373,12 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
             form = WordsCitizenForm(data = request.POST, files = request.FILES)
             user = User.objects.get(username = request.user)
             if form.is_valid():
-                objects = WordsCitizen.objects.filter(user_id = user.id)
-                if len(objects) != 0:
+                try:
+                    objects = WordsCitizen.objects.filter(user_id = user.id)
                     for item in objects:
                         item.delete()
+                except:
+                    pass
                 form.save()
                 return HttpResponseRedirect(reverse('others'))
             else:
@@ -389,10 +389,12 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
             form = WordsForeignForm(data = request.POST, files = request.FILES)
             user = User.objects.get(username = request.user)
             if form.is_valid():
-                objects = WordsForeign.objects.filter(user_id = user.id)
-                if len(objects) != 0:
+                try:
+                    objects = WordsForeign.objects.filter(user_id = user.id)
                     for item in objects:
                         item.delete()
+                except:
+                    pass
                 form.save()
                 return HttpResponseRedirect(reverse('others'))
             else:
@@ -406,13 +408,13 @@ class OthersView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = Others.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = Others.objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form})
 
@@ -420,10 +422,12 @@ class OthersView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            licence = Others.objects.filter(user_id = user.id)
-            if len(licence) != 0:
+            try:
+                licence = Others.objects.filter(user_id = user.id)
                 for item in licence:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect(reverse('choice', args=[4]))
         else:
@@ -439,13 +443,13 @@ class PhonMakerView(LoginRequiredMixin, FormView):
         if maker == 'citizen':
             self.form_title = 'Гражданин РФ'
             user = User.objects.get(username = request.user)
-            objects = PhonMakerCitizen.objects.filter(user_id = user.id).values()
-            if len(objects) != 0:
+            try:
+                objects = PhonMakerCitizen.objects.filter(user_id = user.id).values()
                 for item in objects:
                     data = item
                 data['user'] = user
                 form = PhonMakerCitizenForm(initial = data)
-            else:
+            except:
                 form = PhonMakerCitizenForm(initial = {'user': user})
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
 
@@ -453,12 +457,12 @@ class PhonMakerView(LoginRequiredMixin, FormView):
             self.form_title = 'Иностранный гражданин'
             user = User.objects.get(username = request.user)
             objects = PhonMakerForeign.objects.filter(user_id = user.id).values()
-            if len(objects) != 0:
+            try:
                 for item in objects:
                     data = item
                 data['user'] = user
                 form = PhonMakerForeignForm(initial = data)
-            else:
+            except:
                 form = PhonMakerForeignForm(initial = {'user': user})
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
 
@@ -470,10 +474,12 @@ class PhonMakerView(LoginRequiredMixin, FormView):
             form = PhonMakerCitizenForm(data = request.POST, files = request.FILES)
             user = User.objects.get(username = request.user)
             if form.is_valid():
-                objects = PhonMakerCitizen.objects.filter(user_id = user.id)
-                if len(objects) != 0:
+                try:
+                    objects = PhonMakerCitizen.objects.filter(user_id = user.id)
                     for item in objects:
                         item.delete()
+                except:
+                    pass
                 form.save()
                 return HttpResponseRedirect(reverse('success'))
             else:
@@ -484,10 +490,12 @@ class PhonMakerView(LoginRequiredMixin, FormView):
             form = PhonMakerForeignForm(data = request.POST, files = request.FILES)
             user = User.objects.get(username = request.user)
             if form.is_valid():
-                objects = PhonMakerForeign.objects.filter(user_id = user.id)
-                if len(objects) != 0:
+                try:
+                    objects = PhonMakerForeign.objects.filter(user_id = user.id)
                     for item in objects:
                         item.delete()
+                except:
+                    pass
                 form.save()
                 return HttpResponseRedirect(reverse('success'))
             else:

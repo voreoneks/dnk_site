@@ -1,5 +1,5 @@
 from django.forms import ModelForm, RadioSelect
-from django.forms.widgets import HiddenInput
+from django.forms.widgets import ClearableFileInput, HiddenInput
 
 from .models import *
 

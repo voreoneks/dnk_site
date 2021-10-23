@@ -16,13 +16,13 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = MainInfoMarketing.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = MainInfoMarketing.objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form})
 
@@ -30,10 +30,12 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = MainInfoMarketing.objects.filter(user_id = user.id)
-            if len(objects) != 0:
+            try:
+                objects = MainInfoMarketing.objects.filter(user_id = user.id)
                 for item in objects:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect('marketing_info')
         else:
@@ -47,13 +49,13 @@ class MarketingView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = Marketing.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = Marketing.objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -61,10 +63,12 @@ class MarketingView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = Marketing.objects.filter(user_id = user.id)
-            if len(objects) != 0:
+            try:
+                objects = Marketing.objects.filter(user_id = user.id)
                 for item in objects:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect(reverse('promo_plan'))
         else:
@@ -79,13 +83,13 @@ class PromoPlanView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = PromoPlan.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
+        try:
+            objects = PromoPlan.objects.filter(user_id = user.id).values()
             for item in objects:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        else:
+        except:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -93,10 +97,12 @@ class PromoPlanView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = PromoPlan.objects.filter(user_id = user.id)
-            if len(objects) != 0:
+            try:
+                objects = PromoPlan.objects.filter(user_id = user.id)
                 for item in objects:
                     item.delete()
+            except:
+                pass
             form.save()
             return HttpResponseRedirect(reverse('success'))
         else:
