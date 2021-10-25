@@ -11,7 +11,7 @@ class Sheet():
     CREDENTIALS_FILE = 'creds.json'
     spreadsheet_id = '1ZpaXmS3QBAIcSQRy_2QjWB0PiGkOs9AU0SniWgVclHY'
 
-    def __init__(self, global_range, insert_data_option = 'INSERT_ROWS', value_input_option = "USER_ENTERED"):
+    def __init__(self, global_range, insert_data_option = 'INSERT_ROWS', value_input_option = "RAW"):
         self.global_range = global_range
         self.insert_data_option = insert_data_option
         self.value_input_option = value_input_option
@@ -45,7 +45,7 @@ class Sheet():
         values = self.service.spreadsheets().values().batchUpdate(
         spreadsheetId=self.spreadsheet_id,
         body={
-            "valueInputOption": "USER_ENTERED",
+            "valueInputOption": self.value_input_option,
             "data": [data]
         })
         values.execute()

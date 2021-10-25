@@ -125,49 +125,48 @@ class VideoView(LoginRequiredMixin, FormView):
             form.save()
 
             date_time = str(datetime.now())
-            main_info_sheet = Sheet('A3:G3')
+            main_info_sheet = Sheet('A3:AM3')
 
             main_info = MainInfo.objects.get(user_id = user.id)
             main_info_dict = model_to_dict(main_info)
             content_type = main_info_dict['content_type']
+            audio = Audio.objects.filter(user_id = user.id)
+            audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
+            video = Video.objects.get(user_id = user.id)
+            video_dict = model_to_dict(video)
 
             main_info_values = [
-                (date_time, main_info_dict['name'], main_info_dict['content_type'], main_info_dict['phone_number'], main_info_dict['email'], main_info_dict['is_update_photo'], main_info_dict['photo_link']),
+                (date_time, main_info_dict['name'], main_info_dict['content_type'], main_info_dict['phone_number'], main_info_dict['email'], main_info_dict['is_update_photo'], main_info_dict['photo_link'], audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], '', '', audio_tuple_dict[0]['audio_link'], '', audio_tuple_dict[0]['clean_link'], '', audio_tuple_dict[0]['release_year'], video_dict['songers'], video_dict['video_title'], video_dict['feat'], video_dict['words_author'], video_dict['music_author'], video_dict['lexis'], video_dict['director'], video_dict['timing'], video_dict['release_year'], video_dict['video_link'], '', video_dict['production_country']),
                 ]
 
             main_info_data = {
-                    'range': 'A3:G3',
+                    'range': 'A3:AM3',
                     'majorDimension': 'ROWS',
                     'values': main_info_values
                 }
-            main_info_sheet.write(main_info_data)
+            main_info_sheet.append(main_info_data)
 
-            
-            audio_sheet = Sheet('H3:AA3')
-            audio = Audio.objects.filter(user_id = user.id)
-            audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
-                    
-            audio_values = [
-                (audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], '', '', audio_tuple_dict[0]['audio_link'], '', audio_tuple_dict[0]['clean_link'], '', audio_tuple_dict[0]['release_year']),
-            ]
 
-            audio_data = {
-                'range': 'H3:AA3',
-                'majorDimension': 'ROWS',
-                'values': audio_values
-                }
-            audio_sheet.write(audio_data)
-
+            add_audio_sheet = Sheet('A3:AM3')
             add_audio_values = []
             for i in range(1, len(audio_tuple_dict)):
-                add_audio_values.append(tuple((audio_tuple_dict[i]['songers'], audio_tuple_dict[i]['song_title'], audio_tuple_dict[i]['album_title'], audio_tuple_dict[i]['feat'], audio_tuple_dict[i]['genre'], audio_tuple_dict[i]['fio_songer'], audio_tuple_dict[i]['words_author'], audio_tuple_dict[i]['music_author'], audio_tuple_dict[i]['owner_citizenship'], audio_tuple_dict[i]['record_country'], audio_tuple_dict[i]['timing'], audio_tuple_dict[i]['song_preview'], audio_tuple_dict[i]['lexis'], '', '', audio_tuple_dict[i]['audio_link'], '', audio_tuple_dict[i]['clean_link'], '', audio_tuple_dict[i]['release_year'])))
+                add_audio_values.append(tuple(('', '',  '',  '',  '',  '',  '', audio_tuple_dict[i]['songers'], audio_tuple_dict[i]['song_title'], audio_tuple_dict[i]['album_title'], audio_tuple_dict[i]['feat'], audio_tuple_dict[i]['genre'], audio_tuple_dict[i]['fio_songer'], audio_tuple_dict[i]['words_author'], audio_tuple_dict[i]['music_author'], audio_tuple_dict[i]['owner_citizenship'], audio_tuple_dict[i]['record_country'], audio_tuple_dict[i]['timing'], audio_tuple_dict[i]['song_preview'], audio_tuple_dict[i]['lexis'], '', '', audio_tuple_dict[i]['audio_link'], '', audio_tuple_dict[i]['clean_link'], '', audio_tuple_dict[i]['release_year'])))
 
             add_audio_data = {
-                'range': 'H3:AA3',
+                'range': 'A3:AM3',
                 'majorDimension': 'ROWS',
                 'values': add_audio_values
                 }
-            audio_sheet.append(add_audio_data)
+            add_audio_sheet.append(add_audio_data)
+
+            spaces = Sheet('A3:AM3')
+            spaces_values = [tuple('.' for i in range(39))]
+            spaces_data = {
+                'range': 'A3:AM3',
+                'majorDimension': 'ROWS',
+                'values': spaces_values
+            }
+            spaces.append(spaces_data)
 
 
             # if len(audio_tuple_dict) > 1:
