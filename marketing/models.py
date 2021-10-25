@@ -55,5 +55,8 @@ class PromoPlan(models.Model):
     other = models.CharField(max_length=1024, verbose_name='Другая информация по продвижению релиза', blank=True, null=True)
     project_plan = models.CharField(max_length=1024, verbose_name='Планы по развитию проекта', blank=True, null=True)
     release_plan = models.CharField(max_length=1024, verbose_name='План релизов на ближайшие полгода', blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+class PressRelease(models.Model):
     press_release = models.TextField(verbose_name='Пресс-релиз')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

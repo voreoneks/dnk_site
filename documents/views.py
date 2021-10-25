@@ -135,9 +135,9 @@ def choice(request, id):
     else:
         choice = request.POST.get('choice')
         if choice == 'SINGLE' or choice == 'ALBUM':
-            return HttpResponseRedirect(reverse('audio'))
+            return HttpResponseRedirect(reverse('d_audio'))
         elif choice == 'CLIP':
-            return HttpResponseRedirect(reverse('video'))
+            return HttpResponseRedirect(reverse('d_video'))
         elif choice == 'MUSIC_CITIZEN':
             return HttpResponseRedirect(reverse('music_author', args=['citizen']))
         elif choice == 'MUSIC_FOREIGN':
@@ -195,7 +195,7 @@ class AudioDocsView(LoginRequiredMixin, FormView):
             if add_video == 'NO':
                 return HttpResponseRedirect(reverse('licence'))
             else:
-                return HttpResponseRedirect(reverse('video'))
+                return HttpResponseRedirect(reverse('d_video'))
         else:
             return render(request, self.template_name, {'button': self.form_class._meta.fields, 'formset': formset, 'form_title': self.form_title})
 
@@ -481,7 +481,7 @@ class PhonMakerView(LoginRequiredMixin, FormView):
                 except:
                     pass
                 form.save()
-                return HttpResponseRedirect(reverse('success'))
+                return HttpResponseRedirect(reverse('d_success'))
             else:
                 return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
 
@@ -497,7 +497,7 @@ class PhonMakerView(LoginRequiredMixin, FormView):
                 except:
                     pass
                 form.save()
-                return HttpResponseRedirect(reverse('success'))
+                return HttpResponseRedirect(reverse('d_success'))
             else:
                 return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
 

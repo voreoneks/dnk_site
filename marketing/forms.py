@@ -37,7 +37,7 @@ class MarketingForm(ModelForm):
 class PromoPlanForm(ModelForm):
     class Meta:
         model = PromoPlan
-        fields = ('radio', 'pressa', 'social_crops', 'tv', 'info', 'other', 'project_plan', 'release_plan', 'press_release', 'user',)
+        fields = ('radio', 'pressa', 'social_crops', 'tv', 'info', 'other', 'project_plan', 'release_plan', 'user',)
         widgets = {
             'user': HiddenInput,
         }
@@ -50,5 +50,15 @@ class PromoPlanForm(ModelForm):
             'other':'Таргетированная реклама // перфоманс и инфлюенс-маркетинг',
             'project_plan':'Ближайшие концерты // презентации // туры',
             'release_plan':'Пример: ноябрь - Сингл, март - клип, май - Альбом, август - ВТБ Арена',
+        }
+
+class PressReleaseForm(ModelForm):
+    class Meta:
+        model = PressRelease
+        fields = '__all__'
+        widgets = {
+            'user': HiddenInput,
+        }
+        help_texts = {
             'press_release': 'Если у вас нет готового пресс-релиза, напишите основные детали о себе и своём релизе. Мы оформим это в текст.',
         }

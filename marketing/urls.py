@@ -6,5 +6,6 @@ urlpatterns = [
     path('', MainInfoMarketingView.as_view(), name='marketing'),
     path('marketing_info/', MarketingView.as_view(), name='marketing_info'),
     path('promo_plan/', PromoPlanView.as_view(), name='promo_plan'),
-    path('success/', success_page, name='success'),
+    path('press_release/', PressReleaseView.as_view(), name = 'press_release'),
+    path('success/', success_page, name='m_success'),
 ]
