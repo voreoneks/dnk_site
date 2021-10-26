@@ -13,66 +13,74 @@
 
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-xxl audio-button">
-            <div class="col-4">
-                <button type="button" class="btn button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Заполнить таблицу
-                </button>
-            </div>
+        <div class="col-md-6 col-sm-8 col-10 release-header">
+            <h5>{{ form_title }}</h5>
+            {% autoescape off %}
+            <p>{{ form_description }}</p>
+            {% endautoescape %}
         </div>
     </div>
-</div>
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-md-6 col-sm-8 col-10 audio-button">
+            <button type="button" class="btn button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Заполнить таблицу
+            </button>
+        </div>
+    </div>
 
-<div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <form method="POST" enctype="multipart/form-data" action="" id="audio-form">
-            <div class="col-xxl">
-                <div class="col-12">
+            <div class="col-md-6 col-sm-8 col-10 table ">
 
+                <table>
+                    {% for error in formset.non_form_errors %}
+                        {{ error }}
+                    {% endfor %}
+                    {{ formset.management_form }}
+                    <tr>
+                        <td></td>
+                        {% for item in formset.form.visible_fields %}
+                        
+                            <td class="th">
+                                {{ item.label }}
+                                {% if item.help_text %}
+                                    <a class="info" data-bs-toggle="tooltip" title="{{ item.help_text }}"><img src="{% static '/images/info-white.png' %}" alt=""></a>
+                                {% endif %}
+                            </td>
+                            {% if item.name in button %}
+                            <td></td>
+                            {% endif %}
+                        
+                        {% endfor %}
+                    </tr>
+                    {% for form in formset %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            {% for item in form.visible_fields %}
+                                <td>{{ item }}</td>
+                                {% if item.name in button %}
+                                    <td><input style="width: 25px; padding-top: 5px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
+                                {% endif %}
+                            {% endfor %}
+                            {% for item in form.hidden_fields %}
+                                {{ item }}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
 
             <!-- Modal -->
                     {% csrf_token %}
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-fullscreen">
                             <div class="modal-content">
 
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">Аудио</h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 
                                 <div class="modal-body">
-                                    <table>
-                                        {% for error in formset.non_form_errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                        {{ formset.management_form }}
-                                        <tr>
-                                            <th></th>
-                                            {% for item in formset.form.visible_fields %}
-                                            
-                                                <th><p>{{ item.label }}</p><p style="font-size: 10px;">{{ item.help_text }}</p></th>
-                                                {% if item.name in button %}
-                                                <th></th>
-                                                {% endif %}
-                                            
-                                            {% endfor %}
-                                        </tr>
-                                        {% for form in formset %}
-                                            <tr>
-                                                <td>{{ forloop.counter }}</td>
-                                                {% for item in form.visible_fields %}
-                                                    <td>{{ item }}</td>
-                                                    {% if item.name in button %}
-                                                        <td><input class="copy" type="image" onclick="return false;" src="{% static '/images/angle-down.png' %}"></td>
-                                                    {% endif %}
-                                                {% endfor %}
-                                                {% for item in form.hidden_fields %}
-                                                    {{ item }}
-                                                {% endfor %}
-                                            </tr>
-                                        {% endfor %}
-                                    </table>
                                 </div>
 
                                 <div class="modal-footer">
@@ -81,14 +89,14 @@
 
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     
                     
                 </div>
             </div>
             
-            <div class="col-xxl release-form">
-                <div class="col-4 ">
+            <div class="col-md-6 col-sm-8 col-10 release-form">
+                <div>
                     <p>Добавить видеоклип?</p>
                     <p>
                         <input type="radio" id="video_choice_1" name="add_video" value="NO" checked>
@@ -100,11 +108,9 @@
                     </p>
                 </div>
             </div>
-            <div class="col-xxl release-button">
-                <div class="col-5">
-                    <button class="btn button" type="button" onclick="history.back();">Назад</button>
-                    <button class="btn button" form="audio-form" type="submit">Далее</button>
-                </div>
+            <div class="col-md-6 col-sm-8 col-10 release-button">
+                <button class="btn button" type="button" onclick="history.back();">Назад</button>
+                <button class="btn button" form="audio-form" type="submit">Далее</button>
             </div>
             
         </form>

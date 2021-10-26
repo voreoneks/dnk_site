@@ -4,7 +4,7 @@
 {% block header %}
 
 {% if not user.is_authenticated %}
-    <div class="container-fluid !direction !spacing">
+    <div class="container-xxl !direction !spacing">
         <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             <div class="col-md-xxl">
                 <ul class="nav justify-content-end">
@@ -16,7 +16,37 @@
         </div>
     </div>
 {% else %}
-    {% include 'inc/_nav.html' %}
+    <div class="container-xxl !direction !spacing">
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-lg-6 col-sm-8 col-6 nav-block-left">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a aria-current="page" href="{% url 'main' %}">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">Личный кабинет</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">Калькулятор авансов</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'news' %}">Новости</a>
+                    </li>
+                    
+                </ul>
+            </div>
+            <div class="col-lg-6 col-sm-4 col-6 nav-block-right">
+                <ul class="nav justify-content-end">
+                    <li class="nav-item">
+                        <p>Здравствуйте, {{ user.get_username }}!</p>
+                    </li>
+                    <li class="nav-item">
+                        <a aria-current="page" href="{% url 'logout' %}">Выход</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endif %}
 
 {% endblock %}
@@ -28,39 +58,35 @@
 
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-xxl main-logo">
-            <div class="col-3">
+        <div class="col-sm main-logo">
+            <div class="col-12">
                 <img src="{% static '/images/icon_white.png' %}" alt="">
                 <img src="{% static '/images/dot_white.png' %}" alt="">
             </div>
         </div>
     </div>
-    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-xxl main-title">
-            <div class="col-5 ">
-                <img src="{% static '/images/title_white.png' %}" alt="">
-            </div>
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|} main-title">
+        <div class="col-2 ">
+            <img src="{% static '/images/title_white.png' %}" alt="">
         </div>
     </div>
-    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-xxl main-title">
-            <div class="col-7">
-                <p>Музыкальное издательство</p> 
-            </div>
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|} main-title">
+        <div class="col-2">
+            <p>Музыкальное издательство</p> 
         </div>
     </div>
     {% if user.is_authenticated %}
-        <div class="container-xxl !direction !spacing">
-            <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-                <div class="col-xxl main-btn">
-                    <div class="col-3">
-                        <button type="button" class="btn button"><a href="{% url 'release' %}">Релиз</a></button>
-                        <button type="button" class="btn button"><a href="{% url 'documents' %}">Документы</a></button>
-                        <button type="button" class="btn button"><a href="{% url 'marketing' %}">Маркетинг</a></button>
-                    </div>
-                </div>
-            </div>
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|} button-main">
+        <div class="col-sm-12 col-md-2 ">
+            <button type="button" class="btn button"><a href="{% url 'release' %}">Релиз</a></button>
         </div>
+        <div class="col-sm-12 col-md-2 ">
+            <button type="button" class="btn button"><a href="{% url 'documents' %}">Документы</a></button>
+        </div>
+        <div class="col-sm-12 col-md-2 ">
+            <button type="button" class="btn button"><a href="{% url 'marketing' %}">Маркетинг</a></button>
+        </div>
+    </div>
     {% endif %}
 </div>
 

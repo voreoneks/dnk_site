@@ -1,6 +1,6 @@
-<div class="container-fluid !direction !spacing">
+<div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-md-6 nav-block-left">
+        <div class="col-lg-6 col-sm-8 col-6 nav-block-left">
             <ul class="nav">
                 <li class="nav-item">
                     <a aria-current="page" href="{% url 'main' %}">Главная</a>
@@ -17,11 +17,8 @@
                 
             </ul>
         </div>
-        <div class="col-md-6 nav-block-right">
+        <div class="col-lg-6 col-sm-4 col-6 nav-block-right">
             <ul class="nav justify-content-end">
-                <li class="nav-item">
-                    <p>Здравствуйте, {{ user.get_username }}!</p>
-                </li>
                 <li class="nav-item">
                     <a aria-current="page" href="{% url 'logout' %}">Выход</a>
                 </li>

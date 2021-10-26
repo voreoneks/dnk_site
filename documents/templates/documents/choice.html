@@ -13,19 +13,17 @@
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <form method="POST" action="" novalidate enctype="multipart/form-data">
             {% csrf_token %}
-                <div class="col-xxl release-form">
-                    <div class="col-5 ">
+                <div class="col-md-6 col-sm-8 col-10 release-form">
+                    <div>
                         <p>{{ field_title }}</p>
                         {% autoescape off %}
                         <p>{{ form }}</p>
                         {% endautoescape %}
                     </div>
                 </div>
-            <div class="col-xxl release-button">
-                <div class="col-5">
-                    <button class="btn button" type="button" onclick="history.back();">Назад</button>
-                    <button class="btn button" type="submit">Далее</button>
-                </div>
+            <div class="col-md-6 col-sm-8 col-10 release-button">
+                <button class="btn button" type="button" onclick="history.back();">Назад</button>
+                <button class="btn button" type="submit">Далее</button>
             </div>
         </form>
     </div>
