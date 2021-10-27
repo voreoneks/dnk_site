@@ -1,7 +1,7 @@
 from django.db.models import fields
 from django.forms import ModelForm, RadioSelect
 from django.forms import widgets
-from django.forms.widgets import HiddenInput
+from django.forms.widgets import HiddenInput, Textarea
 
 from .models import *
 
@@ -12,6 +12,7 @@ class MainInfoMarketingForm(ModelForm):
         fields = ('songers', 'release_title', 'release_type', 'genre', 'vk', 'inst', 'facebook', 'youtube', 'tiktok', 'other', 'user',)
         widgets = {
             'user': HiddenInput,
+            'release_type': RadioSelect,
         }
         help_texts = {
             'vk': 'Ссылка на личную страницу и на официальное сообщество',
@@ -58,6 +59,7 @@ class PressReleaseForm(ModelForm):
         fields = '__all__'
         widgets = {
             'user': HiddenInput,
+            'press_release': Textarea(attrs={'rows': 5})
         }
         help_texts = {
             'press_release': 'Если у вас нет готового пресс-релиза, напишите основные детали о себе и своём релизе. Мы оформим это в текст.',

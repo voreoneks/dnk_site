@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block header %}
 
 {% include '_nav.html' %}
@@ -12,31 +11,37 @@
 {% block body %}
 
 <div class="container-xxl !direction !spacing">
-    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-md-6 col-sm-8 col-10 release-header">
-            <h5>{{ form_title }}</h5>
-            {% autoescape off %}
-            <p>{{ form_description }}</p>
-            {% endautoescape %}
+    <form method="POST" enctype="multipart/form-data" action="" id="audio-form">
+        {% csrf_token %}
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 release-header">
+                <h5>{{ form_title }}</h5>
+                {% autoescape off %}
+                <p>{{ form_description }}</p>
+                {% endautoescape %}
+            </div>
         </div>
-    </div>
-    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <div class="col-md-6 col-sm-8 col-10 audio-button">
-            <button type="button" class="btn button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Заполнить таблицу
-            </button>
-        </div>
-    </div>
 
-    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <form method="POST" enctype="multipart/form-data" action="" id="audio-form">
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 release-header">
+                {% if formset.total_error_count %}
+                    <ul class="errorList">
+                        {% for dict in formset.errors %}
+                            {{ dict }}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             <div class="col-md-6 col-sm-8 col-10 table ">
 
                 <table>
-                    {% for error in formset.non_form_errors %}
-                        {{ error }}
-                    {% endfor %}
                     {{ formset.management_form }}
+                    {% if formset.non_form_errors %}
+                        <div>{{formset.non_form_errors}}</div>
+                    {% endif %}
                     <tr>
                         <td></td>
                         {% for item in formset.form.visible_fields %}
@@ -59,7 +64,7 @@
                             {% for item in form.visible_fields %}
                                 <td>{{ item }}</td>
                                 {% if item.name in button %}
-                                    <td><input style="width: 25px; padding-top: 5px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
+                                    <td><input style="width: 20px; padding-top: 5px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
                                 {% endif %}
                             {% endfor %}
                             {% for item in form.hidden_fields %}
@@ -68,33 +73,12 @@
                         </tr>
                     {% endfor %}
                 </table>
-
-            <!-- Modal -->
-                    {% csrf_token %}
-                    <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-fullscreen">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Аудио</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                
-                                <div class="modal-body">
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn button" data-bs-dismiss="modal">Закрыть</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div> -->
-                    
-                    
-                </div>
+                
             </div>
+        </div>
             
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+
             <div class="col-md-6 col-sm-8 col-10 release-form">
                 <div>
                     <p>Добавить видеоклип?</p>
@@ -108,15 +92,18 @@
                     </p>
                 </div>
             </div>
+
+        </div>
+
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}"></div>
+        
             <div class="col-md-6 col-sm-8 col-10 release-button">
                 <button class="btn button" type="button" onclick="history.back();">Назад</button>
                 <button class="btn button" form="audio-form" type="submit">Далее</button>
             </div>
             
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
-
-
 
 {% endblock %}

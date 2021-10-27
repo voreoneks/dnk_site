@@ -10,8 +10,8 @@
 {% block body %}
 
 <div class="container-xxl !direction !spacing">
-    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
-        <form method="POST" action="" novalidate enctype="multipart/form-data">
+    <form method="POST" action="" novalidate enctype="multipart/form-data">
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             {% csrf_token %}
                 <div class="col-md-6 col-sm-8 col-10 release-form">
                     <div>
@@ -21,12 +21,14 @@
                         {% endautoescape %}
                     </div>
                 </div>
+        </div>
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             <div class="col-md-6 col-sm-8 col-10 release-button">
                 <button class="btn button" type="button" onclick="history.back();">Назад</button>
                 <button class="btn button" type="submit">Далее</button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 

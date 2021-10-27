@@ -15,7 +15,7 @@ from .models import *
 
 def release_to_sheet(user):
     date_time = str(datetime.now())
-    release_sheet = Sheet('A3:AM3')
+    release_sheet = Sheet('Релиз!A3:AM3')
 
     main_info = MainInfo.objects.get(user_id = user.id)
     main_info_dict = model_to_dict(main_info)
@@ -50,20 +50,20 @@ def release_to_sheet(user):
     release_values += video_values
 
     release_data = {
-            'range': 'A3:AM3',
+            'range': 'Релиз!A3:AM3',
             'majorDimension': 'ROWS',
             'values': [release_values,]
         }
     release_sheet.append(release_data)
 
     try:
-        add_audio_sheet = Sheet('A3:AM3')
+        add_audio_sheet = Sheet('Релиз!A3:AM3')
         add_audio_values = []
         for i in range(1, len(audio_tuple_dict)):
             add_audio_values.append(tuple(('', '',  '',  '',  '',  '',  '', audio_tuple_dict[i]['songers'], audio_tuple_dict[i]['song_title'], audio_tuple_dict[i]['album_title'], audio_tuple_dict[i]['feat'], audio_tuple_dict[i]['genre'], audio_tuple_dict[i]['fio_songer'], audio_tuple_dict[i]['words_author'], audio_tuple_dict[i]['music_author'], audio_tuple_dict[i]['owner_citizenship'], audio_tuple_dict[i]['record_country'], audio_tuple_dict[i]['timing'], audio_tuple_dict[i]['song_preview'], audio_tuple_dict[i]['lexis'], '', '', audio_tuple_dict[i]['audio_link'], '', audio_tuple_dict[i]['clean_link'], '', audio_tuple_dict[i]['release_year'])))
 
         add_audio_data = {
-            'range': 'A3:AM3',
+            'range': 'Релиз!A3:AM3',
             'majorDimension': 'ROWS',
             'values': add_audio_values
             }
@@ -71,10 +71,10 @@ def release_to_sheet(user):
     except:
         pass
 
-    spaces = Sheet('A3:AM3')
+    spaces = Sheet('Релиз!A3:AM3')
     spaces_values = [tuple('.' for i in range(39))]
     spaces_data = {
-        'range': 'A3:AM3',
+        'range': 'Релиз!A3:AM3',
         'majorDimension': 'ROWS',
         'values': spaces_values
     }
@@ -92,13 +92,13 @@ class MainInfoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        try:
-            main_info = MainInfo.objects.filter(user_id = user.id).values()
+        main_info = MainInfo.objects.filter(user_id = user.id).values()
+        if len(main_info) != 0:
             for item in main_info:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        except:
+        else:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
@@ -106,12 +106,10 @@ class MainInfoView(LoginRequiredMixin, FormView):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            try:
-                main_info = MainInfo.objects.filter(user_id = user.id)
+            main_info = MainInfo.objects.filter(user_id = user.id)
+            if len(main_info) != 0:
                 for item in main_info:
                     item.delete()
-            except:
-                pass
             form.save()
             if form.cleaned_data['content_type'] == 'SINGLE' or form.cleaned_data['content_type'] == 'ALBUM':
                 self.next = 'r_audio'
@@ -136,12 +134,12 @@ class AudioView(LoginRequiredMixin, FormView):
             'form-TOTAL_FORMS': str(num_songs),
             'form-INITIAL_FORMS': str(num_songs),
         }
-        try:
-            audio = Audio.objects.filter(user_id = user.id)
+        audio = Audio.objects.filter(user_id = user.id)
+        if len(audio) != 0:
             for song in range(len(audio)):
                 for field in AudioForm._meta.fields:
                     data['form-' + str(song) + '-' + field] = getattr(audio[song], field)
-        except:
+        else:
             for num in range(num_songs):
                 data['form-' + str(num) + '-user'] = user.id
         formset = audio_formset(data)
@@ -153,12 +151,10 @@ class AudioView(LoginRequiredMixin, FormView):
         formset = audio_formset(data = self.request.POST, files = self.request.FILES)
         add_video = self.request.POST.get('add_video')
         if formset.is_valid():
-            try:
-                audio = Audio.objects.filter(user_id = user.id)
+            audio = Audio.objects.filter(user_id = user.id)
+            if len(audio) != 0:
                 for song in audio:
                     song.delete()
-            except:
-                pass
             for form in formset:
                 form.save()
             if add_video == 'NO':
@@ -173,34 +169,33 @@ class AudioView(LoginRequiredMixin, FormView):
 class VideoView(LoginRequiredMixin, FormView):
     template_name = 'release/video.html'
     form_class = VideoForm
+    form_title = 'Видеоклип'
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        try:
-            video = Video.objects.filter(user_id = user.id).values()
+        video = Video.objects.filter(user_id = user.id).values()
+        if len(video) != 0:
             for item in video:
                 data = item
             data['user'] = user
             form = self.form_class(initial = data)
-        except:
+        else:
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            try:
-                video = Video.objects.filter(user_id = user.id)
+            video = Video.objects.filter(user_id = user.id)
+            if len(video) != 0:
                 for item in video:
                     item.delete()
-            except:
-                pass
             form.save()
             release_to_sheet(user)
             return HttpResponseRedirect(reverse('r_success'))
         else:
-            return render(request, self.template_name, {'form': form})
+            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
             
 

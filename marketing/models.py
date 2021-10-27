@@ -10,6 +10,7 @@ class MainInfoMarketing(models.Model):
         ('CLIP', 'Видеоклип'),
     }
     genre_choices = [
+        ('NONE', 'Не выбрано'),
         ('BLUES','BLUES'), ('CHILDREN`S','CHILDREN`S'),
         ('CHRISTIAN','CHRISTIAN'), ('CLASSICAL','CLASSICAL'),
         ('COUNTRY','COUNTRY'), ('EDUCATIONAL','EDUCATIONAL'),
@@ -24,8 +25,8 @@ class MainInfoMarketing(models.Model):
 
     songers = models.CharField(max_length=100, verbose_name='Исполнитель')
     release_title = models.CharField(max_length=100, verbose_name='Название релиза')
-    release_type = models.CharField(max_length=20, choices=release_type_choices, verbose_name='Тип релиза')
-    genre = models.CharField(max_length=20, choices=genre_choices, verbose_name='Жанр')
+    release_type = models.CharField(max_length=20, choices=release_type_choices, default='SINGLE', verbose_name='Тип релиза')
+    genre = models.CharField(max_length=20, choices=genre_choices, default='NONE', verbose_name='Жанр')
     vk = models.CharField(max_length=100, verbose_name='VK')
     inst = models.CharField(max_length=50, verbose_name='Instagram')
     facebook = models.CharField(max_length=100, verbose_name='Facebook', blank=True, null=True)

@@ -16,7 +16,7 @@ class MainInfo(models.Model):
     name = models.CharField(max_length=150, verbose_name='Имя артиста')
     phone_number = models.CharField(max_length=10, verbose_name='Телефон')
     email = models.EmailField(verbose_name='E-mail')
-    is_update_photo = models.CharField(max_length=3, choices=bool_choices, verbose_name='Необходимо ли обновить/добавить фото в карточках артиста на площадках?', default='NO')
+    is_update_photo = models.CharField(max_length=4, choices=bool_choices, default='NO', verbose_name='Необходимо ли обновить/добавить фото в карточках артиста на площадках?')
     photo_link = models.URLField(verbose_name='Ссылка на скачивание фото', null=True, blank=True)
     photo = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Прикрепить фото', blank=True, null=True)
     content_type = models.CharField(max_length=9, choices=content_choices, verbose_name='Тип релиза', default='SINGLE')
@@ -27,6 +27,7 @@ class MainInfo(models.Model):
 
 class Audio(models.Model):
     genre_choices = [
+        ('NONE', 'Не выбрано'),
         ('BLUES','BLUES'), ('CHILDREN`S','CHILDREN`S'),
         ('CHRISTIAN','CHRISTIAN'), ('CLASSICAL','CLASSICAL'),
         ('COUNTRY','COUNTRY'), ('EDUCATIONAL','EDUCATIONAL'),
@@ -39,19 +40,16 @@ class Audio(models.Model):
         ('PUNK','PUNK'), ('WORLD MUSIC','WORLD MUSIC'),
     ]
     exist_choices = [
+        ('NONE', 'Не выбрано'),
         ('NO', 'Отсутствует'),
         ('YES', 'Присутствует'),
-    ]
-    bool_choices = [
-        ('NO', 'Нет'),
-        ('YES', 'Да'),
     ]
     
     songers = models.CharField(max_length=100, verbose_name='Исполнитель')
     song_title = models.CharField(max_length=100, verbose_name='Название песни')
     album_title = models.CharField(max_length=100, verbose_name='Название альбома', blank=True, null=True)
     feat = models.CharField(max_length=100, verbose_name='feat.', blank=True, null=True)
-    genre = models.CharField(max_length=11, choices=genre_choices, verbose_name='Жанр')
+    genre = models.CharField(max_length=11, choices=genre_choices, default='NONE', verbose_name='Жанр')
     fio_songer = models.CharField(max_length=100, verbose_name='ФИО Исполнителя')
     words_author = models.CharField(max_length=100, verbose_name='Автор слов')
     music_author = models.CharField(max_length=100, verbose_name='Автор музыки')
@@ -59,7 +57,7 @@ class Audio(models.Model):
     record_country = models.CharField(max_length=100, verbose_name='Страна записи')
     timing = models.CharField(max_length=5, verbose_name='Хронометраж')
     song_preview = models.CharField(max_length=15, verbose_name='Превью песни')
-    lexis = models.CharField(max_length=15, choices=exist_choices, verbose_name='Ненормативная лексика в песне')
+    lexis = models.CharField(max_length=15, choices=exist_choices, default='NONE', verbose_name='Ненормативная лексика в песне')
     audio = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Аудио (WAV)', blank=True, null=True)
     audio_link = models.URLField(blank=True, null=True, verbose_name='Аудио (WAV)')
     clean_link = models.URLField(verbose_name='Clean version трека (WAV)')
@@ -70,6 +68,7 @@ class Audio(models.Model):
 
 class Video(models.Model):
     exist_choices = [
+        ('NONE', 'Не выбрано'),
         ('NO', 'Отсутствует'),
         ('YES', 'Присутствует'),
     ]
@@ -79,7 +78,7 @@ class Video(models.Model):
     feat = models.CharField(max_length=100, verbose_name='feat.', blank=True, null=True)
     words_author = models.CharField(max_length=100, verbose_name='Автор слов')
     music_author = models.CharField(max_length=100, verbose_name='Автор музыки')
-    lexis = models.CharField(max_length=15, choices=exist_choices, verbose_name='Ненормативная лексика в песне')
+    lexis = models.CharField(max_length=15, choices=exist_choices, default='NONE', verbose_name='Ненормативная лексика в песне')
     director = models.CharField(max_length=100, verbose_name='Режиссер')
     timing = models.CharField(max_length=5, verbose_name='Хронометраж')
     release_year = models.CharField(max_length=4, verbose_name='Год выпуска')
