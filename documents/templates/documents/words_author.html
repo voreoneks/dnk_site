@@ -9,6 +9,58 @@
 
 {% block body %}
 
-{% include 'vertical_form.html' %}
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-md-6 col-sm-8 col-10 release-header">
+            <h5>{{ form_title }}</h5>
+            {% autoescape off %}
+            <p>{{ form_description }}</p>
+            {% endautoescape %}
+        </div>
+    </div>
+
+    <form method="POST" action="" novalidate enctype="multipart/form-data">
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            {% csrf_token %}
+            <div class="col-md-6 col-sm-8 col-10 release-form">
+                {% for item in form.visible_fields %}
+                    <div>
+                        <p>{{ item.label }}</p>
+                        <p>{{ item.errors }}</p>
+                        {% autoescape off %}
+                        <p style="font-size: 15px;">{{ item.help_text }}</p>
+                        {% endautoescape %}
+                        <p>{{ item }}</p>
+                    </div>
+                {% endfor %}
+                <div>
+                    <p>Добавить еще одного автора слов?</p>
+                    <p>
+                        <ul id="id_music_author">
+                            <li>
+                                <label for="id_music_author_0"><input type="radio" name="one_more" value="ONE_MORE_NO" required id="id_music_author_0" checked>Нет</label>
+                            </li>
+                            <li>
+                                <label for="id_music_author_1"><input type="radio" name="one_more" value="ONE_MORE_YES" required id="id_music_author_1">Да</label>
+                            </li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            {% for item in form.hidden_fields %}
+                {{ item }}
+            {% endfor %}
+        </div>
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 release-button">
+                <button class="btn button" type="button" onclick="history.back();">Назад</button>
+                <div>
+                    <button class="btn button" type="button"><a href="{% url 'delete_words_author' %}?num_author={{num_author}}">Удалить автора</a></button>
+                    <button class="btn button" type="submit">Далее</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

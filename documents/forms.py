@@ -126,92 +126,56 @@ class LicenceForm(ModelForm):
             'user': HiddenInput,
         }
 
-class MusicCitizenForm(ModelForm):
+class MusicAuthorForm(ModelForm):
     class Meta:
-        model = MusicCitizen
-        fields = ('fio', 'birthday', 'series_num', 'who_issued', 'when_issued', 'code_pod', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'user', )
+        model = MusicAuthor
+        fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
         widgets = {
             'user': HiddenInput,
+            'number': HiddenInput,
         }
         help_texts = {
             'fio': 'Полностью',
             'fin_conditions': 'Опишите на каких условиях вы работаете с автором музыки. Пример: Он получил фиксированный платёж в размере 6000 тысяч рублей // Мы договорились работать на роялти 50 на 50 // Отдал права бесплатно // Договорились за упоминание в соцсетях.',
         }
 
-class MusicForeignForm(ModelForm):
-    class Meta:
-        model = MusicForeign
-        fields = ('fio', 'birthday', 'citizen', 'passport', 'author_email', 'fin_conditions', 'user',)
-        widgets = {
-            'user': HiddenInput,
-        }
-        help_texts = {
-            'fio': 'Полностью',
-            'birthday': 'Полностью',
-            'passport': 'Серия и номер паспорта, кем и когда выдан',
-            'fin_conditions': 'Опишите на каких условиях вы работаете с автором музыки. Пример: Он получил фиксированный платёж в размере 6000 тысяч рублей // Мы договорились работать на роялти 50 на 50 // Отдал права бесплатно // Договорились за упоминание в соцсетях.',
-        }
 
-class WordsCitizenForm(ModelForm):
+class WordsAuthorForm(ModelForm):
     class Meta:
-        model = WordsCitizen
-        fields = ('fio', 'birthday', 'series_num', 'who_issued', 'when_issued', 'code_pod', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'user', )
+        model = WordsAuthor
+        fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
         widgets = {
             'user': HiddenInput,
+            'number': HiddenInput,
         }
         help_texts = {
             'fio': 'Полностью',
-            'fin_conditions': 'Опишите на каких условиях вы работаете с автором текста. Пример: Он получил фиксированный платёж в размере 6000 тысяч рублей // Мы договорились работать на роялти 50 на 50 // Отдал права бесплатно // Договорились за упоминание в соцсетях.',
-        }
-
-class WordsForeignForm(ModelForm):
-    class Meta:
-        model = WordsForeign
-        fields = ('fio', 'birthday', 'citizen', 'passport', 'author_email', 'fin_conditions', 'user',)
-        widgets = {
-            'user': HiddenInput,
-        }
-        help_texts = {
-            'fio': 'Полностью',
-            'birthday': 'Полностью',
-            'passport': 'Серия и номер паспорта, кем и когда выдан',
             'fin_conditions': 'Опишите на каких условиях вы работаете с автором текста. Пример: Он получил фиксированный платёж в размере 6000 тысяч рублей // Мы договорились работать на роялти 50 на 50 // Отдал права бесплатно // Договорились за упоминание в соцсетях.',
         }
 
 class OthersForm(ModelForm):
     class Meta:
         model = Others
-        fields = ('creative_name', 'songs', 'fio', 'citizen', 'birthday', 'series_num', 'id_number', 'who_issued', 'when_issued', 'code_pod', 'birth_place', 'reg', 'fin_conditions', 'user',)
+        fields = ('creative_name', 'songs', 'fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'fin_conditions', 'number', 'user')
         widgets = {
             'user': HiddenInput,
+            'number': HiddenInput,
         }
         help_texts = {
             'id_number': 'Если применимо',
             'fin_conditions': 'Опишите на каких условиях вы работаете с автором текста. Пример: Он получил фиксированный платёж в размере 6000 тысяч рублей // Мы договорились работать на роялти 50 на 50 // Отдал права бесплатно // Договорились за упоминание в соцсетях.',
         }
 
-class PhonMakerCitizenForm(ModelForm):
+class PhonMakerForm(ModelForm):
     class Meta:
-        model = PhonMakerCitizen
-        fields = ('fio', 'birthday', 'series_num', 'who_issued', 'when_issued', 'code_pod', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'user', )
+        model = PhonMaker
+        fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
         widgets = {
             'user': HiddenInput,
+            'number': HiddenInput,
         }
         help_texts = {
             'fio': 'Полностью',
             'fin_conditions': 'Опишите на каких условиях вы работаете с автором текста. Пример: Он получил фиксированный платёж в размере 6000 тысяч рублей // Мы договорились работать на роялти 50 на 50 // Отдал права бесплатно // Договорились за упоминание в соцсетях.',
         }
 
-class PhonMakerForeignForm(ModelForm):
-    class Meta:
-        model = PhonMakerForeign
-        fields = ('fio', 'birthday', 'citizen', 'passport', 'author_email', 'fin_conditions', 'user',)
-        widgets = {
-            'user': HiddenInput,
-        }
-        help_texts = {
-            'fio': 'Полностью',
-            'birthday': 'Полностью',
-            'passport': 'Серия и номер паспорта, кем и когда выдан',
-            'fin_conditions': 'Опишите на каких условиях вы работаете с автором текста. Пример: Он получил фиксированный платёж в размере 6000 тысяч рублей // Мы договорились работать на роялти 50 на 50 // Отдал права бесплатно // Договорились за упоминание в соцсетях.',
-        }
