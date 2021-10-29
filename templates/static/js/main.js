@@ -13,6 +13,10 @@ $(function(){
             targetSelect.eq(i).val(text)
         }
     })
+    $('button[type=submit]').click(function(){
+        $('form').submit();
+        $(this).attr('disabled', 'disabled');
+    })
 });
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

@@ -4,6 +4,11 @@ from django.db.models.base import Model
 from django.db.models.fields import CharField
 
 class MainInfoDocs(models.Model):
+    release_type_choices = {
+        ('SINGLE', 'Сингл'),
+        ('ALBUM', 'Альбом / ЕР'),
+        ('CLIP', 'Видеоклип'),
+    }
     org_type_choices = [
         ('IPRF', 'ИП РФ'),
         ('IPIN', 'ИП Иностранный'),
@@ -20,6 +25,7 @@ class MainInfoDocs(models.Model):
     email = models.EmailField(verbose_name='E-mail')
     socials = models.CharField(max_length=500, verbose_name='Социальные сети', blank=True, null=True)
     cover = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка (jpg 3000x3000)', blank=True, null=True)
+    release_type = models.CharField(max_length=15, choices=release_type_choices, verbose_name='Тип релиза', null=True, default='SINGLE')
     num_songs = models.IntegerField(choices=integer_choices, null=True, default=1, verbose_name='Количество песен для отправки')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 

@@ -1,13 +1,71 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.forms import formset_factory
+from django.forms.models import model_to_dict
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic.edit import FormView
+from datetime import datetime
+
+from google_sheets import Sheet
 
 from .forms import *
 from .models import *
+
+
+def marketing_to_sheet(user):
+    date_time = str(datetime.now())
+    all_marketing_sheet = Sheet('Маркетинг!A3:AC3')
+    all_marketing_values = tuple()
+
+    main_info_marketing = MainInfoMarketing.objects.get(user_id = user.id)
+    main_info_marketing_dict = model_to_dict(main_info_marketing)
+    main_info_marketing_values = (
+        date_time, main_info_marketing_dict['songers'], main_info_marketing_dict['release_title'], main_info_marketing_dict['release_type'], main_info_marketing_dict['genre'], main_info_marketing_dict['vk'], main_info_marketing_dict['inst'], main_info_marketing_dict['facebook'], main_info_marketing_dict['youtube'], main_info_marketing_dict['tiktok'], main_info_marketing_dict['other']
+    )
+    all_marketing_values += main_info_marketing_values
+
+    marketing = Marketing.objects.get(user_id = user.id)
+    marketing_dict = model_to_dict(marketing)
+    marketing_values = (
+        marketing_dict['positioning'], marketing_dict['where_from'], marketing_dict['affiliation'], marketing_dict['awards'], '', marketing_dict['photo_link'], marketing_dict['inspiration'], marketing_dict['concept'], marketing_dict['guest_artists']
+    )
+    all_marketing_values += marketing_values
+
+    try:
+        promo_plan = PromoPlan.objects.get(user_id = user.id)
+        promo_plan_dict = model_to_dict(promo_plan)
+        promo_plan_values = (
+            promo_plan_dict['radio'], promo_plan_dict['pressa'], promo_plan_dict['social_crops'], promo_plan_dict['tv'], promo_plan_dict['info'], promo_plan_dict['other'], promo_plan_dict['project_plan'], promo_plan_dict['release_plan']
+        )
+    except:
+        promo_plan_values = tuple('' for i in range(8))
+    all_marketing_values += promo_plan_values
+
+    press_release = PressRelease.objects.get(user_id = user.id)
+    press_release_dict = model_to_dict(press_release)
+    press_release_values = (
+        press_release_dict['press_release'],
+    )
+    all_marketing_values += press_release_values
+
+    all_marketing_data = {
+        'range': 'Маркетинг!A3:AC3',
+        'majorDimension': 'ROWS',
+        'values': [all_marketing_values,]
+    }
+
+    all_marketing_sheet.append(all_marketing_data)
+
+    spaces = Sheet('Маркетинг!A3:AC3')
+    spaces_values = tuple('.' for i in range(29))
+    spaces_data = {
+        'range': 'Маркетинг!A3:AC3',
+        'majorDimension': 'ROWS',
+        'values': [spaces_values,]
+    }
+    spaces.append(spaces_data)
 
 
 class MainInfoMarketingView(LoginRequiredMixin, FormView):
@@ -130,6 +188,7 @@ class PressReleaseView(LoginRequiredMixin, FormView):
                 for item in objects:
                     item.delete()
             form.save()
+            marketing_to_sheet(user)
             return HttpResponseRedirect(reverse('m_success'))
         else:
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})

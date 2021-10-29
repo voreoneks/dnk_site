@@ -4,7 +4,6 @@ from .views import *
 urlpatterns = [
     path('', MainInfoDocsView.as_view(), name='documents'),
     path('orginfo/', OrgInfoView.as_view(), name='orginfo'),
-    path('choice/<int:id>/', choice, name='choice'),
     path('audio/', AudioDocsView.as_view(), name='d_audio'),
     path('video/', VideoDocsView.as_view(), name='d_video'), 
     path('licence/', LicenceView.as_view(), name='licence'),

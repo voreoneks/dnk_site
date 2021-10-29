@@ -8,9 +8,10 @@ from .models import *
 class MainInfoDocsForm(ModelForm):
     class Meta:
         model = MainInfoDocs
-        fields = ('you_are', 'partners_value', 'artist_name', 'artist_fio', 'phone_number', 'email', 'socials', 'cover', 'num_songs', 'user',)
+        fields = ('you_are', 'partners_value', 'artist_name', 'artist_fio', 'phone_number', 'email', 'socials', 'cover', 'release_type', 'num_songs', 'user',)
         widgets = {
             'you_are': RadioSelect,
+            'release_type': RadioSelect,
             'user': HiddenInput,
         }
         help_texts = {

@@ -20,12 +20,12 @@ def docs_to_sheet(user):
     main_info_docs_dict = model_to_dict(main_info_docs)
     docs_values = tuple()
     main_info_docs_values = (
-        date_time, main_info_docs_dict['you_are'], main_info_docs_dict['partners_value'], main_info_docs_dict['artist_fio'], main_info_docs_dict['artist_name'], main_info_docs_dict['phone_number'], main_info_docs_dict['email'], main_info_docs_dict['socials']
+        date_time, main_info_docs_dict['you_are'], main_info_docs_dict['partners_value'], main_info_docs_dict['artist_fio'], main_info_docs_dict['artist_name'], main_info_docs_dict['phone_number'], main_info_docs_dict['email'], main_info_docs_dict['socials'], main_info_docs_dict['release_type']
     )
     docs_values += main_info_docs_values
 
     try:
-        orginfoiprf = OrgInfoIprf.objects.filter(user_id = user.id)
+        orginfoiprf = OrgInfoIprf.objects.get(user_id = user.id)
         orginfoiprf_dict = model_to_dict(orginfoiprf)
         orginfoiprf_values = (
             orginfoiprf_dict['fio'], orginfoiprf_dict['ogrnip'], orginfoiprf_dict['inn'], orginfoiprf_dict['bank'], orginfoiprf_dict['r_s'], orginfoiprf_dict['bik'], orginfoiprf_dict['inn_bank'], orginfoiprf_dict['k_s']
@@ -36,9 +36,8 @@ def docs_to_sheet(user):
     docs_values += orginfoiprf_values
 
     try:
-        orginfoipin = OrgInfoIpin.objects.filter(user_id = user.id)
+        orginfoipin = OrgInfoIpin.objects.get(user_id = user.id)
         orginfoipin_dict = model_to_dict(orginfoipin)
-        print(orginfoipin_dict)
         orginfoipin_values = (
             orginfoipin_dict['fio'], orginfoipin_dict['citizen'], orginfoipin_dict['id_number'], orginfoipin_dict['bank'], orginfoipin_dict['r_s'], orginfoipin_dict['bik'], orginfoipin_dict['inn_bank'], orginfoipin_dict['k_s']
         )
@@ -48,7 +47,7 @@ def docs_to_sheet(user):
     docs_values += orginfoipin_values
 
     try:
-        orginfosam = OrgInfoSam.objects.filter(user_id = user.id)
+        orginfosam = OrgInfoSam.objects.get(user_id = user.id)
         orginfosam_dict = model_to_dict(orginfosam)
         orginfosam_values = (
             orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], orginfosam_dict['when_issued'], orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils'], ''
@@ -59,7 +58,7 @@ def docs_to_sheet(user):
     docs_values += orginfosam_values
 
     try:
-        orginfoooo = OrgInfoOoo.objects.filter(user_id = user.id)
+        orginfoooo = OrgInfoOoo.objects.get(user_id = user.id)
         orginfoooo_dict = model_to_dict(orginfoooo)
         orginfoooo_values = (
             orginfoooo_dict['name'], orginfoooo_dict['fio_gen_dir'], orginfoooo_dict['ogrn'], orginfoooo_dict['inn'], orginfoooo_dict['kpp'], orginfoooo_dict['yur_address'], orginfoooo_dict['fact_address'], orginfoooo_dict['bank'], orginfoooo_dict['r_s'], orginfoooo_dict['bik'], orginfoooo_dict['inn_bank'], orginfoooo_dict['k_s']
@@ -70,20 +69,21 @@ def docs_to_sheet(user):
     docs_values += orginfoooo_values
 
         
-    audio_docs = AudioDocs.objects.filter(user_id = user.id)
-    audio_docs_tuple_dict = tuple(model_to_dict(item) for item in audio_docs)
 
     try:
+        audio_docs = AudioDocs.objects.filter(user_id = user.id)
+        audio_docs_tuple_dict = tuple(model_to_dict(item) for item in audio_docs)
         audio_docs_values = (
             audio_docs_tuple_dict[0]['songers'], audio_docs_tuple_dict[0]['album_title'], audio_docs_tuple_dict[0]['song_title'], audio_docs_tuple_dict[0]['words_author'], audio_docs_tuple_dict[0]['music_author'], audio_docs_tuple_dict[0]['phon_maker'], audio_docs_tuple_dict[0]['timing'], '', audio_docs_tuple_dict[0]['release_year']
         )
     except:
+        audio_docs = []
         audio_docs_values = tuple('' for i in range(9))
     
     docs_values += audio_docs_values
 
     try:
-        video_docs = VideoDocs.objects.filter(user_id = user.id)
+        video_docs = VideoDocs.objects.get(user_id = user.id)
         video_docs_dict = model_to_dict(video_docs)
         video_docs_values = (
             video_docs_dict['songers'], video_docs_dict['video_title'], video_docs_dict['words_author'], video_docs_dict['music_author'], video_docs_dict['phon_maker'], video_docs_dict['director'], video_docs_dict['timing'], video_docs_dict['release_year'], video_docs_dict['production_country']
@@ -121,21 +121,25 @@ def docs_to_sheet(user):
         others = Others.objects.filter(user_id = user.id)
         others_tuple_dict = tuple(model_to_dict(item) for item in others)
         others_values = (
-            others_tuple_dict[0]['creative_name'], others_tuple_dict[0]['songs'], others_tuple_dict[0]['fio'], str(others_tuple_dict[0]['birthday']), others_tuple_dict[0]['citizen'], others_tuple_dict[0]['passport'], others_tuple_dict[0]['birth_place'], others_tuple_dict[0]['reg'], others_tuple_dict[0]['author_email'], others_tuple_dict[0]['fin_conditions']
+            others_tuple_dict[0]['creative_name'], others_tuple_dict[0]['songs'], others_tuple_dict[0]['fio'], str(others_tuple_dict[0]['birthday']), others_tuple_dict[0]['citizen'], others_tuple_dict[0]['passport'], others_tuple_dict[0]['birth_place'], others_tuple_dict[0]['reg'], others_tuple_dict[0]['fin_conditions']
         )
     except:
+        others = []
         others_values = tuple('' for i in range(9))
 
     docs_values += others_values
 
-    phon_maker = PhonMaker.objects.filter(user_id = user.id)
-    phon_maker_tuple_dict = tuple(model_to_dict(item) for item in phon_maker)
-    phon_maker_values = (
-        phon_maker_tuple_dict[0]['fio'], str(phon_maker_tuple_dict[0]['birthday']), phon_maker_tuple_dict[0]['citizen'], phon_maker_tuple_dict[0]['passport'], phon_maker_tuple_dict[0]['birth_place'], phon_maker_tuple_dict[0]['reg'], phon_maker_tuple_dict[0]['author_email'], phon_maker_tuple_dict[0]['fin_conditions']
-    )
+    try:
+        phon_maker = PhonMaker.objects.filter(user_id = user.id)
+        phon_maker_tuple_dict = tuple(model_to_dict(item) for item in phon_maker)
+        phon_maker_values = (
+            phon_maker_tuple_dict[0]['fio'], str(phon_maker_tuple_dict[0]['birthday']), phon_maker_tuple_dict[0]['citizen'], phon_maker_tuple_dict[0]['passport'], phon_maker_tuple_dict[0]['birth_place'], phon_maker_tuple_dict[0]['reg'], phon_maker_tuple_dict[0]['author_email'], phon_maker_tuple_dict[0]['fin_conditions']
+        )
+    except:
+        phon_maker = []
+        phon_maker_values = tuple('' for i in range(8))
 
     docs_values += phon_maker_values
-    print(docs_values)
 
     docs_data = {
         'range': 'Документы!A3:DC3',
@@ -146,47 +150,69 @@ def docs_to_sheet(user):
     docs_sheet.append(docs_data)
 
 
-    spaces = Sheet('Документы!A3:AM3')
-    spaces_values = [tuple('.' for i in range(39))]
+    add_rows = Sheet('Документы!A3:DC3')
+    max_len = max(len(audio_docs), len(music_author), len(words_author), len(others), len(phon_maker))
+
+    for i in range(1, max_len):
+        add_rows_values = tuple('' for i in range(53))
+        try:
+            add_audio_docs_value = (
+                audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['phon_maker'], audio_docs_tuple_dict[i]['timing'], '', audio_docs_tuple_dict[i]['release_year']
+            )
+        except:
+            add_audio_docs_value = tuple('' for i in range(9))
+        add_rows_values += add_audio_docs_value
+
+        try:
+            add_music_author_values = (
+                music_author_tuple_dict[i]['fio'], str(music_author_tuple_dict[i]['birthday']), music_author_tuple_dict[i]['citizen'], music_author_tuple_dict[i]['passport'], music_author_tuple_dict[i]['birth_place'], music_author_tuple_dict[i]['reg'], music_author_tuple_dict[i]['author_email'], music_author_tuple_dict[i]['fin_conditions']
+            )
+        except:
+            add_music_author_values = tuple('' for i in range(8))
+        add_rows_values += add_music_author_values
+
+        try:
+            add_words_author_values = (
+                words_author_tuple_dict[i]['fio'], str(words_author_tuple_dict[i]['birthday']), words_author_tuple_dict[i]['citizen'], words_author_tuple_dict[i]['passport'], words_author_tuple_dict[i]['birth_place'], words_author_tuple_dict[i]['reg'], words_author_tuple_dict[i]['author_email'], words_author_tuple_dict[i]['fin_conditions']
+            )
+        except:
+            add_words_author_values = tuple('' for i in range(8))
+        add_rows_values += add_words_author_values
+
+        try:
+            add_others_values = (
+                others_tuple_dict[i]['creative_name'], others_tuple_dict[i]['songs'], others_tuple_dict[i]['fio'], str(others_tuple_dict[i]['birthday']), others_tuple_dict[i]['citizen'], others_tuple_dict[i]['passport'], others_tuple_dict[i]['birth_place'], others_tuple_dict[i]['reg'], others_tuple_dict[i]['author_email'], others_tuple_dict[i]['fin_conditions']
+            )
+        except:
+            add_others_values = tuple('' for i in range(9))
+        add_rows_values += add_others_values
+
+        try:
+            add_phon_maker_values = (
+                phon_maker_tuple_dict[i]['fio'], str(phon_maker_tuple_dict[i]['birthday']), phon_maker_tuple_dict[i]['citizen'], phon_maker_tuple_dict[i]['passport'], phon_maker_tuple_dict[i]['birth_place'], phon_maker_tuple_dict[i]['reg'], phon_maker_tuple_dict[i]['author_email'], phon_maker_tuple_dict[i]['fin_conditions']
+            )
+        except:
+            add_phon_maker_values = tuple('' for i in range(8))
+        add_rows_values += add_phon_maker_values
+
+        add_rows_data = {
+            'range': 'Документы!A3:DC3',
+            'majorDimension': 'ROWS',
+            'values': [add_rows_values, ]
+        }
+
+        add_rows.append(add_rows_data)
+
+
+    spaces = Sheet('Документы!A3:DC3')
+    spaces_values = tuple('.' for i in range(107))
     spaces_data = {
-        'range': 'Документы!A3:AM3',
+        'range': 'Документы!A3:DC3',
         'majorDimension': 'ROWS',
-        'values': spaces_values
+        'values': [spaces_values,]
     }
     spaces.append(spaces_data)
 
-
-
-
-
-
-    # try:
-    #     add_audio_sheet = Sheet('Релиз!A3:AM3')
-    #     add_audio_values = []
-    #     for i in range(1, len(audio_docs_tuple_dict)):
-    #         add_audio_values.append(tuple(('', '',  '',  '',  '',  '',  '', audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['feat'], audio_docs_tuple_dict[i]['genre'], audio_docs_tuple_dict[i]['fio_songer'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['owner_citizenship'], audio_docs_tuple_dict[i]['record_country'], audio_docs_tuple_dict[i]['timing'], audio_docs_tuple_dict[i]['song_preview'], audio_docs_tuple_dict[i]['lexis'], '', '', audio_docs_tuple_dict[i]['audio_link'], '', audio_docs_tuple_dict[i]['clean_link'], '', audio_docs_tuple_dict[i]['release_year'])))
-
-    #     add_audio_data = {
-    #         'range': 'Релиз!A3:AM3',
-    #         'majorDimension': 'ROWS',
-    #         'values': add_audio_values
-    #         }
-    #     add_audio_sheet.append(add_audio_data)
-    # except:
-    #     pass
-
-    # spaces = Sheet('Релиз!A3:AM3')
-    # spaces_values = [tuple('.' for i in range(39))]
-    # spaces_data = {
-    #     'range': 'Релиз!A3:AM3',
-    #     'majorDimension': 'ROWS',
-    #     'values': spaces_values
-    # }
-    # spaces.append(spaces_data)
-    # main_info.delete()
-    # for item in audio:
-    #     item.delete()
-    # video.delete()
 
 
 class MainInfoDocsView(LoginRequiredMixin, FormView):
@@ -273,27 +299,15 @@ class OrgInfoView(LoginRequiredMixin, FormView):
                 for item in objects:
                     item.delete()
             form.save() 
-            return HttpResponseRedirect(reverse('choice', args=[1]))
+            main_info_docs = MainInfoDocs.objects.get(user_id = user.id)
+            release_type = main_info_docs.release_type
+            if release_type == 'SINGLE' or release_type == 'ALBUM':
+                return HttpResponseRedirect(reverse('d_audio'))
+            else:
+                return HttpResponseRedirect(reverse('d_video'))                
         else:
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
-    
-
-def choice(request, id):
-    if request.method == 'GET':
-        if id == 1:
-            form = '<p><input type="radio" name="choice" value="SINGLE" required id="id_content_type_0" checked><label for="id_content_type_0">Сингл</label></p><p><input type="radio" name="choice" value="ALBUM" required id="id_content_type_1"><label for="id_content_type_1">Альбом</label></p><p><input type="radio" name="choice" value="CLIP" required id="id_content_type_2"><label for="id_content_type_2">Видеоклип</label></p>'
-            context = {
-                'field_title': 'Тип релиза',
-                'form': form,
-            }
-        return render(request, 'documents/choice.html', context)
-    else:
-        choice = request.POST.get('choice')
-        if choice == 'SINGLE' or choice == 'ALBUM':
-            return HttpResponseRedirect(reverse('d_audio'))
-        elif choice == 'CLIP':
-            return HttpResponseRedirect(reverse('d_video'))
 
 class AudioDocsView(LoginRequiredMixin, FormView):
     template_name = 'documents/audio.html'
