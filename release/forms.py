@@ -1,5 +1,5 @@
 from django.forms import ModelForm, RadioSelect
-from django.forms.widgets import ClearableFileInput, HiddenInput
+from django.forms.widgets import ClearableFileInput, FileInput, HiddenInput
 
 from .models import *
 
@@ -9,6 +9,9 @@ class MainInfoForm(ModelForm):
         model = MainInfo
         fields = ['name', 'phone_number', 'email', 'is_update_photo', 'photo_link', 'photo', 'content_type', 'cover', 'cover_psd', 'num_songs', 'user',]
         widgets = {
+            'photo': FileInput,
+            'cover': FileInput,
+            'cover_psd': FileInput,
             'is_update_photo': RadioSelect,
             'content_type': RadioSelect,
             'user': HiddenInput,

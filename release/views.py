@@ -92,25 +92,48 @@ class MainInfoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        main_info = MainInfo.objects.filter(user_id = user.id).values()
-        if len(main_info) != 0:
-            for item in main_info:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
-        else:
+        try:
+            object_ = MainInfo.objects.get(user_id = user.id)
+            object_dict = model_to_dict(object_)
+            photo = object_dict['photo']
+            cover = object_dict['cover']
+            cover_psd = object_dict['cover_psd']
+            form = self.form_class(initial = object_dict)
+        except:
+            photo = ''
+            cover = ''
+            cover_psd = ''
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, 
+                    {'form': form, 
+                    'form_title': self.form_title, 
+                    'photo': photo, 
+                    'cover': cover, 
+                    'cover_psd': cover_psd, 
+                    'delete_photo': 'delete_photo', 
+                    'delete_cover': 'delete_cover', 
+                    'delete_cover_psd': 'delete_cover_psd'})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            main_info = MainInfo.objects.filter(user_id = user.id)
-            if len(main_info) != 0:
-                for item in main_info:
-                    item.delete()
-            form.save()
+            try:
+                object_ = MainInfo.objects.get(user_id = user.id)
+                photo = object_.photo
+                cover = object_.cover
+                cover_psd = object_.cover_psd
+                object_.delete()
+                forma = form.save(commit = False)
+                if cover:
+                    forma.cover = cover
+                if photo:
+                    forma.photo = photo
+                if cover_psd:
+                    forma.cover_psd = cover_psd
+                form.save()
+            except:
+                form.save()
             if form.cleaned_data['content_type'] == 'SINGLE' or form.cleaned_data['content_type'] == 'ALBUM':
                 self.next = 'r_audio'
             else:
@@ -173,31 +196,54 @@ class VideoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        video = Video.objects.filter(user_id = user.id).values()
-        if len(video) != 0:
-            for item in video:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
-        else:
+        try:
+            object_ = Video.objects.get(user_id = user.id)
+            object_dict = model_to_dict(object_)
+            preview = object_dict['video_preview']
+            form = self.form_class(initial = object_dict)
+        except:
+            preview = ''
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'delete_preview': 'delete_preview', 'preview':preview})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            video = Video.objects.filter(user_id = user.id)
-            if len(video) != 0:
-                for item in video:
-                    item.delete()
-            form.save()
+            try:
+                object_ = Video.objects.get(user_id = user.id)
+                preview = object_.video_preview
+                object_.delete()
+                if preview:
+                    forma = form.save(commit = False)
+                    forma.video_preview = preview
+                form.save()
+            except:
+                form.save()
             release_to_sheet(user)
             return HttpResponseRedirect(reverse('r_success'))
         else:
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
-            
+def delete_photo(request):
+    user = User.objects.get(username = request.user)
+    object_ = MainInfo.objects.filter(user_id = user.id).update(photo = '')
+    return HttpResponseRedirect(reverse('release'))
+
+def delete_cover(request):
+    user = User.objects.get(username = request.user)
+    object_ = MainInfo.objects.filter(user_id = user.id).update(cover = '')
+    return HttpResponseRedirect(reverse('release'))
+
+def delete_cover_psd(request):
+    user = User.objects.get(username = request.user)
+    object_ = MainInfo.objects.filter(user_id = user.id).update(cover_psd = '')
+    return HttpResponseRedirect(reverse('release'))
+
+def delete_preview(request):
+    user = User.objects.get(username = request.user)
+    object_ = Video.objects.filter(user_id = user.id).update(video_preview = '')
+    return HttpResponseRedirect(reverse('r_video'))
 
 def success_page(request):
     return render(request, 'success.html')

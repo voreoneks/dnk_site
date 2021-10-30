@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db.models.expressions import F
 from django.forms import formset_factory
 from django.http.response import Http404, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
@@ -50,7 +51,7 @@ def docs_to_sheet(user):
         orginfosam = OrgInfoSam.objects.get(user_id = user.id)
         orginfosam_dict = model_to_dict(orginfosam)
         orginfosam_values = (
-            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], orginfosam_dict['when_issued'], orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils'], ''
+            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils'], ''
         )
     except:
         orginfosam_values = tuple('' for i in range(16))
@@ -141,6 +142,8 @@ def docs_to_sheet(user):
 
     docs_values += phon_maker_values
 
+    print(docs_values)
+
     docs_data = {
         'range': 'Документы!A3:DC3',
         'majorDimension': 'ROWS',
@@ -214,6 +217,66 @@ def docs_to_sheet(user):
     spaces.append(spaces_data)
 
 
+    main_info_docs.delete()
+
+    try:
+        OrgInfoIprf.objects.get(user_id = user.id).delete()
+    except:
+        pass
+
+    try:
+        OrgInfoIpin.objects.get(user_id = user.id).delete()
+    except:
+        pass
+
+    try:
+       OrgInfoSam.objects.get(user_id = user.id).delete()
+    except:
+        pass
+
+    try:
+        OrgInfoOoo.objects.get(user_id = user.id).delete()
+    except:
+        pass
+
+    try:
+        audio_docs = AudioDocs.objects.filter(user_id = user.id)
+        for item in audio_docs:
+            item.delete()
+    except:
+        pass
+
+    try:
+        VideoDocs.objects.get(user_id = user.id).delete()
+    except:
+        pass
+
+    licence.delete()
+
+    for item in music_author:
+        item.delete()
+
+    for item in words_author:
+        item.delete()
+
+    try:
+        others = Others.objects.filter(user_id = user.id)
+        for item in others:
+            item.delete()
+    except:
+        pass
+
+    try:
+        phon_maker = PhonMaker.objects.filter(user_id = user.id)
+        for item in phon_maker:
+            item.delete()
+    except:
+        pass
+
+
+
+
+
 
 class MainInfoDocsView(LoginRequiredMixin, FormView):
     template_name = 'documents/documents.html'
@@ -222,25 +285,33 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = MainInfoDocs.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
-        else:
+        try:
+            object_ = MainInfoDocs.objects.get(user_id = user.id)
+            object_dict = model_to_dict(object_)
+            cover = object_dict['cover']
+            form = self.form_class(initial = object_dict)
+            delete_link = 'delete_cover'
+        except:
+            delete_link = ''
+            cover = ''
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'cover': cover, 'delete_link': delete_link})
 
     def post(self, request, *args, **kwargs):
+        print(request.POST)
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = MainInfoDocs.objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
-            form.save()
+            try:
+                object_ = MainInfoDocs.objects.get(user_id = user.id)
+                cover = object_.cover
+                object_.delete()
+                if cover:
+                    forma = form.save(commit = False)
+                    forma.cover = cover
+                forma.save()
+            except:
+                form.save()
             return HttpResponseRedirect('orginfo')
         else:
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
@@ -280,15 +351,17 @@ class OrgInfoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = self.get_model().objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.get_form_class()(initial = data)
-        else:
+        try:
+            object_ = self.get_model().objects.get(user_id = user.id)
+            object_dict = model_to_dict(object_)
+            skan_passport = object_dict['skan_passport']
+            delete_skan_passport = 'delete_skan_passport'
+            form = self.get_form_class()(initial = object_dict)
+        except:
+            skan_passport = ''
+            delete_skan_passport = ''
             form = self.get_form_class()(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'skan_passport': skan_passport, 'delete_skan_passport': delete_skan_passport})
 
     def post(self, request, *args, **kwargs):
         form = self.get_form_class()(data = request.POST, files = request.FILES)
@@ -651,6 +724,16 @@ def delete_phon_maker(request, *args, **kwargs):
     else:
         link = 1
     return HttpResponseRedirect(reverse('phon_maker', args=[link]))
+
+def delete_cover(request):
+    user = User.objects.get(username = request.user)
+    object_ = MainInfoDocs.objects.filter(user_id = user.id).update(cover = '')
+    return HttpResponseRedirect(reverse('documents'))
+
+def delete_skan_passport(request):
+    user = User.objects.get(username = request.user)
+    object_ = OrgInfoSam.objects.filter(user_id = user.id).update(skan_passport = '')
+    return HttpResponseRedirect(reverse('orginfo'))
 
 def success_page(request):
     return render(request, 'success.html')

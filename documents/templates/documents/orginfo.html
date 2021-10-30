@@ -9,6 +9,52 @@
 
 {% block body %}
 
-{% include 'vertical_form.html' %}
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-md-6 col-sm-8 col-10 release-header">
+            <h5>{{ form_title }}</h5>
+            {% autoescape off %}
+            <p>{{ form_description }}</p>
+            {% endautoescape %}
+        </div>
+    </div>
+
+    <form method="POST" action="" novalidate enctype="multipart/form-data">
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            {% csrf_token %}
+            <div class="col-md-6 col-sm-8 col-10 release-form">
+                {% for item in form.visible_fields %}
+                    <div>
+                        <p>{{ item.label }}</p>
+                        <p>{{ item.errors }}</p>
+                        {% autoescape off %}
+                        <p style="font-size: 15px;">{{ item.help_text }}</p>
+                        {% endautoescape %}
+                        <p>{{ item }}</p>
+                        {% if item.name == 'skan_passport' %}
+                            {% if skan_passport %}
+                                <p>Загружено:</p>
+                                <img src="/media/{{ skan_passport }}" alt="">
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url delete_skan_passport %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% for item in form.hidden_fields %}
+                {{ item }}
+            {% endfor %}
+        </div>
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 release-button">
+                <button class="btn button" type="button" onclick="history.back();">Назад</button>
+                <button class="btn button" type="submit">Далее</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 
 {% endblock %}

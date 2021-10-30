@@ -43,6 +43,7 @@ def marketing_to_sheet(user):
         promo_plan_values = tuple('' for i in range(8))
     all_marketing_values += promo_plan_values
 
+
     press_release = PressRelease.objects.get(user_id = user.id)
     press_release_dict = model_to_dict(press_release)
     press_release_values = (
@@ -66,6 +67,20 @@ def marketing_to_sheet(user):
         'values': [spaces_values,]
     }
     spaces.append(spaces_data)
+
+
+    main_info_marketing.delete()
+    marketing.delete()
+    try:
+        PromoPlan.objects.get(user_id = user.id).delete()
+    except:
+        pass
+    press_release.delete()
+
+
+
+
+
 
 
 class MainInfoMarketingView(LoginRequiredMixin, FormView):

@@ -1,7 +1,7 @@
 from django.db.models import fields
 from django.forms import ModelForm, RadioSelect
 from django.forms import widgets
-from django.forms.widgets import HiddenInput
+from django.forms.widgets import HiddenInput, FileInput
 
 from .models import *
 
@@ -10,6 +10,7 @@ class MainInfoDocsForm(ModelForm):
         model = MainInfoDocs
         fields = ('you_are', 'partners_value', 'artist_name', 'artist_fio', 'phone_number', 'email', 'socials', 'cover', 'release_type', 'num_songs', 'user',)
         widgets = {
+            'cover': FileInput,
             'you_are': RadioSelect,
             'release_type': RadioSelect,
             'user': HiddenInput,
@@ -59,6 +60,7 @@ class OrgInfoSamForm(ModelForm):
         model = OrgInfoSam
         fields = ('fio', 'birthday', 'series_num', 'who_issued', 'when_issued', 'code_pod', 'birth_place', 'reg', 'bank', 'r_s', 'bik', 'inn_bank', 'k_s', 'inn', 'snils', 'skan_passport', 'user',)
         widgets = {
+            'skan_passport': FileInput,
             'user': HiddenInput,
         }
         help_texts = {

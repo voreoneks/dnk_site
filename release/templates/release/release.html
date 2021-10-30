@@ -9,6 +9,71 @@
 
 {% block body %}
 
-{% include 'vertical_form.html' %}
+{% load static %}
+<div class="container-xxl !direction !spacing">
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-md-6 col-sm-8 col-10 release-header">
+            <h5>{{ form_title }}</h5>
+            {% autoescape off %}
+            <p>{{ form_description }}</p>
+            {% endautoescape %}
+        </div>
+    </div>
+
+    <form method="POST" action="" novalidate enctype="multipart/form-data">
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            {% csrf_token %}
+            <div class="col-md-6 col-sm-8 col-10 release-form">
+                {% for item in form.visible_fields %}
+                    <div>
+                        <p>{{ item.label }}</p>
+                        <p>{{ item.errors }}</p>
+                        {% autoescape off %}
+                        <p style="font-size: 15px;">{{ item.help_text }}</p>
+                        {% endautoescape %}
+                        <p>{{ item }}</p>
+                        {% if item.name == 'cover' %}
+                            {% if cover %}
+                                <p>Загружено:</p>
+                                <img src="/media/{{ cover }}" alt="">
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url delete_cover %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% if item.name == 'photo' %}
+                            {% if photo %}
+                                <p>Загружено:</p>
+                                <img src="/media/{{ photo }}" alt="">
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url delete_photo %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% if item.name == 'cover_psd' %}
+                            {% if cover_psd %}
+                                <p>Загружено:</p>
+                                <p style="font-size: 12px;">{{ cover_psd }}</p>
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url delete_cover_psd %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% for item in form.hidden_fields %}
+                {{ item }}
+            {% endfor %}
+        </div>
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 release-button">
+                <button class="btn button" type="button" onclick="history.back();">Назад</button>
+                <button class="btn button" type="submit">Далее</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 
 {% endblock %}
