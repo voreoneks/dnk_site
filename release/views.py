@@ -10,6 +10,7 @@ from django.urls.base import reverse
 from django.views.generic.edit import FormView
 from google_sheets import Sheet
 
+from lk.models import *
 from .forms import *
 from .models import *
 
@@ -100,10 +101,20 @@ class MainInfoView(LoginRequiredMixin, FormView):
             cover_psd = object_dict['cover_psd']
             form = self.form_class(initial = object_dict)
         except:
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                lk_dict = model_to_dict(lk)
+                name = lk_dict['name']
+                phone = lk_dict['phone']
+                email = lk_dict['email']
+            except:
+                name = ''
+                phone = ''
+                email = ''
             photo = ''
             cover = ''
             cover_psd = ''
-            form = self.form_class(initial = {'user': user})
+            form = self.form_class(initial = {'name': name, 'phone_number': phone, 'email': email, 'user': user})
         return render(request, self.template_name, 
                     {'form': form, 
                     'form_title': self.form_title, 
@@ -140,7 +151,24 @@ class MainInfoView(LoginRequiredMixin, FormView):
                 self.next = 'r_video'
             return HttpResponseRedirect(reverse(self.next))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            try:
+                object_ = MainInfo.objects.get(user_id = user.id)
+                object_dict = model_to_dict(object_)
+                photo = object_dict['photo']
+                cover = object_dict['cover']
+                cover_psd = object_dict['cover_psd']
+            except:
+                photo = ''
+                cover = ''
+                cover_psd = ''
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title,
+                                                        'photo': photo, 
+                                                        'cover': cover, 
+                                                        'cover_psd': cover_psd, 
+                                                        'delete_photo': 'delete_photo', 
+                                                        'delete_cover': 'delete_cover', 
+                                                        'delete_cover_psd': 'delete_cover_psd'})
 
 
 class AudioView(LoginRequiredMixin, FormView):
@@ -223,7 +251,13 @@ class VideoView(LoginRequiredMixin, FormView):
             release_to_sheet(user)
             return HttpResponseRedirect(reverse('r_success'))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            try:
+                object_ = Video.objects.get(user_id = user.id)
+                object_dict = model_to_dict(object_)
+                preview = object_dict['video_preview']
+            except:
+                preview = ''
+            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'delete_preview': 'delete_preview', 'preview':preview})
 
 def delete_photo(request):
     user = User.objects.get(username = request.user)

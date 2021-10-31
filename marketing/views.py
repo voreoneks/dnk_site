@@ -9,6 +9,7 @@ from django.views.generic.edit import FormView
 from datetime import datetime
 
 from google_sheets import Sheet
+from lk.models import Lk
 
 from .forms import *
 from .models import *
@@ -90,14 +91,37 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = MainInfoMarketing.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
-        else:
-            form = self.form_class(initial = {'user': user})
+        try:
+            object_ = MainInfoMarketing.objects.get(user_id = user.id)
+            object_dict = model_to_dict(object_)
+            form = self.form_class(initial = object_dict)
+        except:
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                lk_dict = model_to_dict(lk)
+                name = lk_dict['name']
+                vk = lk_dict['vk']
+                inst = lk_dict['inst']
+                facebook = lk_dict['facebook']
+                youtube = lk_dict['youtube']
+                tiktok = lk_dict['tiktok']
+                other = lk_dict['telegram']
+            except:
+                name = ''
+                vk = ''
+                inst = ''
+                facebook = ''
+                youtube = ''
+                tiktok = ''
+                other = ''
+            form = self.form_class(initial = {'user': user,
+                                              'songers': name,
+                                              'vk': vk,
+                                              'inst': inst,
+                                              'facebook': facebook,
+                                              'youtube': youtube,
+                                              'tiktok': tiktok,
+                                              'other': other})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
 
     def post(self, request, *args, **kwargs):
@@ -121,28 +145,39 @@ class MarketingView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = Marketing.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
-        else:
+        try:
+            object_ = Marketing.objects.get(user_id = user.id)
+            object_dict = model_to_dict(object_)
+            photo = object_dict['photo']
+            form = self.form_class(initial = object_dict)
+        except:
+            photo = ''
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'photo': photo, 'delete_photo': 'delete_photo'})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = Marketing.objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
-            form.save()
+            try:
+                object_ = Marketing.objects.get(user_id = user.id)
+                photo = object_.photo
+                object_.delete()
+                if photo:
+                    forma = form.save(commit = False)
+                    forma.photo = photo
+                form.save()
+            except:
+                form.save()
             return HttpResponseRedirect(reverse('promo_plan'))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            try:
+                object_ = Marketing.objects.get(user_id = user.id)
+                object_dict = model_to_dict(object_)
+                photo = object_dict['photo']
+            except:
+                photo = ''
+            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'photo': photo, 'delete_photo': 'delete_photo'})
 
 
 class PromoPlanView(LoginRequiredMixin, FormView):
@@ -207,6 +242,11 @@ class PressReleaseView(LoginRequiredMixin, FormView):
             return HttpResponseRedirect(reverse('m_success'))
         else:
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+
+def delete_photo(request):
+    user = User.objects.get(username = request.user)
+    object_ = Marketing.objects.filter(user_id = user.id).update(photo = '')
+    return HttpResponseRedirect(reverse('marketing_info'))
 
 def success_page(request):
     return render(request, 'success.html')

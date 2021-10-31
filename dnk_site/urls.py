@@ -30,6 +30,7 @@ urlpatterns = [
     path('release/', include('release.urls')),
     path('documents/', include('documents.urls')),
     path('marketing/', include('marketing.urls')),
+    path('myaccount/', include('lk.urls')),
 ]
 
 if settings.DEBUG:

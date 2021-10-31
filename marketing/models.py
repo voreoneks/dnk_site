@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models.base import Model
 from django.contrib.auth.models import User
 
 class MainInfoMarketing(models.Model):
@@ -30,7 +29,7 @@ class MainInfoMarketing(models.Model):
     vk = models.CharField(max_length=100, verbose_name='VK')
     inst = models.CharField(max_length=50, verbose_name='Instagram')
     facebook = models.CharField(max_length=100, verbose_name='Facebook', blank=True, null=True)
-    youtube = models.CharField(max_length=100, verbose_name='Youtube', blank=True, null=True)
+    youtube = models.CharField(max_length=100, verbose_name='YouTube', blank=True, null=True)
     tiktok = models.CharField(max_length=100, verbose_name='TikTok', blank=True, null=True)
     other = models.CharField(max_length=500, verbose_name='Другие социальные сети', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

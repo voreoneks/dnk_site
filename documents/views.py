@@ -10,6 +10,8 @@ from datetime import datetime
 from google_sheets import Sheet
 from django.forms.models import model_to_dict
 
+from lk.models import Lk
+
 from .forms import *
 from .models import *
 
@@ -292,9 +294,42 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
             form = self.form_class(initial = object_dict)
             delete_link = 'delete_cover'
         except:
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                lk_dict = model_to_dict(lk)
+                print(lk_dict)
+                name = lk_dict['name']
+                fio = lk_dict['fio']
+                phone = lk_dict['phone']
+                email = lk_dict['email']
+                telegram = lk_dict['telegram']
+                vk = lk_dict['vk']
+                inst = lk_dict['inst']
+                facebook = lk_dict['facebook']
+                youtube = lk_dict['youtube']
+                tiktok = lk_dict['tiktok']
+                socials = 'Telegram: ' + str(telegram) + ', ' + 'VK: ' + str(vk) + ', ' + 'Instagram: ' + str(inst) + ', ' + 'Facebook: ' + str(facebook) + ', ' + 'YouTube: ' + str(youtube) + ', ' + 'TikTok: ' + str(tiktok) + '.'
+                socials = socials.replace('None', ' ')
+            except:
+                name = ''
+                fio = ''
+                phone = ''
+                email = ''
+                telegram = ''
+                vk = ''
+                inst = ''
+                facebook = ''
+                youtube = ''
+                tiktok = ''
+                socials = ''
             delete_link = ''
             cover = ''
-            form = self.form_class(initial = {'user': user})
+            form = self.form_class(initial = {'user': user, 
+                                    'artist_name': name,
+                                    'artist_fio': fio, 
+                                    'phone_number': phone,
+                                    'email': email,
+                                    'socials': socials})
         return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'cover': cover, 'delete_link': delete_link})
 
     def post(self, request, *args, **kwargs):
@@ -314,7 +349,14 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                 form.save()
             return HttpResponseRedirect('orginfo')
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            try:
+                object_ = MainInfoDocs.objects.get(user_id = user.id)
+                object_dict = model_to_dict(object_)
+                cover = object_dict['cover']
+            except:
+                delete_link = ''
+                cover = ''
+            return render(request, self.template_name, {'form': form, 'form_title': self.form_title,  'cover': cover, 'delete_link': delete_link})
         
 
 class OrgInfoView(LoginRequiredMixin, FormView):
@@ -379,7 +421,15 @@ class OrgInfoView(LoginRequiredMixin, FormView):
             else:
                 return HttpResponseRedirect(reverse('d_video'))                
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            try:
+                object_ = self.get_model().objects.get(user_id = user.id)
+                object_dict = model_to_dict(object_)
+                skan_passport = object_dict['skan_passport']
+                delete_skan_passport = 'delete_skan_passport'
+            except:
+                skan_passport = ''
+                delete_skan_passport = ''
+            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'skan_passport': skan_passport, 'delete_skan_passport': delete_skan_passport})
 
 
 class AudioDocsView(LoginRequiredMixin, FormView):

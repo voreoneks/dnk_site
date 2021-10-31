@@ -1,6 +1,4 @@
-from django.db.models import fields
 from django.forms import ModelForm, RadioSelect
-from django.forms import widgets
 from django.forms.widgets import HiddenInput, Textarea
 
 from .models import *
