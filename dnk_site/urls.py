@@ -31,6 +31,7 @@ urlpatterns = [
     path('documents/', include('documents.urls')),
     path('marketing/', include('marketing.urls')),
     path('myaccount/', include('lk.urls')),
+    path('calc/', include('calc.urls')),
 ]
 
 if settings.DEBUG:

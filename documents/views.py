@@ -292,7 +292,6 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
             object_dict = model_to_dict(object_)
             cover = object_dict['cover']
             form = self.form_class(initial = object_dict)
-            delete_link = 'delete_cover'
         except:
             try:
                 lk = Lk.objects.get(user_id = user.id)
@@ -322,7 +321,6 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                 youtube = ''
                 tiktok = ''
                 socials = ''
-            delete_link = ''
             cover = ''
             form = self.form_class(initial = {'user': user, 
                                     'artist_name': name,
@@ -330,7 +328,7 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                                     'phone_number': phone,
                                     'email': email,
                                     'socials': socials})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'cover': cover, 'delete_link': delete_link})
+        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'cover': cover, 'delete_cover': 'delete_cover'})
 
     def post(self, request, *args, **kwargs):
         print(request.POST)
@@ -356,7 +354,7 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
             except:
                 delete_link = ''
                 cover = ''
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title,  'cover': cover, 'delete_link': delete_link})
+            return render(request, self.template_name, {'form': form, 'form_title': self.form_title,  'cover': cover, 'delete_cover': 'delete_cover'})
         
 
 class OrgInfoView(LoginRequiredMixin, FormView):
