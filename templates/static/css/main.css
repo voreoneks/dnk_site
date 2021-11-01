@@ -166,6 +166,10 @@ select::-webkit-scrollbar-thumb {
     color: brown;
 }
 
+.errorlist{
+    color: brown;
+}
+
 .release-button{
     display: flex;
     margin: auto;

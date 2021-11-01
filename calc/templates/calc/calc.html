@@ -12,7 +12,10 @@
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <div class="col-md-6 col-sm-8 col-10 release-header">
-            <h5>Калькулятор авансов</h5>
+            <h5>Калькулятор авансов</h5><hr>
+            {% if error %}
+                <p style="text-align: center; color: brown;">{{ error }}</p>
+            {% endif %}
         </div>
     </div>
     <div class="calc-form">
@@ -24,35 +27,35 @@
                     {% csrf_token %}
                     <div class="col">
                         <label for="apple_music">Apple Music</label>
-                        <input type="number" id="apple_music">
+                        <input value="{{ apple_music }}" name="apple_music" type="number" id="apple_music">
                     </div>
     
         
                        
                     <div class="col">
                         <label for="spotify">Spotify</label>
-                        <input type="number" id="spotify">
+                        <input value="{{ spotify }}" name="spotify" type="number" id="spotify">
                     </div>            
                     
                     
                     
                     <div class="col">
                         <label for="vk_boom">VK / BOOM</label>
-                        <input type="number" id="vk_boom">
+                        <input value="{{ vk_boom }}" name="vk_boom" type="number" id="vk_boom">
                     </div>
                     
                     
                     
                     <div class="col">
                         <label for="youtube">YouTube Music</label>
-                        <input type="number" id="youtube">
+                        <input value="{{ youtube }}" name="youtube" type="number" id="youtube">
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="col">
                         <label for="prepaid">Потенциальный аванс</label>
-                        <input readonly value="100" type="number" id="prepaid">
+                        <input name="prepaid" readonly value="{{ result }}" type="text" id="prepaid">
                         <button form="calc-form" type="submit" class="btn button">Рассчитать</button>
                     </div>
                 </div>

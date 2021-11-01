@@ -9,9 +9,9 @@ from release.models import *
 class Sheet():
 
     CREDENTIALS_FILE = 'creds.json'
-    spreadsheet_id = '1ZpaXmS3QBAIcSQRy_2QjWB0PiGkOs9AU0SniWgVclHY'
 
-    def __init__(self, global_range, insert_data_option = 'INSERT_ROWS', value_input_option = "RAW"):
+    def __init__(self, global_range, insert_data_option = 'INSERT_ROWS', value_input_option = "RAW", spreadsheet_id = '1ZpaXmS3QBAIcSQRy_2QjWB0PiGkOs9AU0SniWgVclHY'):
+        self.spreadsheet_id = spreadsheet_id
         self.global_range = global_range
         self.insert_data_option = insert_data_option
         self.value_input_option = value_input_option
@@ -38,7 +38,6 @@ class Sheet():
         range=range,
         majorDimension=majorDimension
         ).execute()
-        pprint(values)
         return values
 
     def write(self, data):
