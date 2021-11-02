@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "dnkdev-1",
+  "private_key_id": "436a0474a8e4111e4b80c79faf0ac1a780324ef3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDEX2N0S3KH2z9A\nDSpgyGNWo2ga1ifPM7VQ/EYXNObBk5a9R+5kFf1yQPcICogA/SHaIUiUHcchEsJR\nYPudi36F+6M1q7Ed6cVRXrVZVYBVurXcGZneA6nR9e7HNXSFtp104V1Vp7pT0b2T\ntDHm51X01vWAbFmz/RksUgYJQ2aIn2k1zSQpH4Hhkdbe4LTG86RaU/T+jotH/eF3\nxb42Rtyf4DpCf6Ir2icwjtBb5jIgvsamAekA5LRt3eWUEfXX/6ta9SKkM4GVjhqf\neJ+Ajf9AB6lLZir7YjcVBv2wlm2HgXfWfcNsm6Gh8tkP6u5OHk0Vw9WHMRj3njpG\nzCHGRQWxAgMBAAECggEAAQUPICh6z3J3sUkgN4vIMEf9n2i4oN5/ijcf1LkFRcC9\ndKgt+GkWKC9m2QIs/fb9OQPD5mOtMrfFOI+iCYm9k3aLZ25H0i7yQ7TpM4M6fQzQ\n1Z7Fv3MSFlwKQbs+VVTDG+XxCnkqLOCW9RsSHe/aRhY5BNILOTW5mWhSTbQC5qIN\noTFGWbIY2xuRw3xtsMQNR1Hp8QMCwt6sFPsNAzv2GVVxpnE680eE4GTSREYxXNer\nd2gr41yWZsiquKj8HsBer77YJYaKAG+/7o9dQPjdItiW6XCSB1bhzYfWnTBLeB6e\nEzIjqwsOyS7oMo2l1ys7cBK9YJGAeveKrts5QSOUwQKBgQDlJHz/IprcTBOtgQ+Z\nci2gfxQsUjOrPP2sCbbbzd32w1ezy4TcKFgr27GiswODaIHUn04kiV8y3HTXTJ4i\nrC1IWn5jUz/NZLkXvG8jTHmBnPPfjb3QH4FzgILOxFtUrQW7+WkDhCpgVLU7iMk9\ne4tbzNsyIRIxgrhDoOatldvNyQKBgQDbY6A42w4izBVzis33FEccJhL028edL8iU\n+F0eXqaUJpfVB75NRxqP1PdCZhhcs/N/oi3na2ETt7io/LQtok0rAFC3hBZo/R3y\n24sBFyg3pkrhieTuW9HdGGwBBJ7lZFJ3jbAOgFfPCUWabGtcdn/ujDkJN1MFMS7w\nlOqizb7MqQKBgDIKTeHJxNfnJUT2slloPd6W4ejr6qyynRM869oEkzyYXEa/YzxQ\n8zBgweIuBc5kvDWatI32EfwheMKr0LzxrNHoMUGvpHdOT72HQR4MTVyo0fk4EwOo\nXbTDk81jxC4xutbaGLzT2A1BcnKV5JywpjZd/mBsKHT3fxYFxVqTJ3VBAoGANb0I\ngQS/SKy+0Gd+nff8lxuIZyvykEElG8BeZtL+cKmnZUoZRiqVige7bSs+6m41xdy+\n68G0rLTC6bnElKz9w/u2ycz0BFGD5Xn7aY/3jPIRw38YcX5SQJr70aAFH+FcBebR\n6itr1s3Jm9LU1Xg9S/xS+Dvx/QKYIdwIQUquYskCgYBeIyQ0uidV2VY3DBUjl7HY\n1oV9AwambILAxoba9PdLnprenD4vxXppwjUPtdg73pMqonUPpX/+zdPmq4njVXSu\nAnpB38h9dpn9ibYV06fJFqzkn3dvLUitaIiwq1lafNJ2nlRFeA0AZseoZ8YT6jZl\nBcq7PvfF88px+59uuXXGsw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "dnk-music-drive@dnkdev-1.iam.gserviceaccount.com",
+  "client_id": "117157708360889167232",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dnk-music-drive%40dnkdev-1.iam.gserviceaccount.com"
+}

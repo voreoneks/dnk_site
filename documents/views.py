@@ -448,6 +448,8 @@ class AudioDocsView(LoginRequiredMixin, FormView):
             for song in range(len(audio)):
                 for field in AudioDocsForm._meta.fields:
                     data['form-' + str(song) + '-' + field] = getattr(audio[song], field)
+            for song in range(num_songs):
+                data['form-' + str(song) + '-user'] = user
         else:
             for num in range(num_songs):
                 data['form-' + str(num) + '-user'] = user.id

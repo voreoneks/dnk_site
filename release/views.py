@@ -1,4 +1,5 @@
 from datetime import datetime
+from os import close
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -9,18 +10,43 @@ from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic.edit import FormView
 from google_sheets import Sheet
+from google_drive.google_drive import Drive
+from pathlib import Path, PurePath, WindowsPath
+from dnk_site.settings import BASE_DIR
 
 from lk.models import *
 from .forms import *
 from .models import *
 
 def release_to_sheet(user):
+    drive = Drive()
     date_time = str(datetime.now())
-    release_sheet = Sheet('Релиз!A3:AM3')
+    release_sheet = Sheet('Релиз!A3:AN3')
 
     main_info = MainInfo.objects.get(user_id = user.id)
     main_info_dict = model_to_dict(main_info)
     content_type = main_info_dict['content_type']
+
+    if main_info_dict['photo'] or main_info_dict['cover'] or main_info_dict['cover_psd']:
+        new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user))
+
+    if main_info_dict['photo']:
+        photo = str(BASE_DIR) + str(WindowsPath(main_info_dict['photo'].url))
+        up_photo = drive.upload_file(new_folder['id'], 'photo', photo)['webViewLink']
+    else: 
+        up_photo = ''
+    if main_info_dict['cover']:
+        cover = str(BASE_DIR) + str(WindowsPath(main_info_dict['cover'].url))
+        up_cover = drive.upload_file(new_folder['id'], 'cover', cover)['webViewLink']
+    else:
+        up_cover = ''
+    if main_info_dict['cover_psd']:
+        cover_psd = str(BASE_DIR) + str(WindowsPath(main_info_dict['cover_psd'].url))
+        up_cover_psd = drive.upload_file(new_folder['id'], 'cover_psd', cover_psd)['webViewLink']
+    else:
+        up_cover_psd = ''
+
+
     audio = Audio.objects.filter(user_id = user.id)
     audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
     video = Video.objects.get(user_id = user.id)
@@ -28,13 +54,13 @@ def release_to_sheet(user):
     release_values = tuple()
 
     main_info_values = (
-        date_time, main_info_dict['name'], main_info_dict['content_type'], main_info_dict['phone_number'], main_info_dict['email'], main_info_dict['is_update_photo'], main_info_dict['photo_link']
+        date_time, main_info_dict['name'], main_info_dict['content_type'], main_info_dict['phone_number'], main_info_dict['email'], main_info_dict['is_update_photo'], main_info_dict['photo_link'], up_photo, up_cover, up_cover_psd
     )
     release_values += main_info_values
 
     try:
         audio_values = (
-            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], '', '', audio_tuple_dict[0]['audio_link'], '', audio_tuple_dict[0]['clean_link'], '', audio_tuple_dict[0]['release_year']
+            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], '', audio_tuple_dict[0]['clean_link'], '', audio_tuple_dict[0]['release_year']
         )
     except:
         audio_values = tuple('' for i in range(20))
@@ -51,20 +77,20 @@ def release_to_sheet(user):
     release_values += video_values
 
     release_data = {
-            'range': 'Релиз!A3:AM3',
+            'range': 'Релиз!A3:AN3',
             'majorDimension': 'ROWS',
             'values': [release_values,]
         }
     release_sheet.append(release_data)
 
     try:
-        add_audio_sheet = Sheet('Релиз!A3:AM3')
+        add_audio_sheet = Sheet('Релиз!A3:AN3')
         add_audio_values = []
         for i in range(1, len(audio_tuple_dict)):
-            add_audio_values.append(tuple(('', '',  '',  '',  '',  '',  '', audio_tuple_dict[i]['songers'], audio_tuple_dict[i]['song_title'], audio_tuple_dict[i]['album_title'], audio_tuple_dict[i]['feat'], audio_tuple_dict[i]['genre'], audio_tuple_dict[i]['fio_songer'], audio_tuple_dict[i]['words_author'], audio_tuple_dict[i]['music_author'], audio_tuple_dict[i]['owner_citizenship'], audio_tuple_dict[i]['record_country'], audio_tuple_dict[i]['timing'], audio_tuple_dict[i]['song_preview'], audio_tuple_dict[i]['lexis'], '', '', audio_tuple_dict[i]['audio_link'], '', audio_tuple_dict[i]['clean_link'], '', audio_tuple_dict[i]['release_year'])))
+            add_audio_values.append(tuple(('', '',  '',  '',  '',  '',  '', '', '', '', audio_tuple_dict[i]['songers'], audio_tuple_dict[i]['song_title'], audio_tuple_dict[i]['album_title'], audio_tuple_dict[i]['feat'], audio_tuple_dict[i]['genre'], audio_tuple_dict[i]['fio_songer'], audio_tuple_dict[i]['words_author'], audio_tuple_dict[i]['music_author'], audio_tuple_dict[i]['owner_citizenship'], audio_tuple_dict[i]['record_country'], audio_tuple_dict[i]['timing'], audio_tuple_dict[i]['song_preview'], audio_tuple_dict[i]['lexis'], audio_tuple_dict[i]['audio_link'], '', audio_tuple_dict[i]['clean_link'], '', audio_tuple_dict[i]['release_year'])))
 
         add_audio_data = {
-            'range': 'Релиз!A3:AM3',
+            'range': 'Релиз!A3:AN3',
             'majorDimension': 'ROWS',
             'values': add_audio_values
             }
@@ -72,10 +98,10 @@ def release_to_sheet(user):
     except:
         pass
 
-    spaces = Sheet('Релиз!A3:AM3')
+    spaces = Sheet('Релиз!A3:AN3')
     spaces_values = [tuple('.' for i in range(39))]
     spaces_data = {
-        'range': 'Релиз!A3:AM3',
+        'range': 'Релиз!A3:AN3',
         'majorDimension': 'ROWS',
         'values': spaces_values
     }
@@ -121,9 +147,9 @@ class MainInfoView(LoginRequiredMixin, FormView):
                     'photo': photo, 
                     'cover': cover, 
                     'cover_psd': cover_psd, 
-                    'delete_photo': 'delete_photo', 
-                    'delete_cover': 'delete_cover', 
-                    'delete_cover_psd': 'delete_cover_psd'})
+                    'delete_photo': 'delete_r_photo', 
+                    'delete_cover': 'delete_r_cover', 
+                    'delete_cover_psd': 'delete_r_cover_psd'})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
@@ -190,6 +216,8 @@ class AudioView(LoginRequiredMixin, FormView):
             for song in range(len(audio)):
                 for field in AudioForm._meta.fields:
                     data['form-' + str(song) + '-' + field] = getattr(audio[song], field)
+            for song in range(num_songs):
+                data['form-' + str(song) + '-user'] = user
         else:
             for num in range(num_songs):
                 data['form-' + str(num) + '-user'] = user.id
