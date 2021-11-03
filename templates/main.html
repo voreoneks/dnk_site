@@ -78,13 +78,13 @@
     {% if user.is_authenticated %}
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|} button-main">
         <div class="col-sm-12 col-md-2 ">
-            <button type="button" class="btn button"><a href="{% url 'release' %}">Релиз</a></button>
+            <button type="button" class="btn button" onclick="document.location.href = '{% url 'release' %}';">Релиз</button>
         </div>
         <div class="col-sm-12 col-md-2 ">
-            <button type="button" class="btn button"><a href="{% url 'documents' %}">Документы</a></button>
+            <button type="button" class="btn button" onclick="document.location.href = '{% url 'documents' %}';">Документы</button>
         </div>
         <div class="col-sm-12 col-md-2 ">
-            <button type="button" class="btn button"><a href="{% url 'marketing' %}">Маркетинг</a></button>
+            <button type="button" class="btn button" onclick="document.location.href = '{% url 'marketing' %}';">Маркетинг</button>
         </div>
     </div>
     {% endif %}

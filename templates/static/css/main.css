@@ -225,6 +225,15 @@ a:focus{
     position: relative;
 }
 
+.download{
+    color: rgb(197, 167, 143);
+    margin-bottom: 30px;
+}
+
+.download a{
+    text-transform: uppercase;
+}
+
 .main-title p{
     margin-top: 50px;
     text-align: center;

@@ -25,6 +25,11 @@
                             {% endif %}
                             <h3>{{ item.title }}</h3>
                             <p>{{ item.content|linebreaks|truncatewords:50 }}</p>
+                            {% if item.file %}
+                                <div class="download">
+                                    <p>Скачать файл: <a href="{% url 'download' item.slug %}">{{ item.filename }}</a></p>
+                                </div>
+                            {% endif %}
                             <div class="row news-footer">
                                 <div class="col-md-6 text-muted">
                                     {{ item.created_at }}

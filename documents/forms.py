@@ -1,7 +1,7 @@
 from django.db.models import fields
 from django.forms import ModelForm, RadioSelect
 from django.forms import widgets
-from django.forms.widgets import HiddenInput, FileInput
+from django.forms.widgets import HiddenInput, FileInput, Input
 
 from .models import *
 
@@ -60,6 +60,8 @@ class OrgInfoSamForm(ModelForm):
         model = OrgInfoSam
         fields = ('fio', 'birthday', 'series_num', 'who_issued', 'when_issued', 'code_pod', 'birth_place', 'reg', 'bank', 'r_s', 'bik', 'inn_bank', 'k_s', 'inn', 'snils', 'skan_passport', 'user',)
         widgets = {
+            'birthday': Input(attrs={'type': 'date'}),
+            'when_issued': Input(attrs={'type': 'date'}),
             'skan_passport': FileInput,
             'user': HiddenInput,
         }
@@ -134,6 +136,7 @@ class MusicAuthorForm(ModelForm):
         model = MusicAuthor
         fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
         widgets = {
+            'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }
@@ -148,6 +151,7 @@ class WordsAuthorForm(ModelForm):
         model = WordsAuthor
         fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
         widgets = {
+            'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }
@@ -161,6 +165,7 @@ class OthersForm(ModelForm):
         model = Others
         fields = ('creative_name', 'songs', 'fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'fin_conditions', 'number', 'user')
         widgets = {
+            'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }
@@ -174,6 +179,7 @@ class PhonMakerForm(ModelForm):
         model = PhonMaker
         fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
         widgets = {
+            'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }

@@ -391,19 +391,24 @@ class OrgInfoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
+        context = {}
         try:
             object_ = self.get_model().objects.get(user_id = user.id)
             object_dict = model_to_dict(object_)
-            skan_passport = object_dict['skan_passport']
-            delete_skan_passport = 'delete_skan_passport'
+            if self.get_model() == OrgInfoSam:
+                context['skan_passport'] = object_dict['skan_passport']
             form = self.get_form_class()(initial = object_dict)
         except:
-            skan_passport = ''
-            delete_skan_passport = ''
+            if self.get_model() == OrgInfoSam:
+                context['skan_passport'] = ''
             form = self.get_form_class()(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'skan_passport': skan_passport, 'delete_skan_passport': delete_skan_passport})
+        context['delete_skan_passport'] = 'delete_skan_passport'
+        context['form'] = form
+        context['form_title'] = self.form_title
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        context = {}
         form = self.get_form_class()(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
@@ -419,15 +424,17 @@ class OrgInfoView(LoginRequiredMixin, FormView):
             else:
                 return HttpResponseRedirect(reverse('d_video'))                
         else:
-            try:
-                object_ = self.get_model().objects.get(user_id = user.id)
-                object_dict = model_to_dict(object_)
-                skan_passport = object_dict['skan_passport']
-                delete_skan_passport = 'delete_skan_passport'
-            except:
-                skan_passport = ''
-                delete_skan_passport = ''
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'skan_passport': skan_passport, 'delete_skan_passport': delete_skan_passport})
+            if self.get_model() == OrgInfoSam:
+                try:
+                    object_ = self.get_model().objects.get(user_id = user.id)
+                    object_dict = model_to_dict(object_)
+                    context['skan_passport'] = object_dict['skan_passport']
+                except:
+                    context['skan_passport'] = ''
+            context['delete_skan_passport'] = 'delete_skan_passport'
+            context['form'] = form
+            context['form_title'] = self.form_title
+            return render(request, self.template_name, context)
 
 
 class AudioDocsView(LoginRequiredMixin, FormView):

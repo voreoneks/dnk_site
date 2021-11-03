@@ -55,7 +55,11 @@
                 <div class="col-md-6">
                     <div class="col">
                         <label for="prepaid">Потенциальный аванс</label>
-                        <input name="prepaid" readonly value="{{ result }}" type="text" id="prepaid">
+                        {% if result %}
+                            <input name="prepaid" readonly value="{{ result }} рублей" type="text" id="prepaid">
+                        {% else %}
+                            <input name="prepaid" readonly type="text" id="prepaid">
+                        {% endif %}
                         <button form="calc-form" type="submit" class="btn button">Рассчитать</button>
                     </div>
                 </div>

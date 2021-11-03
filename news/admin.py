@@ -8,5 +8,5 @@ class NewsAdmin(admin.ModelAdmin):
     list_filter = ('user_visible', 'is_published')
     search_fields = ('title', 'content')
     list_editable = ('is_published',)
-    prepopulated_fields = {'slug': ('title',)}
+    prepopulated_fields = {'slug': ('title', )}
 

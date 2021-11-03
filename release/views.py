@@ -219,7 +219,13 @@ class AudioView(LoginRequiredMixin, FormView):
             for song in range(num_songs):
                 data['form-' + str(song) + '-user'] = user
         else:
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                fio = lk.fio
+            except:
+                fio = ''
             for num in range(num_songs):
+                data['form-' + str(num) + '-fio_songer'] = fio
                 data['form-' + str(num) + '-user'] = user.id
         formset = audio_formset(data)
         return render(request, self.template_name, {'button': self.fields_for_button, 'formset': formset, 'form_title': self.form_title})
