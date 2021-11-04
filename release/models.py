@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 
 class MainInfo(models.Model):
     bool_choices = [
@@ -55,12 +56,13 @@ class Audio(models.Model):
     music_author = models.CharField(max_length=100, verbose_name='Автор музыки')
     owner_citizenship = models.CharField(max_length=50, verbose_name='Гражданство изначального владельца авторских прав (артиста)')
     record_country = models.CharField(max_length=100, verbose_name='Страна записи')
-    timing = models.CharField(max_length=5, verbose_name='Хронометраж')
+    timing = models.CharField(max_length=5, verbose_name='Хронометраж', validators=[RegexValidator(regex='/d{2}:/d{2}'),])
     song_preview = models.CharField(max_length=15, verbose_name='Превью песни')
     lexis = models.CharField(max_length=15, choices=exist_choices, default='NONE', verbose_name='Ненормативная лексика в песне')
     audio = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Аудио (WAV)', blank=True, null=True)
-    audio_link = models.URLField(blank=True, null=True, verbose_name='Аудио (WAV)')
-    clean_link = models.URLField(verbose_name='Clean version трека (WAV)')
+    audio_link = models.URLField(blank=True, null=True, verbose_name='Ссылка на аудио')
+    clean_link = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Clean version трека (WAV)', blank=True, null=True)
+    instrumental = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Instrumental (минус)', blank=True, null=True)
     song_text = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Текст песни', blank=True, null=True)
     release_year = models.CharField(max_length=4, verbose_name='Год выпуска')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

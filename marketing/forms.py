@@ -13,7 +13,12 @@ class MainInfoMarketingForm(ModelForm):
             'release_type': RadioSelect,
         }
         help_texts = {
-            'vk': 'Ссылка на личную страницу и на официальное сообщество',
+            'inst': 'Укажите полную ссылку на страницу аккаунта. Например: https://www.instagram.com/myaccount.',
+            'facebook': 'Укажите полную ссылку на страницу аккаунта. Например: https://www.facebook.com/myaccount.',
+            'youtube': 'Укажите полную ссылку на страницу аккаунта. Например: https://www.youtube.com/user/myaccount.',
+            'tiktok': 'Укажите полную ссылку на страницу аккаунта. Например: https://www.tiktok.com/@tiktok.',
+            'other': 'Укажите полные ссылки на страницы аккаунтов. Например: https://t.me/myaccount.',
+            'vk': 'Полная ссылка на личную страницу и на официальное сообщество. Например: https://vk.com/myaccount.',
 
         }
 
@@ -23,6 +28,10 @@ class MarketingForm(ModelForm):
         model = Marketing
         fields = ('positioning', 'where_from', 'affiliation', 'awards', 'photo', 'photo_link', 'inspiration', 'concept', 'guest_artists', 'user',)
         widgets = {
+            'guest_artists': Textarea(attrs={'rows': 5}),
+            'concept': Textarea(attrs={'rows': 5}),
+            'inspiration': Textarea(attrs={'rows': 5}),
+            'awards': Textarea(attrs={'rows': 5}),
             'user': HiddenInput,
         }
         help_texts = {
@@ -38,6 +47,14 @@ class PromoPlanForm(ModelForm):
         model = PromoPlan
         fields = ('radio', 'pressa', 'social_crops', 'tv', 'info', 'other', 'project_plan', 'release_plan', 'user',)
         widgets = {
+            'radio': Textarea(attrs={'rows': 5}),
+            'pressa': Textarea(attrs={'rows': 5}), 
+            'social_crops': Textarea(attrs={'rows': 5}), 
+            'tv': Textarea(attrs={'rows': 5}), 
+            'info': Textarea(attrs={'rows': 5}), 
+            'other': Textarea(attrs={'rows': 5}), 
+            'project_plan': Textarea(attrs={'rows': 5}), 
+            'release_plan': Textarea(attrs={'rows': 5}),
             'user': HiddenInput,
         }
         help_texts = {

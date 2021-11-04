@@ -81,6 +81,14 @@ section{
     resize: none;
 }
 
+.release-form input{
+    width: 40%;
+}
+
+.release-form input[type = 'radio']{
+    width: auto
+}
+
 .release-form img{
     width: 30%;
     border: solid white 4px;
@@ -126,6 +134,18 @@ section{
 
     .calc input{
         width: 80%;
+    }
+
+    .prepaid label{
+        margin-top: 60px;
+    }
+
+    .release-form input{
+        width: 100%;
+    }
+
+    .release-form input[type = 'radio']{
+        width: auto
     }
 }
 

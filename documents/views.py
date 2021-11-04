@@ -307,7 +307,7 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                 facebook = lk_dict['facebook']
                 youtube = lk_dict['youtube']
                 tiktok = lk_dict['tiktok']
-                socials = 'Telegram: ' + str(telegram) + ', ' + 'VK: ' + str(vk) + ', ' + 'Instagram: ' + str(inst) + ', ' + 'Facebook: ' + str(facebook) + ', ' + 'YouTube: ' + str(youtube) + ', ' + 'TikTok: ' + str(tiktok) + '.'
+                socials = 'Telegram: ' + str(telegram) + ', ' + 'VK: ' + str(vk) + ', ' + 'Instagram: ' + str(inst) + ', ' + 'Facebook: ' + str(facebook) + ', ' + 'YouTube: ' + str(youtube) + ', ' + 'TikTok: ' + str(tiktok)
                 socials = socials.replace('None', ' ')
             except:
                 name = ''

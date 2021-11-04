@@ -47,10 +47,6 @@ def release_to_sheet(user):
         up_cover_psd = ''
 
 
-    audio = Audio.objects.filter(user_id = user.id)
-    audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
-    video = Video.objects.get(user_id = user.id)
-    video_dict = model_to_dict(video)
     release_values = tuple()
 
     main_info_values = (
@@ -59,8 +55,10 @@ def release_to_sheet(user):
     release_values += main_info_values
 
     try:
+        audio = Audio.objects.filter(user_id = user.id)
+        audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
         audio_values = (
-            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], '', audio_tuple_dict[0]['clean_link'], '', audio_tuple_dict[0]['release_year']
+            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], '', '', '', audio_tuple_dict[0]['release_year']
         )
     except:
         audio_values = tuple('' for i in range(20))
@@ -68,11 +66,13 @@ def release_to_sheet(user):
     release_values += audio_values
 
     try:
+        video = Video.objects.get(user_id = user.id)
+        video_dict = model_to_dict(video)
         video_values = (
             video_dict['songers'], video_dict['video_title'], video_dict['feat'], video_dict['words_author'], video_dict['music_author'], video_dict['lexis'], video_dict['director'], video_dict['timing'], video_dict['release_year'], video_dict['video_link'], '', video_dict['production_country']
         )
     except:
-        release_values = tuple('' for i in range(12))
+        video_values = tuple('' for i in range(12))
         
     release_values += video_values
 
@@ -99,7 +99,7 @@ def release_to_sheet(user):
         pass
 
     spaces = Sheet('Релиз!A3:AN3')
-    spaces_values = [tuple('.' for i in range(39))]
+    spaces_values = [tuple('.' for i in range(40))]
     spaces_data = {
         'range': 'Релиз!A3:AN3',
         'majorDimension': 'ROWS',
@@ -107,9 +107,15 @@ def release_to_sheet(user):
     }
     spaces.append(spaces_data)
     main_info.delete()
-    for item in audio:
-        item.delete()
-    video.delete()
+    try:
+        for item in audio:
+            item.delete()
+    except:
+        pass
+    try:
+        video.delete()
+    except:
+        pass
 
 
 class MainInfoView(LoginRequiredMixin, FormView):
@@ -201,7 +207,7 @@ class AudioView(LoginRequiredMixin, FormView):
     template_name = 'release/audio.html'
     form_class = AudioForm
     form_title = 'Аудио'
-    fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'clean_link', 'release_year', 'add_video',]
+    fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'release_year', 'add_video',]
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -241,6 +247,7 @@ class AudioView(LoginRequiredMixin, FormView):
                 for song in audio:
                     song.delete()
             for form in formset:
+                print(form.cleaned_data)
                 form.save()
             if add_video == 'NO':
                 release_to_sheet(user)
@@ -248,6 +255,13 @@ class AudioView(LoginRequiredMixin, FormView):
             else:
                 return HttpResponseRedirect(reverse('r_video'))
         else:
+            # errors = {}
+            # error_list = set()
+            # for item in formset.errors:
+            #     for k,v in item.items():
+            #         if not 'Обязательное поле.' in v:
+            #             errors[k] = error_list + v
+            # print(errors)
             return render(request, self.template_name, {'button': self.fields_for_button, 'formset': formset, 'form_title': self.form_title})
 
 
