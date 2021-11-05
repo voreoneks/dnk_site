@@ -61,6 +61,10 @@
                             <input name="prepaid" readonly type="text" id="prepaid">
                         {% endif %}
                         <button form="calc-form" type="submit" class="btn button">Рассчитать</button>
+                        <button hidden id="loading" class="btn button" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            Загрузка...
+                        </button>
                     </div>
                 </div>
             </div>

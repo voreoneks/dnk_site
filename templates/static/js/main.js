@@ -13,9 +13,13 @@ $(function(){
             targetSelect.eq(i).val(text)
         }
     })
+
     $('button[type=submit]').click(function(){
         $('form').submit();
         $(this).attr('disabled', 'disabled');
+        $(this).fadeOut('1000', function(){
+            $('#loading').removeAttr('hidden');
+        })
     })
 });
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

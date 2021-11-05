@@ -18,5 +18,5 @@ class LkForm(ModelForm):
             'inst': 'Укажите полную ссылку на аккаунт. Например: https://www.instagram.com/myaccount.',
             'facebook': 'Укажите полную ссылку на аккаунт. Например: https://www.facebook.com/myaccount.',
             'youtube': 'Укажите полную ссылку на аккаунт. Например: https://www.youtube.com/user/myaccount.',
-            'tiktok': 'Укажите полную ссылку на аккаунт. Например: https://www.tiktok.com/@tiktok.',
+            'tiktok': 'Укажите полную ссылку на аккаунт. Например: https://www.tiktok.com/@myaccount.',
         }

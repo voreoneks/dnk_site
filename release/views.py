@@ -11,7 +11,7 @@ from django.urls.base import reverse
 from django.views.generic.edit import FormView
 from google_sheets import Sheet
 from google_drive.google_drive import Drive
-from pathlib import Path, PurePath, WindowsPath
+from pathlib import Path
 from dnk_site.settings import BASE_DIR
 
 from lk.models import *
@@ -21,102 +21,132 @@ from .models import *
 def release_to_sheet(user):
     drive = Drive()
     date_time = str(datetime.now())
-    release_sheet = Sheet('Релиз!A3:AN3')
+    release_sheet = Sheet('Релиз!A3:AO3')
 
-    main_info = MainInfo.objects.get(user_id = user.id)
-    main_info_dict = model_to_dict(main_info)
+    main_info = MainInfo.objects.filter(user_id = user.id)
+    main_info_dict = model_to_dict(main_info[0])
     content_type = main_info_dict['content_type']
+    release_values = tuple()
 
-    if main_info_dict['photo'] or main_info_dict['cover'] or main_info_dict['cover_psd']:
-        new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user))
+    new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user))
 
     if main_info_dict['photo']:
-        photo = str(BASE_DIR) + str(WindowsPath(main_info_dict['photo'].url))
-        up_photo = drive.upload_file(new_folder['id'], 'photo', photo)['webViewLink']
+        photo = str(Path(BASE_DIR)) + str(Path(main_info_dict['photo'].url))
+        up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', photo)['webViewLink']
     else: 
         up_photo = ''
     if main_info_dict['cover']:
-        cover = str(BASE_DIR) + str(WindowsPath(main_info_dict['cover'].url))
-        up_cover = drive.upload_file(new_folder['id'], 'cover', cover)['webViewLink']
+        cover = str(Path(BASE_DIR)) + str(Path(main_info_dict['cover'].url))
+        up_cover = drive.upload_file(new_folder['id'], 'Обложка', cover)['webViewLink']
     else:
         up_cover = ''
     if main_info_dict['cover_psd']:
-        cover_psd = str(BASE_DIR) + str(WindowsPath(main_info_dict['cover_psd'].url))
-        up_cover_psd = drive.upload_file(new_folder['id'], 'cover_psd', cover_psd)['webViewLink']
+        cover_psd = str(Path(BASE_DIR)) + str(Path(main_info_dict['cover_psd'].url))
+        up_cover_psd = drive.upload_file(new_folder['id'], 'Обложка_PSD', cover_psd)['webViewLink']
     else:
         up_cover_psd = ''
 
-
-    release_values = tuple()
 
     main_info_values = (
         date_time, main_info_dict['name'], main_info_dict['content_type'], main_info_dict['phone_number'], main_info_dict['email'], main_info_dict['is_update_photo'], main_info_dict['photo_link'], up_photo, up_cover, up_cover_psd
     )
     release_values += main_info_values
+    main_info.delete()
 
-    try:
-        audio = Audio.objects.filter(user_id = user.id)
+
+    audio = Audio.objects.filter(user_id = user.id)
+    if len(audio) != 0:
         audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
+        up_song_tuple = tuple()
+        up_clean_link_tuple = tuple()
+        up_instrumental_tuple = tuple()
+        up_song_text_tuple = tuple()
+
+        for item in audio_tuple_dict:
+
+            if item['audio']:
+                song = str(Path(BASE_DIR)) + str(Path(item['audio'].url))
+                up_song = drive.upload_file(new_folder['id'], item['song_title'], song)['webViewLink']
+            else:
+                up_song = ''
+            up_song_tuple = (*up_song_tuple, up_song)
+
+            if item['clean_link']:
+                clean_link = str(Path(BASE_DIR)) + str(Path(item['clean_link'].url))
+                up_clean_link = drive.upload_file(new_folder['id'], item['song_title'] + '_clean', clean_link)['webViewLink']
+            else:
+                up_clean_link = ''
+            up_clean_link_tuple = (*up_clean_link_tuple, up_clean_link)
+
+            if item['instrumental']:
+                instrumental = str(Path(BASE_DIR)) + str(Path(item['instrumental'].url))
+                up_instrumental = drive.upload_file(new_folder['id'], item['song_title'] + '_instrumental', instrumental)['webViewLink']
+            else:
+                up_instrumental = ''
+            up_instrumental_tuple = (*up_instrumental_tuple, up_instrumental)
+
+            if item['song_text']:
+                song_text = str(Path(BASE_DIR)) + str(Path(item['song_text'].url))
+                up_song_text = drive.upload_file(new_folder['id'], item['song_title'] + '_text', song_text)['webViewLink']
+            else:
+                up_song_text = ''
+            up_song_text_tuple = (*up_song_text_tuple, up_song_text)
+
         audio_values = (
-            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], '', '', '', audio_tuple_dict[0]['release_year']
+            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], up_song[0], up_clean_link[0], up_instrumental[0], up_song_text[0], audio_tuple_dict[0]['release_year']
         )
-    except:
+    else:
         audio_values = tuple('' for i in range(20))
     
     release_values += audio_values
 
-    try:
-        video = Video.objects.get(user_id = user.id)
-        video_dict = model_to_dict(video)
+    video = Video.objects.filter(user_id = user.id)
+    if len(video) != 0:
+        video_dict = model_to_dict(video[0])
+        if video_dict['video_preview']:
+            video_preview = str(Path(BASE_DIR)) + str(Path(video_dict['video_preview'].url))
+            up_video_preview = drive.upload_file(new_folder['id'], video_dict['video_title'], video_preview)['webViewLink']
         video_values = (
-            video_dict['songers'], video_dict['video_title'], video_dict['feat'], video_dict['words_author'], video_dict['music_author'], video_dict['lexis'], video_dict['director'], video_dict['timing'], video_dict['release_year'], video_dict['video_link'], '', video_dict['production_country']
+            video_dict['songers'], video_dict['video_title'], video_dict['feat'], video_dict['words_author'], video_dict['music_author'], video_dict['lexis'], video_dict['director'], video_dict['timing'], video_dict['release_year'], video_dict['video_link'], up_video_preview, video_dict['production_country']
         )
-    except:
+        video.delete()
+    else:
         video_values = tuple('' for i in range(12))
         
     release_values += video_values
 
     release_data = {
-            'range': 'Релиз!A3:AN3',
+            'range': 'Релиз!A3:AO3',
             'majorDimension': 'ROWS',
             'values': [release_values,]
         }
     release_sheet.append(release_data)
 
-    try:
-        add_audio_sheet = Sheet('Релиз!A3:AN3')
+    if len(audio) > 1:
+        add_audio_sheet = Sheet('Релиз!A3:AO3')
         add_audio_values = []
         for i in range(1, len(audio_tuple_dict)):
-            add_audio_values.append(tuple(('', '',  '',  '',  '',  '',  '', '', '', '', audio_tuple_dict[i]['songers'], audio_tuple_dict[i]['song_title'], audio_tuple_dict[i]['album_title'], audio_tuple_dict[i]['feat'], audio_tuple_dict[i]['genre'], audio_tuple_dict[i]['fio_songer'], audio_tuple_dict[i]['words_author'], audio_tuple_dict[i]['music_author'], audio_tuple_dict[i]['owner_citizenship'], audio_tuple_dict[i]['record_country'], audio_tuple_dict[i]['timing'], audio_tuple_dict[i]['song_preview'], audio_tuple_dict[i]['lexis'], audio_tuple_dict[i]['audio_link'], '', audio_tuple_dict[i]['clean_link'], '', audio_tuple_dict[i]['release_year'])))
+            add_audio_values.append(tuple(('', '',  '',  '',  '',  '',  '', '', '', '', audio_tuple_dict[i]['songers'], audio_tuple_dict[i]['song_title'], audio_tuple_dict[i]['album_title'], audio_tuple_dict[i]['feat'], audio_tuple_dict[i]['genre'], audio_tuple_dict[i]['fio_songer'], audio_tuple_dict[i]['words_author'], audio_tuple_dict[i]['music_author'], audio_tuple_dict[i]['owner_citizenship'], audio_tuple_dict[i]['record_country'], audio_tuple_dict[i]['timing'], audio_tuple_dict[i]['song_preview'], audio_tuple_dict[i]['lexis'], audio_tuple_dict[i]['audio_link'], up_song_tuple[i], up_clean_link_tuple[i], up_instrumental_tuple[i], up_song_text_tuple[i], audio_tuple_dict[i]['release_year'])))
 
         add_audio_data = {
-            'range': 'Релиз!A3:AN3',
+            'range': 'Релиз!A3:AO3',
             'majorDimension': 'ROWS',
             'values': add_audio_values
             }
         add_audio_sheet.append(add_audio_data)
-    except:
-        pass
 
-    spaces = Sheet('Релиз!A3:AN3')
-    spaces_values = [tuple('.' for i in range(40))]
+        for item in audio:
+            item.delete()
+
+    spaces = Sheet('Релиз!A3:AO3')
+    spaces_values = [tuple('.' for i in range(41))]
     spaces_data = {
-        'range': 'Релиз!A3:AN3',
+        'range': 'Релиз!A3:AO3',
         'majorDimension': 'ROWS',
         'values': spaces_values
     }
     spaces.append(spaces_data)
-    main_info.delete()
-    try:
-        for item in audio:
-            item.delete()
-    except:
-        pass
-    try:
-        video.delete()
-    except:
-        pass
-
+    
 
 class MainInfoView(LoginRequiredMixin, FormView):
     template_name = 'release/release.html'
@@ -152,10 +182,7 @@ class MainInfoView(LoginRequiredMixin, FormView):
                     'form_title': self.form_title, 
                     'photo': photo, 
                     'cover': cover, 
-                    'cover_psd': cover_psd, 
-                    'delete_photo': 'delete_r_photo', 
-                    'delete_cover': 'delete_r_cover', 
-                    'delete_cover_psd': 'delete_r_cover_psd'})
+                    'cover_psd': cover_psd})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
@@ -197,10 +224,7 @@ class MainInfoView(LoginRequiredMixin, FormView):
                                                         'form_title': self.form_title,
                                                         'photo': photo, 
                                                         'cover': cover, 
-                                                        'cover_psd': cover_psd, 
-                                                        'delete_photo': 'delete_photo', 
-                                                        'delete_cover': 'delete_cover', 
-                                                        'delete_cover_psd': 'delete_cover_psd'})
+                                                        'cover_psd': cover_psd})
 
 
 class AudioView(LoginRequiredMixin, FormView):
@@ -218,6 +242,28 @@ class AudioView(LoginRequiredMixin, FormView):
             'form-INITIAL_FORMS': str(num_songs),
         }
         audio = Audio.objects.filter(user_id = user.id)
+        audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
+
+        audio_urls = tuple()
+        for item in audio_tuple_dict:
+            if item['audio']:
+                audio_urls = (*audio_urls, Path(item['audio'].url).name)
+
+        clean_link_urls = tuple()
+        for item in audio_tuple_dict:
+            if item['clean_link']:
+                clean_link_urls = (*clean_link_urls, Path(item['clean_link'].url).name)
+
+        instrumental_urls = tuple()
+        for item in audio_tuple_dict:
+            if item['instrumental']:
+                instrumental_urls = (*instrumental_urls, Path(item['instrumental'].url).name)
+
+        song_text_urls = tuple()
+        for item in audio_tuple_dict:
+            if item['song_text']:
+                song_text_urls = (*song_text_urls, Path(item['song_text'].url).name)
+
         if len(audio) != 0:
             for song in range(len(audio)):
                 for field in AudioForm._meta.fields:
@@ -234,7 +280,7 @@ class AudioView(LoginRequiredMixin, FormView):
                 data['form-' + str(num) + '-fio_songer'] = fio
                 data['form-' + str(num) + '-user'] = user.id
         formset = audio_formset(data)
-        return render(request, self.template_name, {'button': self.fields_for_button, 'formset': formset, 'form_title': self.form_title})
+        return render(request, self.template_name, {'button': self.fields_for_button, 'formset': formset, 'form_title': self.form_title, 'audio_urls': audio_urls, 'clean_link_urls': clean_link_urls, 'instrumental_urls': instrumental_urls, 'song_text_urls': song_text_urls})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -244,11 +290,26 @@ class AudioView(LoginRequiredMixin, FormView):
         if formset.is_valid():
             audio = Audio.objects.filter(user_id = user.id)
             if len(audio) != 0:
+                songs = tuple()
+                clean_links = tuple()
+                instrumentals = tuple()
+                song_texts = tuple()
                 for song in audio:
+                    songs = (*songs, song.audio)
+                    clean_links = (*clean_links, song.clean_link)
+                    instrumentals = (*instrumentals, song.instrumental)
+                    song_texts = (*song_texts, song.song_text)
                     song.delete()
-            for form in formset:
-                print(form.cleaned_data)
-                form.save()
+                for form in range(len(formset)):
+                    forma = formset[form].save(commit = False)
+                    forma.audio = songs[form]
+                    forma.clean_link = clean_links[form]
+                    forma.instrumental = instrumentals[form]
+                    forma.song_text = song_texts[form]
+                    formset[form].save()
+            else:
+                for form in formset:
+                    form.save()
             if add_video == 'NO':
                 release_to_sheet(user)
                 return HttpResponseRedirect(reverse('r_success'))
@@ -327,5 +388,14 @@ def delete_preview(request):
     object_ = Video.objects.filter(user_id = user.id).update(video_preview = '')
     return HttpResponseRedirect(reverse('r_video'))
 
+def clear_table(request):
+    user = User.objects.get(username = request.user)
+    objects = Audio.objects.filter(user_id = user.id)
+    for item in objects:
+        item.delete()
+    return HttpResponseRedirect(reverse('r_audio'))
+
+
 def success_page(request):
     return render(request, 'success.html')
+

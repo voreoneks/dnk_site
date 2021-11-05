@@ -15,7 +15,7 @@ class MainInfo(models.Model):
     integer_choices = [(i, i) for i in range(1, 101)]
 
     name = models.CharField(max_length=150, verbose_name='Имя артиста')
-    phone_number = models.CharField(max_length=10, verbose_name='Телефон')
+    phone_number = models.CharField(max_length=12, verbose_name='Телефон')
     email = models.EmailField(verbose_name='E-mail')
     is_update_photo = models.CharField(max_length=4, choices=bool_choices, default='NO', verbose_name='Необходимо ли обновить/добавить фото в карточках артиста на площадках?')
     photo_link = models.URLField(verbose_name='Ссылка на скачивание фото', null=True, blank=True)
@@ -56,7 +56,7 @@ class Audio(models.Model):
     music_author = models.CharField(max_length=100, verbose_name='Автор музыки')
     owner_citizenship = models.CharField(max_length=50, verbose_name='Гражданство изначального владельца авторских прав (артиста)')
     record_country = models.CharField(max_length=100, verbose_name='Страна записи')
-    timing = models.CharField(max_length=5, verbose_name='Хронометраж', validators=[RegexValidator(regex='/d{2}:/d{2}'),])
+    timing = models.CharField(max_length=5, verbose_name='Хронометраж', validators=[RegexValidator(regex='[0-9]{2}:[0-9]{2}'),])
     song_preview = models.CharField(max_length=15, verbose_name='Превью песни')
     lexis = models.CharField(max_length=15, choices=exist_choices, default='NONE', verbose_name='Ненормативная лексика в песне')
     audio = models.FileField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Аудио (WAV)', blank=True, null=True)

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load index %}
 
 {% block header %}
 
@@ -24,13 +25,13 @@
 
         <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             <div class="col-md-6 col-sm-8 col-10 release-header">
-                <!-- {% if formset.total_error_count %}
+                {% if formset.total_error_count %}
                     <ul class="errorList">
                         {% for dict in formset.errors %}
                             {{ dict }}
                         {% endfor %}
                     </ul>
-                {% endif %} -->
+                {% endif %}
             </div>
         </div>
 
@@ -62,9 +63,23 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             {% for item in form.visible_fields %}
-                                <td>{{ item }}</td>
+                                <td>
+                                    {{ item }}
+                                    {% if item.name == 'audio' and audio_urls %}
+                                        Загружено: {{ audio_urls|index:item.auto_id }}
+                                    {% endif %}
+                                    {% if item.name == 'clean_link' and clean_link_urls %}
+                                        Загружено: {{ clean_link_urls|index:item.auto_id }}
+                                    {% endif %}
+                                    {% if item.name == 'instrumental' and instrumental_urls %}
+                                        Загружено: {{ instrumental_urls|index:item.auto_id }}
+                                    {% endif %}
+                                    {% if item.name == 'song_text' and song_text_urls %}
+                                        Загружено: {{ song_text_urls|index:item.auto_id }}
+                                    {% endif %}
+                                </td>
                                 {% if item.name in button %}
-                                    <td><input style="width: 20px; padding-top: 5px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
+                                    <td><input style="width: 20px; padding-top: 5px; margin-right: 15px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
                                 {% endif %}
                             {% endfor %}
                             {% for item in form.hidden_fields %}
@@ -99,7 +114,14 @@
         
             <div class="col-md-6 col-sm-8 col-10 release-button">
                 <button class="btn button" type="button" onclick="history.back();">Назад</button>
-                <button class="btn button" form="audio-form" type="submit">Далее</button>
+                <div>
+                    <button class="btn button" type="button" onclick="document.location.href = '{% url 'clear_table' %}';">Очистить таблицу</button>
+                    <button class="btn button" form="audio-form" type="submit">Далее</button>
+                    <button hidden id="loading" class="btn button" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        Загрузка...
+                    </button>
+                </div>
             </div>
             
         </div>

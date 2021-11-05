@@ -1,5 +1,6 @@
 body{
     background-color: black;
+    position: relative;
 }
 
 body::-webkit-scrollbar {
@@ -146,6 +147,16 @@ section{
 
     .release-form input[type = 'radio']{
         width: auto
+    }
+
+    .release-button{
+        flex-direction: column;
+        margin: auto;
+        width: auto;
+    }
+
+    .release-button button{
+        margin-top: 10%;
     }
 }
 
