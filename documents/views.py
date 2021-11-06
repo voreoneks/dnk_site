@@ -7,23 +7,36 @@ from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic.edit import FormView
 from datetime import datetime
+from dnk_site.settings import BASE_DIR, MEDIA_URL
+from google_drive.google_drive import Drive
 from google_sheets import Sheet
 from django.forms.models import model_to_dict
+from pathlib import Path
 
 from lk.models import Lk
-
+import os
 from .forms import *
 from .models import *
 
 def docs_to_sheet(user):
+    drive = Drive()
     date_time = str(datetime.now())
     docs_sheet = Sheet('Документы!A3:DC3')
 
     main_info_docs = MainInfoDocs.objects.get(user_id = user.id)
     main_info_docs_dict = model_to_dict(main_info_docs)
     docs_values = tuple()
+
+    new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user) + '_documents')
+
+    if main_info_docs_dict['cover']:
+        cover = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_docs_dict['cover'].name))
+        up_cover = drive.upload_file(new_folder['id'], 'Обложка', cover)['webViewLink']
+    else:
+        cover = ''
+
     main_info_docs_values = (
-        date_time, main_info_docs_dict['you_are'], main_info_docs_dict['partners_value'], main_info_docs_dict['artist_fio'], main_info_docs_dict['artist_name'], main_info_docs_dict['phone_number'], main_info_docs_dict['email'], main_info_docs_dict['socials'], main_info_docs_dict['release_type']
+        date_time, main_info_docs_dict['you_are'], main_info_docs_dict['partners_value'], main_info_docs_dict['artist_fio'], main_info_docs_dict['artist_name'], main_info_docs_dict['phone_number'], main_info_docs_dict['email'], main_info_docs_dict['socials'], up_cover, main_info_docs_dict['release_type']
     )
     docs_values += main_info_docs_values
 
@@ -52,8 +65,15 @@ def docs_to_sheet(user):
     try:
         orginfosam = OrgInfoSam.objects.get(user_id = user.id)
         orginfosam_dict = model_to_dict(orginfosam)
+
+        if orginfosam_dict['skan_passport']:
+            skan_passport = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, orginfosam_dict['skan_passport'].name))
+            up_skan_passport = drive.upload_file(new_folder['id'], 'Скан пасспорта', skan_passport)['webViewLink']
+        else:
+            up_skan_passport = ''
+
         orginfosam_values = (
-            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils'], ''
+            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils'], up_skan_passport
         )
     except:
         orginfosam_values = tuple('' for i in range(16))
@@ -77,11 +97,11 @@ def docs_to_sheet(user):
         audio_docs = AudioDocs.objects.filter(user_id = user.id)
         audio_docs_tuple_dict = tuple(model_to_dict(item) for item in audio_docs)
         audio_docs_values = (
-            audio_docs_tuple_dict[0]['songers'], audio_docs_tuple_dict[0]['album_title'], audio_docs_tuple_dict[0]['song_title'], audio_docs_tuple_dict[0]['words_author'], audio_docs_tuple_dict[0]['music_author'], audio_docs_tuple_dict[0]['phon_maker'], audio_docs_tuple_dict[0]['timing'], '', audio_docs_tuple_dict[0]['release_year']
+            audio_docs_tuple_dict[0]['songers'], audio_docs_tuple_dict[0]['album_title'], audio_docs_tuple_dict[0]['song_title'], audio_docs_tuple_dict[0]['words_author'], audio_docs_tuple_dict[0]['music_author'], audio_docs_tuple_dict[0]['phon_maker'], audio_docs_tuple_dict[0]['timing'], audio_docs_tuple_dict[0]['release_year']
         )
     except:
         audio_docs = []
-        audio_docs_values = tuple('' for i in range(9))
+        audio_docs_values = tuple('' for i in range(8))
     
     docs_values += audio_docs_values
 
@@ -159,15 +179,17 @@ def docs_to_sheet(user):
     max_len = max(len(audio_docs), len(music_author), len(words_author), len(others), len(phon_maker))
 
     for i in range(1, max_len):
-        add_rows_values = tuple('' for i in range(53))
+        add_rows_values = tuple('' for i in range(54))
         try:
             add_audio_docs_value = (
                 audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['phon_maker'], audio_docs_tuple_dict[i]['timing'], '', audio_docs_tuple_dict[i]['release_year']
             )
         except:
-            add_audio_docs_value = tuple('' for i in range(9))
+            add_audio_docs_value = tuple('' for i in range(8))
         add_rows_values += add_audio_docs_value
 
+        add_rows_values += tuple('' for i in range(12))
+        
         try:
             add_music_author_values = (
                 music_author_tuple_dict[i]['fio'], str(music_author_tuple_dict[i]['birthday']), music_author_tuple_dict[i]['citizen'], music_author_tuple_dict[i]['passport'], music_author_tuple_dict[i]['birth_place'], music_author_tuple_dict[i]['reg'], music_author_tuple_dict[i]['author_email'], music_author_tuple_dict[i]['fin_conditions']
@@ -352,7 +374,6 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                 object_dict = model_to_dict(object_)
                 cover = object_dict['cover']
             except:
-                delete_link = ''
                 cover = ''
             return render(request, self.template_name, {'form': form, 'form_title': self.form_title,  'cover': cover, 'delete_cover': 'delete_cover'})
         

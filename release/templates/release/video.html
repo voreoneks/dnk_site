@@ -35,8 +35,10 @@
                         {% if item.name == 'video_preview' %}
                             {% if preview %}
                                 <p>Загружено:</p>
-                                <img src="/media/{{ delete_preview }}" alt="">
-                                <button class="btn button" type="button" onclick="document.location.href = '{% url delete_preview %}';">Очистить</button>
+                                <img src="/media/{{ preview }}" alt="">
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url delete_preview %}';">Очистить</button>
+                                </div>
                             {% endif %}
                         {% endif %}                        
                     </div>

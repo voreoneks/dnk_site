@@ -21,7 +21,7 @@ class MainInfoDocs(models.Model):
     partners_value = models.IntegerField(choices=integer_choices, null=True, default=1, verbose_name='Количество участников')
     artist_name = models.CharField(max_length=100, verbose_name='Имя артиста')
     artist_fio = models.CharField(max_length=100, verbose_name='ФИО Артиста')
-    phone_number = models.CharField(max_length=10, verbose_name='Телефон для связи')
+    phone_number = models.CharField(max_length=12, verbose_name='Телефон для связи')
     email = models.EmailField(verbose_name='E-mail')
     socials = models.CharField(max_length=500, verbose_name='Социальные сети', blank=True, null=True)
     cover = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка (jpg 3000x3000)', blank=True, null=True)

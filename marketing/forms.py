@@ -1,5 +1,5 @@
 from django.forms import ModelForm, RadioSelect
-from django.forms.widgets import HiddenInput, Textarea
+from django.forms.widgets import FileInput, HiddenInput, Textarea
 
 from .models import *
 
@@ -28,6 +28,7 @@ class MarketingForm(ModelForm):
         model = Marketing
         fields = ('positioning', 'where_from', 'affiliation', 'awards', 'photo', 'photo_link', 'inspiration', 'concept', 'guest_artists', 'user',)
         widgets = {
+            'photo': FileInput,
             'guest_artists': Textarea(attrs={'rows': 5}),
             'concept': Textarea(attrs={'rows': 5}),
             'inspiration': Textarea(attrs={'rows': 5}),

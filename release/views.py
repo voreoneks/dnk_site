@@ -12,11 +12,12 @@ from django.views.generic.edit import FormView
 from google_sheets import Sheet
 from google_drive.google_drive import Drive
 from pathlib import Path
-from dnk_site.settings import BASE_DIR
+from dnk_site.settings import BASE_DIR, MEDIA_URL
 
 from lk.models import *
 from .forms import *
 from .models import *
+import os
 
 def release_to_sheet(user):
     drive = Drive()
@@ -28,20 +29,20 @@ def release_to_sheet(user):
     content_type = main_info_dict['content_type']
     release_values = tuple()
 
-    new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user))
+    new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user) + '_release')
 
     if main_info_dict['photo']:
-        photo = str(Path(BASE_DIR)) + str(Path(main_info_dict['photo'].url))
+        photo = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['photo'].name))
         up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', photo)['webViewLink']
     else: 
         up_photo = ''
     if main_info_dict['cover']:
-        cover = str(Path(BASE_DIR)) + str(Path(main_info_dict['cover'].url))
+        cover = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover'].name))
         up_cover = drive.upload_file(new_folder['id'], 'Обложка', cover)['webViewLink']
     else:
         up_cover = ''
     if main_info_dict['cover_psd']:
-        cover_psd = str(Path(BASE_DIR)) + str(Path(main_info_dict['cover_psd'].url))
+        cover_psd = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover_psd'].name))
         up_cover_psd = drive.upload_file(new_folder['id'], 'Обложка_PSD', cover_psd)['webViewLink']
     else:
         up_cover_psd = ''
@@ -65,35 +66,35 @@ def release_to_sheet(user):
         for item in audio_tuple_dict:
 
             if item['audio']:
-                song = str(Path(BASE_DIR)) + str(Path(item['audio'].url))
+                song = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['audio'].name))
                 up_song = drive.upload_file(new_folder['id'], item['song_title'], song)['webViewLink']
             else:
                 up_song = ''
             up_song_tuple = (*up_song_tuple, up_song)
 
             if item['clean_link']:
-                clean_link = str(Path(BASE_DIR)) + str(Path(item['clean_link'].url))
+                clean_link = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['clean_link'].name))
                 up_clean_link = drive.upload_file(new_folder['id'], item['song_title'] + '_clean', clean_link)['webViewLink']
             else:
                 up_clean_link = ''
             up_clean_link_tuple = (*up_clean_link_tuple, up_clean_link)
 
             if item['instrumental']:
-                instrumental = str(Path(BASE_DIR)) + str(Path(item['instrumental'].url))
+                instrumental = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['instrumental'].name))
                 up_instrumental = drive.upload_file(new_folder['id'], item['song_title'] + '_instrumental', instrumental)['webViewLink']
             else:
                 up_instrumental = ''
             up_instrumental_tuple = (*up_instrumental_tuple, up_instrumental)
 
             if item['song_text']:
-                song_text = str(Path(BASE_DIR)) + str(Path(item['song_text'].url))
+                song_text = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['song_text'].name))
                 up_song_text = drive.upload_file(new_folder['id'], item['song_title'] + '_text', song_text)['webViewLink']
             else:
                 up_song_text = ''
             up_song_text_tuple = (*up_song_text_tuple, up_song_text)
 
         audio_values = (
-            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], up_song[0], up_clean_link[0], up_instrumental[0], up_song_text[0], audio_tuple_dict[0]['release_year']
+            audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], up_song_tuple[0], up_clean_link_tuple[0], up_instrumental_tuple[0], up_song_text_tuple[0], audio_tuple_dict[0]['release_year']
         )
     else:
         audio_values = tuple('' for i in range(20))
@@ -104,7 +105,7 @@ def release_to_sheet(user):
     if len(video) != 0:
         video_dict = model_to_dict(video[0])
         if video_dict['video_preview']:
-            video_preview = str(Path(BASE_DIR)) + str(Path(video_dict['video_preview'].url))
+            video_preview = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, video_dict['video_preview'].name))
             up_video_preview = drive.upload_file(new_folder['id'], video_dict['video_title'], video_preview)['webViewLink']
         video_values = (
             video_dict['songers'], video_dict['video_title'], video_dict['feat'], video_dict['words_author'], video_dict['music_author'], video_dict['lexis'], video_dict['director'], video_dict['timing'], video_dict['release_year'], video_dict['video_link'], up_video_preview, video_dict['production_country']
@@ -247,22 +248,22 @@ class AudioView(LoginRequiredMixin, FormView):
         audio_urls = tuple()
         for item in audio_tuple_dict:
             if item['audio']:
-                audio_urls = (*audio_urls, Path(item['audio'].url).name)
+                audio_urls = (*audio_urls, Path(item['audio'].name).name)
 
         clean_link_urls = tuple()
         for item in audio_tuple_dict:
             if item['clean_link']:
-                clean_link_urls = (*clean_link_urls, Path(item['clean_link'].url).name)
+                clean_link_urls = (*clean_link_urls, Path(item['clean_link'].name).name)
 
         instrumental_urls = tuple()
         for item in audio_tuple_dict:
             if item['instrumental']:
-                instrumental_urls = (*instrumental_urls, Path(item['instrumental'].url).name)
+                instrumental_urls = (*instrumental_urls, Path(item['instrumental'].name).name)
 
         song_text_urls = tuple()
         for item in audio_tuple_dict:
             if item['song_text']:
-                song_text_urls = (*song_text_urls, Path(item['song_text'].url).name)
+                song_text_urls = (*song_text_urls, Path(item['song_text'].name).name)
 
         if len(audio) != 0:
             for song in range(len(audio)):
@@ -302,10 +303,14 @@ class AudioView(LoginRequiredMixin, FormView):
                     song.delete()
                 for form in range(len(formset)):
                     forma = formset[form].save(commit = False)
-                    forma.audio = songs[form]
-                    forma.clean_link = clean_links[form]
-                    forma.instrumental = instrumentals[form]
-                    forma.song_text = song_texts[form]
+                    if not forma.audio:
+                        forma.audio = songs[form]
+                    if not forma.clean_link:
+                        forma.clean_link = clean_links[form]
+                    if not forma.instrumental:
+                        forma.instrumental = instrumentals[form]
+                    if not forma.song_text:
+                        forma.song_text = song_texts[form]
                     formset[form].save()
             else:
                 for form in formset:

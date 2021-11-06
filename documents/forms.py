@@ -1,7 +1,7 @@
 from django.db.models import fields
 from django.forms import ModelForm, RadioSelect
 from django.forms import widgets
-from django.forms.widgets import HiddenInput, FileInput, Input
+from django.forms.widgets import HiddenInput, FileInput, Input, Textarea
 
 from .models import *
 
@@ -10,6 +10,7 @@ class MainInfoDocsForm(ModelForm):
         model = MainInfoDocs
         fields = ('you_are', 'partners_value', 'artist_name', 'artist_fio', 'phone_number', 'email', 'socials', 'cover', 'release_type', 'num_songs', 'user',)
         widgets = {
+            'socials': Textarea(attrs={'rows': 5}),
             'cover': FileInput,
             'you_are': RadioSelect,
             'release_type': RadioSelect,

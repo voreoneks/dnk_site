@@ -28,7 +28,7 @@ class MainInfoForm(ModelForm):
 class AudioForm(ModelForm):
     class Meta:
         model = Audio
-        fields = ('songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio', 'audio_link', 'clean_link', 'instrumental', 'song_text', 'release_year', 'user',)
+        fields = ('songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'audio', 'clean_link', 'instrumental', 'song_text', 'release_year', 'user',)
         help_texts = {
             'audio': 'Прикрепите файл или укажите ссылку на трек.',
             'audio_link': 'Прикрепите файл или укажите ссылку на трек.',
@@ -62,5 +62,6 @@ class VideoForm(ModelForm):
         }
 
         widgets = {
+            'video_preview': FileInput,
             'user': HiddenInput,
         }
