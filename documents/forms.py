@@ -8,7 +8,7 @@ from .models import *
 class MainInfoDocsForm(ModelForm):
     class Meta:
         model = MainInfoDocs
-        fields = ('you_are', 'partners_value', 'artist_name', 'artist_fio', 'phone_number', 'email', 'socials', 'cover', 'release_type', 'num_songs', 'user',)
+        fields = '__all__'
         widgets = {
             'socials': Textarea(attrs={'rows': 5}),
             'cover': FileInput,
@@ -27,7 +27,7 @@ class MainInfoDocsForm(ModelForm):
 class OrgInfoIprfForm(ModelForm):
     class Meta:
         model = OrgInfoIprf
-        fields = ('fio', 'ogrnip', 'inn', 'bank', 'r_s', 'bik', 'inn_bank', 'k_s', 'user',)
+        fields = '__all__'
         widgets = {
             'user': HiddenInput,
         }
@@ -43,7 +43,7 @@ class OrgInfoIprfForm(ModelForm):
 class OrgInfoIpinForm(ModelForm):
     class Meta:
         model = OrgInfoIpin
-        fields = ('fio', 'citizen', 'id_number', 'bank', 'r_s', 'bik', 'inn_bank', 'k_s', 'user',)
+        fields = '__all__'
         widgets = {
             'user': HiddenInput,
         }
@@ -60,7 +60,7 @@ class OrgInfoIpinForm(ModelForm):
 class OrgInfoSamForm(ModelForm):
     class Meta:
         model = OrgInfoSam
-        fields = ('fio', 'birthday', 'series_num', 'who_issued', 'when_issued', 'code_pod', 'birth_place', 'reg', 'bank', 'r_s', 'bik', 'inn_bank', 'k_s', 'inn', 'snils', 'skan_passport', 'user',)
+        fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
             'when_issued': Input(attrs={'type': 'date'}),
@@ -80,7 +80,7 @@ class OrgInfoSamForm(ModelForm):
 class OrgInfoOooForm(ModelForm):
     class Meta:
         model = OrgInfoOoo
-        fields = ('name', 'fio_gen_dir', 'ogrn', 'inn', 'kpp', 'yur_address', 'fact_address', 'bank', 'r_s', 'bik', 'inn_bank', 'k_s', 'user',)
+        fields = '__all__'
         widgets = {
             'user': HiddenInput,
         }
@@ -92,7 +92,7 @@ class OrgInfoOooForm(ModelForm):
 class AudioDocsForm(ModelForm):
     class Meta:
         model = AudioDocs
-        fields = ('songers', 'song_title', 'album_title', 'words_author', 'music_author', 'phon_maker', 'timing', 'release_year', 'user',)
+        fields = '__all__'
         widgets = {
             'user': HiddenInput,
         }
@@ -108,7 +108,7 @@ class AudioDocsForm(ModelForm):
 class VideoDocsForm(ModelForm):
     class Meta:
         model = VideoDocs
-        fields = ('songers', 'video_title', 'words_author', 'music_author', 'phon_maker', 'director', 'timing', 'release_year', 'production_country', 'user',)
+        fields = '__all__'
         widgets = {
             'user': HiddenInput,
         }
@@ -125,7 +125,7 @@ class VideoDocsForm(ModelForm):
 class LicenceForm(ModelForm):
     class Meta:
         model = Licence
-        fields = ('music_author', 'words_author', 'phon_maker', 'user', )
+        fields = '__all__'
         widgets = {
             'music_author': RadioSelect, 
             'words_author': RadioSelect, 
@@ -136,7 +136,7 @@ class LicenceForm(ModelForm):
 class MusicAuthorForm(ModelForm):
     class Meta:
         model = MusicAuthor
-        fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
+        fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
@@ -151,7 +151,7 @@ class MusicAuthorForm(ModelForm):
 class WordsAuthorForm(ModelForm):
     class Meta:
         model = WordsAuthor
-        fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
+        fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
@@ -165,7 +165,7 @@ class WordsAuthorForm(ModelForm):
 class OthersForm(ModelForm):
     class Meta:
         model = Others
-        fields = ('creative_name', 'songs', 'fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'fin_conditions', 'number', 'user')
+        fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
@@ -179,7 +179,7 @@ class OthersForm(ModelForm):
 class PhonMakerForm(ModelForm):
     class Meta:
         model = PhonMaker
-        fields = ('fio', 'birthday', 'citizen', 'passport', 'birth_place', 'reg', 'author_email', 'fin_conditions', 'number', 'user', )
+        fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
             'user': HiddenInput,

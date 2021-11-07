@@ -1,13 +1,16 @@
+import os
+from datetime import datetime
+from pathlib import Path
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.forms import formset_factory
 from django.forms.models import model_to_dict
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic.edit import FormView
-from datetime import datetime
-
+from dnk_site.settings import BASE_DIR, MEDIA_URL
+from google_drive.google_drive import Drive
 from google_sheets import Sheet
 from lk.models import Lk
 
@@ -16,41 +19,55 @@ from .models import *
 
 
 def marketing_to_sheet(user):
+    drive = Drive()
     date_time = str(datetime.now())
     all_marketing_sheet = Sheet('Маркетинг!A3:AC3')
     all_marketing_values = tuple()
 
-    main_info_marketing = MainInfoMarketing.objects.get(user_id = user.id)
-    main_info_marketing_dict = model_to_dict(main_info_marketing)
+    new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user) + '_marketing')
+
+    main_info_marketing = MainInfoMarketing.objects.filter(user_id = user.id)
+    main_info_marketing_dict = model_to_dict(*main_info_marketing)
     main_info_marketing_values = (
         date_time, main_info_marketing_dict['songers'], main_info_marketing_dict['release_title'], main_info_marketing_dict['release_type'], main_info_marketing_dict['genre'], main_info_marketing_dict['vk'], main_info_marketing_dict['inst'], main_info_marketing_dict['facebook'], main_info_marketing_dict['youtube'], main_info_marketing_dict['tiktok'], main_info_marketing_dict['other']
     )
     all_marketing_values += main_info_marketing_values
+    main_info_marketing.delete()
 
-    marketing = Marketing.objects.get(user_id = user.id)
-    marketing_dict = model_to_dict(marketing)
+    marketing = Marketing.objects.filter(user_id = user.id)
+    marketing_dict = model_to_dict(*marketing)
+
+    if marketing_dict['photo']:
+        photo = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, marketing_dict['photo'].name))
+        up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', photo)['webViewLink']
+    else:
+        photo = ''
+
     marketing_values = (
-        marketing_dict['positioning'], marketing_dict['where_from'], marketing_dict['affiliation'], marketing_dict['awards'], '', marketing_dict['photo_link'], marketing_dict['inspiration'], marketing_dict['concept'], marketing_dict['guest_artists']
+        marketing_dict['positioning'], marketing_dict['where_from'], marketing_dict['affiliation'], marketing_dict['awards'], up_photo, marketing_dict['photo_link'], marketing_dict['inspiration'], marketing_dict['concept'], marketing_dict['guest_artists']
     )
     all_marketing_values += marketing_values
+    marketing.delete()
 
-    try:
-        promo_plan = PromoPlan.objects.get(user_id = user.id)
-        promo_plan_dict = model_to_dict(promo_plan)
+    promo_plan = PromoPlan.objects.filter(user_id = user.id)
+    if promo_plan:
+        promo_plan_dict = model_to_dict(*promo_plan)
         promo_plan_values = (
             promo_plan_dict['radio'], promo_plan_dict['pressa'], promo_plan_dict['social_crops'], promo_plan_dict['tv'], promo_plan_dict['info'], promo_plan_dict['other'], promo_plan_dict['project_plan'], promo_plan_dict['release_plan']
         )
-    except:
+        promo_plan.delete()
+    else:
         promo_plan_values = tuple('' for i in range(8))
     all_marketing_values += promo_plan_values
 
 
-    press_release = PressRelease.objects.get(user_id = user.id)
-    press_release_dict = model_to_dict(press_release)
+    press_release = PressRelease.objects.filter(user_id = user.id)
+    press_release_dict = model_to_dict(*press_release)
     press_release_values = (
         press_release_dict['press_release'],
     )
     all_marketing_values += press_release_values
+    press_release.delete()
 
     all_marketing_data = {
         'range': 'Маркетинг!A3:AC3',
@@ -70,19 +87,6 @@ def marketing_to_sheet(user):
     spaces.append(spaces_data)
 
 
-    main_info_marketing.delete()
-    marketing.delete()
-    try:
-        PromoPlan.objects.get(user_id = user.id).delete()
-    except:
-        pass
-    press_release.delete()
-
-
-
-
-
-
 
 class MainInfoMarketingView(LoginRequiredMixin, FormView):
     template_name = 'marketing/marketing.html'
@@ -91,14 +95,15 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        try:
-            object_ = MainInfoMarketing.objects.get(user_id = user.id)
-            object_dict = model_to_dict(object_)
-            form = self.form_class(initial = object_dict)
-        except:
-            try:
-                lk = Lk.objects.get(user_id = user.id)
-                lk_dict = model_to_dict(lk)
+        main_info = MainInfoMarketing.objects.filter(user_id = user.id)
+        if main_info:
+            main_info_dict = model_to_dict(*main_info)
+            form = self.form_class(initial = main_info_dict)
+        else:
+            lk = Lk.objects.filter(user_id = user.id)
+
+            if lk:
+                lk_dict = model_to_dict(*lk)
                 name = lk_dict['name']
                 vk = lk_dict['vk']
                 inst = lk_dict['inst']
@@ -106,7 +111,7 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
                 youtube = lk_dict['youtube']
                 tiktok = lk_dict['tiktok']
                 other = lk_dict['telegram']
-            except:
+            else:
                 name = ''
                 vk = ''
                 inst = ''
@@ -114,6 +119,7 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
                 youtube = ''
                 tiktok = ''
                 other = ''
+
             form = self.form_class(initial = {'user': user,
                                               'songers': name,
                                               'vk': vk,
@@ -122,20 +128,21 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
                                               'youtube': youtube,
                                               'tiktok': tiktok,
                                               'other': other})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = MainInfoMarketing.objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
+            main_info = MainInfoMarketing.objects.filter(user_id = user.id)
+            if main_info:
+                main_info.delete()
             form.save()
             return HttpResponseRedirect('marketing_info')
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title})
 
 
 class MarketingView(LoginRequiredMixin, FormView):
@@ -145,39 +152,46 @@ class MarketingView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        try:
-            object_ = Marketing.objects.get(user_id = user.id)
-            object_dict = model_to_dict(object_)
-            photo = object_dict['photo']
-            form = self.form_class(initial = object_dict)
-        except:
+        marketing = Marketing.objects.filter(user_id = user.id)
+        if marketing:
+            marketing_dict = model_to_dict(*marketing)
+            photo = marketing_dict['photo']
+            form = self.form_class(initial = marketing_dict)
+        else:
             photo = ''
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'photo': photo, 'delete_photo': 'delete_photo'})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'photo': photo, 
+                                                    'delete_photo': 'delete_photo'})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            try:
-                object_ = Marketing.objects.get(user_id = user.id)
-                photo = object_.photo
-                object_.delete()
+            marketing = Marketing.objects.filter(user_id = user.id)
+            if marketing:
+                marketing_dict = model_to_dict(*marketing)
+                photo = marketing_dict['photo']
+                marketing.delete()
+                forma = form.save(commit = False)
                 if photo:
-                    forma = form.save(commit = False)
                     forma.photo = photo
-                form.save()
-            except:
+                forma.save()
+            else:
                 form.save()
             return HttpResponseRedirect(reverse('promo_plan'))
         else:
-            try:
-                object_ = Marketing.objects.get(user_id = user.id)
-                object_dict = model_to_dict(object_)
-                photo = object_dict['photo']
-            except:
+            marketing = Marketing.objects.filter(user_id = user.id)
+            if marketing:
+                marketing_dict = model_to_dict(*marketing)
+                photo = marketing_dict['photo']
+            else:
                 photo = ''
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'photo': photo, 'delete_photo': 'delete_photo'})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'photo': photo, 
+                                                        'delete_photo': 'delete_photo'})
 
 
 class PromoPlanView(LoginRequiredMixin, FormView):
@@ -187,28 +201,28 @@ class PromoPlanView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = PromoPlan.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
+        promo_plan = PromoPlan.objects.filter(user_id = user.id)
+        if promo_plan:
+            promo_plan_dict = model_to_dict(*promo_plan)
+            promo_plan_dict['user'] = user
+            form = self.form_class(initial = promo_plan_dict)
         else:
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = PromoPlan.objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
+            promo_plan = PromoPlan.objects.filter(user_id = user.id)
+            if promo_plan:
+                promo_plan.delete()
             form.save()
             return HttpResponseRedirect(reverse('press_release'))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title})
 
 
 class PressReleaseView(LoginRequiredMixin, FormView):
@@ -219,33 +233,35 @@ class PressReleaseView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = PressRelease.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
+        press_release = PressRelease.objects.filter(user_id = user.id)
+        if press_release:
+            press_release_dict = model_to_dict(*press_release)
+            press_release_dict['user'] = user
+            form = self.form_class(initial = press_release)
         else:
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'form_description': self.form_description})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = PressRelease.objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
+            press_release = PressRelease.objects.filter(user_id = user.id)
+            if press_release:
+                press_release.delete()
             form.save()
             marketing_to_sheet(user)
             return HttpResponseRedirect(reverse('m_success'))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description})
 
 def delete_photo(request):
     user = User.objects.get(username = request.user)
-    object_ = Marketing.objects.filter(user_id = user.id).update(photo = '')
+    Marketing.objects.filter(user_id = user.id).update(photo = '')
     return HttpResponseRedirect(reverse('marketing_info'))
 
 def success_page(request):

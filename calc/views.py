@@ -1,7 +1,6 @@
-import re
 from django.shortcuts import render
-
 from google_sheets import Sheet
+
 
 def calc(request):
     if request.method == 'GET':
@@ -11,7 +10,6 @@ def calc(request):
         spotify = request.POST['spotify']
         vk_boom = request.POST['vk_boom']
         youtube = request.POST['youtube']
-        print(type(apple_music))
         if '.' in apple_music or '.' in spotify or '.' in vk_boom or '.' in youtube:
             error = 'Значение должно быть целым числом.'
             return render(request, 'calc/calc.html', {'error': error})

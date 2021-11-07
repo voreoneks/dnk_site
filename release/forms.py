@@ -8,7 +8,7 @@ from .models import *
 class MainInfoForm(ModelForm):
     class Meta:
         model = MainInfo
-        fields = ['name', 'phone_number', 'email', 'is_update_photo', 'photo_link', 'photo', 'content_type', 'cover', 'cover_psd', 'num_songs', 'user',]
+        fields = '__all__'
         widgets = {
             'photo': FileInput,
             'cover': FileInput,
@@ -28,7 +28,7 @@ class MainInfoForm(ModelForm):
 class AudioForm(ModelForm):
     class Meta:
         model = Audio
-        fields = ('songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'audio', 'clean_link', 'instrumental', 'song_text', 'release_year', 'user',)
+        fields = '__all__'
         help_texts = {
             'audio': 'Прикрепите файл или укажите ссылку на трек.',
             'audio_link': 'Прикрепите файл или укажите ссылку на трек.',
@@ -49,7 +49,7 @@ class AudioForm(ModelForm):
 class VideoForm(ModelForm):
     class Meta:
         model = Video
-        fields = ('songers', 'video_title', 'feat', 'words_author', 'music_author', 'lexis', 'director', 'timing', 'release_year', 'video_link', 'video_preview', 'production_country', 'user',)
+        fields = '__all__'
 
         help_texts = {
             'songers': 'Написать имя исполнителя в том виде, в каком оно будет отражено на площадках. Если в песне несколько основных исполнителей, просьба заполнить всех основных исполнителей через запятую. Пример: "Джиган, Тимати, Егор Крид"',

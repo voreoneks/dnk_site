@@ -1,22 +1,23 @@
+import os
+from datetime import datetime
+from pathlib import Path
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.db.models.expressions import F
 from django.forms import formset_factory
-from django.http.response import Http404, HttpResponseNotFound, HttpResponseRedirect
+from django.forms.models import model_to_dict
+from django.http.response import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic.edit import FormView
-from datetime import datetime
 from dnk_site.settings import BASE_DIR, MEDIA_URL
 from google_drive.google_drive import Drive
 from google_sheets import Sheet
-from django.forms.models import model_to_dict
-from pathlib import Path
-
 from lk.models import Lk
-import os
+
 from .forms import *
 from .models import *
+
 
 def docs_to_sheet(user):
     drive = Drive()
@@ -39,32 +40,35 @@ def docs_to_sheet(user):
         date_time, main_info_docs_dict['you_are'], main_info_docs_dict['partners_value'], main_info_docs_dict['artist_fio'], main_info_docs_dict['artist_name'], main_info_docs_dict['phone_number'], main_info_docs_dict['email'], main_info_docs_dict['socials'], up_cover, main_info_docs_dict['release_type']
     )
     docs_values += main_info_docs_values
+    main_info_docs.delete()
 
-    try:
-        orginfoiprf = OrgInfoIprf.objects.get(user_id = user.id)
-        orginfoiprf_dict = model_to_dict(orginfoiprf)
+    orginfoiprf = OrgInfoIprf.objects.filter(user_id = user.id)
+    if orginfoiprf:
+        orginfoiprf_dict = model_to_dict(*orginfoiprf)
         orginfoiprf_values = (
             orginfoiprf_dict['fio'], orginfoiprf_dict['ogrnip'], orginfoiprf_dict['inn'], orginfoiprf_dict['bank'], orginfoiprf_dict['r_s'], orginfoiprf_dict['bik'], orginfoiprf_dict['inn_bank'], orginfoiprf_dict['k_s']
         )
-    except:
+        orginfoiprf.delete()
+    else:
         orginfoiprf_values = tuple('' for i in range(8))
 
     docs_values += orginfoiprf_values
 
-    try:
-        orginfoipin = OrgInfoIpin.objects.get(user_id = user.id)
-        orginfoipin_dict = model_to_dict(orginfoipin)
+    orginfoipin = OrgInfoIpin.objects.filter(user_id = user.id)
+    if orginfoipin:
+        orginfoipin_dict = model_to_dict(*orginfoipin)
         orginfoipin_values = (
             orginfoipin_dict['fio'], orginfoipin_dict['citizen'], orginfoipin_dict['id_number'], orginfoipin_dict['bank'], orginfoipin_dict['r_s'], orginfoipin_dict['bik'], orginfoipin_dict['inn_bank'], orginfoipin_dict['k_s']
         )
-    except:
+        orginfoipin.delete()
+    else:
         orginfoipin_values = tuple('' for i in range(8))
 
     docs_values += orginfoipin_values
 
-    try:
-        orginfosam = OrgInfoSam.objects.get(user_id = user.id)
-        orginfosam_dict = model_to_dict(orginfosam)
+    orginfosam = OrgInfoSam.objects.filter(user_id = user.id)
+    if orginfosam:
+        orginfosam_dict = model_to_dict(*orginfosam)
 
         if orginfosam_dict['skan_passport']:
             skan_passport = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, orginfosam_dict['skan_passport'].name))
@@ -75,43 +79,46 @@ def docs_to_sheet(user):
         orginfosam_values = (
             orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils'], up_skan_passport
         )
-    except:
+        orginfosam.delete()
+    else:
         orginfosam_values = tuple('' for i in range(16))
 
     docs_values += orginfosam_values
 
-    try:
-        orginfoooo = OrgInfoOoo.objects.get(user_id = user.id)
-        orginfoooo_dict = model_to_dict(orginfoooo)
+    orginfoooo = OrgInfoOoo.objects.filter(user_id = user.id)
+    if orginfoooo:
+        orginfoooo_dict = model_to_dict(*orginfoooo)
         orginfoooo_values = (
             orginfoooo_dict['name'], orginfoooo_dict['fio_gen_dir'], orginfoooo_dict['ogrn'], orginfoooo_dict['inn'], orginfoooo_dict['kpp'], orginfoooo_dict['yur_address'], orginfoooo_dict['fact_address'], orginfoooo_dict['bank'], orginfoooo_dict['r_s'], orginfoooo_dict['bik'], orginfoooo_dict['inn_bank'], orginfoooo_dict['k_s']
         )
-    except:
+        orginfoooo.delete()
+    else:
         orginfoooo_values = tuple('' for i in range(12))
 
     docs_values += orginfoooo_values
 
         
 
-    try:
-        audio_docs = AudioDocs.objects.filter(user_id = user.id)
+    audio_docs = AudioDocs.objects.filter(user_id = user.id)
+    if audio_docs:
         audio_docs_tuple_dict = tuple(model_to_dict(item) for item in audio_docs)
         audio_docs_values = (
             audio_docs_tuple_dict[0]['songers'], audio_docs_tuple_dict[0]['album_title'], audio_docs_tuple_dict[0]['song_title'], audio_docs_tuple_dict[0]['words_author'], audio_docs_tuple_dict[0]['music_author'], audio_docs_tuple_dict[0]['phon_maker'], audio_docs_tuple_dict[0]['timing'], audio_docs_tuple_dict[0]['release_year']
         )
-    except:
-        audio_docs = []
+        audio_docs.delete()
+    else:
         audio_docs_values = tuple('' for i in range(8))
     
     docs_values += audio_docs_values
 
-    try:
-        video_docs = VideoDocs.objects.get(user_id = user.id)
-        video_docs_dict = model_to_dict(video_docs)
+    video_docs = VideoDocs.objects.filter(user_id = user.id)
+    if video_docs:
+        video_docs_dict = model_to_dict(*video_docs)
         video_docs_values = (
             video_docs_dict['songers'], video_docs_dict['video_title'], video_docs_dict['words_author'], video_docs_dict['music_author'], video_docs_dict['phon_maker'], video_docs_dict['director'], video_docs_dict['timing'], video_docs_dict['release_year'], video_docs_dict['production_country']
         )
-    except:
+        video_docs.delete()
+    else:
         video_docs_values = tuple('' for i in range(9))
 
     docs_values += video_docs_values
@@ -122,6 +129,7 @@ def docs_to_sheet(user):
         licence_dict['music_author'], licence_dict['words_author'], licence_dict['phon_maker']
     )
     docs_values += licence_values
+    licence.delete()
 
 
     music_author = MusicAuthor.objects.filter(user_id = user.id)
@@ -131,6 +139,7 @@ def docs_to_sheet(user):
     )
 
     docs_values += music_author_values
+    music_author.delete()
 
     words_author = WordsAuthor.objects.filter(user_id = user.id)
     words_author_tuple_dict = tuple(model_to_dict(item) for item in words_author)
@@ -139,32 +148,31 @@ def docs_to_sheet(user):
     )
 
     docs_values += words_author_values
+    words_author.delete()
 
-    try:
-        others = Others.objects.filter(user_id = user.id)
+    others = Others.objects.filter(user_id = user.id)
+    if others:
         others_tuple_dict = tuple(model_to_dict(item) for item in others)
         others_values = (
             others_tuple_dict[0]['creative_name'], others_tuple_dict[0]['songs'], others_tuple_dict[0]['fio'], str(others_tuple_dict[0]['birthday']), others_tuple_dict[0]['citizen'], others_tuple_dict[0]['passport'], others_tuple_dict[0]['birth_place'], others_tuple_dict[0]['reg'], others_tuple_dict[0]['fin_conditions']
         )
-    except:
-        others = []
+        others.delete()
+    else:
         others_values = tuple('' for i in range(9))
 
     docs_values += others_values
 
-    try:
-        phon_maker = PhonMaker.objects.filter(user_id = user.id)
+    phon_maker = PhonMaker.objects.filter(user_id = user.id)
+    if phon_maker:
         phon_maker_tuple_dict = tuple(model_to_dict(item) for item in phon_maker)
         phon_maker_values = (
             phon_maker_tuple_dict[0]['fio'], str(phon_maker_tuple_dict[0]['birthday']), phon_maker_tuple_dict[0]['citizen'], phon_maker_tuple_dict[0]['passport'], phon_maker_tuple_dict[0]['birth_place'], phon_maker_tuple_dict[0]['reg'], phon_maker_tuple_dict[0]['author_email'], phon_maker_tuple_dict[0]['fin_conditions']
         )
-    except:
-        phon_maker = []
+        phon_maker.delete()
+    else:
         phon_maker_values = tuple('' for i in range(8))
 
     docs_values += phon_maker_values
-
-    print(docs_values)
 
     docs_data = {
         'range': 'Документы!A3:DC3',
@@ -180,45 +188,45 @@ def docs_to_sheet(user):
 
     for i in range(1, max_len):
         add_rows_values = tuple('' for i in range(54))
-        try:
+        if len(audio_docs) > i:
             add_audio_docs_value = (
                 audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['phon_maker'], audio_docs_tuple_dict[i]['timing'], '', audio_docs_tuple_dict[i]['release_year']
             )
-        except:
+        else:
             add_audio_docs_value = tuple('' for i in range(8))
         add_rows_values += add_audio_docs_value
 
         add_rows_values += tuple('' for i in range(12))
         
-        try:
+        if len(music_author) > i:
             add_music_author_values = (
                 music_author_tuple_dict[i]['fio'], str(music_author_tuple_dict[i]['birthday']), music_author_tuple_dict[i]['citizen'], music_author_tuple_dict[i]['passport'], music_author_tuple_dict[i]['birth_place'], music_author_tuple_dict[i]['reg'], music_author_tuple_dict[i]['author_email'], music_author_tuple_dict[i]['fin_conditions']
             )
-        except:
+        else:
             add_music_author_values = tuple('' for i in range(8))
         add_rows_values += add_music_author_values
 
-        try:
+        if len(words_author) > i:
             add_words_author_values = (
                 words_author_tuple_dict[i]['fio'], str(words_author_tuple_dict[i]['birthday']), words_author_tuple_dict[i]['citizen'], words_author_tuple_dict[i]['passport'], words_author_tuple_dict[i]['birth_place'], words_author_tuple_dict[i]['reg'], words_author_tuple_dict[i]['author_email'], words_author_tuple_dict[i]['fin_conditions']
             )
-        except:
+        else:
             add_words_author_values = tuple('' for i in range(8))
         add_rows_values += add_words_author_values
 
-        try:
+        if len(others):
             add_others_values = (
                 others_tuple_dict[i]['creative_name'], others_tuple_dict[i]['songs'], others_tuple_dict[i]['fio'], str(others_tuple_dict[i]['birthday']), others_tuple_dict[i]['citizen'], others_tuple_dict[i]['passport'], others_tuple_dict[i]['birth_place'], others_tuple_dict[i]['reg'], others_tuple_dict[i]['author_email'], others_tuple_dict[i]['fin_conditions']
             )
-        except:
+        else:
             add_others_values = tuple('' for i in range(9))
         add_rows_values += add_others_values
 
-        try:
+        if len(phon_maker) > i:
             add_phon_maker_values = (
                 phon_maker_tuple_dict[i]['fio'], str(phon_maker_tuple_dict[i]['birthday']), phon_maker_tuple_dict[i]['citizen'], phon_maker_tuple_dict[i]['passport'], phon_maker_tuple_dict[i]['birth_place'], phon_maker_tuple_dict[i]['reg'], phon_maker_tuple_dict[i]['author_email'], phon_maker_tuple_dict[i]['fin_conditions']
             )
-        except:
+        else:
             add_phon_maker_values = tuple('' for i in range(8))
         add_rows_values += add_phon_maker_values
 
@@ -241,66 +249,6 @@ def docs_to_sheet(user):
     spaces.append(spaces_data)
 
 
-    main_info_docs.delete()
-
-    try:
-        OrgInfoIprf.objects.get(user_id = user.id).delete()
-    except:
-        pass
-
-    try:
-        OrgInfoIpin.objects.get(user_id = user.id).delete()
-    except:
-        pass
-
-    try:
-       OrgInfoSam.objects.get(user_id = user.id).delete()
-    except:
-        pass
-
-    try:
-        OrgInfoOoo.objects.get(user_id = user.id).delete()
-    except:
-        pass
-
-    try:
-        audio_docs = AudioDocs.objects.filter(user_id = user.id)
-        for item in audio_docs:
-            item.delete()
-    except:
-        pass
-
-    try:
-        VideoDocs.objects.get(user_id = user.id).delete()
-    except:
-        pass
-
-    licence.delete()
-
-    for item in music_author:
-        item.delete()
-
-    for item in words_author:
-        item.delete()
-
-    try:
-        others = Others.objects.filter(user_id = user.id)
-        for item in others:
-            item.delete()
-    except:
-        pass
-
-    try:
-        phon_maker = PhonMaker.objects.filter(user_id = user.id)
-        for item in phon_maker:
-            item.delete()
-    except:
-        pass
-
-
-
-
-
 
 class MainInfoDocsView(LoginRequiredMixin, FormView):
     template_name = 'documents/documents.html'
@@ -309,16 +257,18 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        try:
-            object_ = MainInfoDocs.objects.get(user_id = user.id)
-            object_dict = model_to_dict(object_)
-            cover = object_dict['cover']
-            form = self.form_class(initial = object_dict)
-        except:
-            try:
-                lk = Lk.objects.get(user_id = user.id)
-                lk_dict = model_to_dict(lk)
-                print(lk_dict)
+        main_info = MainInfoDocs.objects.filter(user_id = user.id)
+
+        if main_info:
+            main_info_dict = model_to_dict(*main_info)
+            cover = main_info_dict['cover']
+            form = self.form_class(initial = main_info_dict)
+        else:
+            lk = Lk.objects.filter(user_id = user.id)
+
+            if lk:
+                lk_dict = model_to_dict(*lk)
+
                 name = lk_dict['name']
                 fio = lk_dict['fio']
                 phone = lk_dict['phone']
@@ -329,9 +279,10 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                 facebook = lk_dict['facebook']
                 youtube = lk_dict['youtube']
                 tiktok = lk_dict['tiktok']
+
                 socials = 'Telegram: ' + str(telegram) + ', ' + 'VK: ' + str(vk) + ', ' + 'Instagram: ' + str(inst) + ', ' + 'Facebook: ' + str(facebook) + ', ' + 'YouTube: ' + str(youtube) + ', ' + 'TikTok: ' + str(tiktok)
                 socials = socials.replace('None', ' ')
-            except:
+            else:
                 name = ''
                 fio = ''
                 phone = ''
@@ -343,39 +294,51 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                 youtube = ''
                 tiktok = ''
                 socials = ''
+
             cover = ''
             form = self.form_class(initial = {'user': user, 
-                                    'artist_name': name,
-                                    'artist_fio': fio, 
-                                    'phone_number': phone,
-                                    'email': email,
-                                    'socials': socials})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'cover': cover, 'delete_cover': 'delete_cover'})
+                                              'artist_name': name,
+                                              'artist_fio': fio, 
+                                              'phone_number': phone,
+                                              'email': email,
+                                              'socials': socials})
+
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'cover': cover, 'delete_cover': 
+                                                    'delete_cover'})
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            try:
-                object_ = MainInfoDocs.objects.get(user_id = user.id)
-                cover = object_.cover
-                object_.delete()
+            main_info = MainInfoDocs.objects.filter(user_id = user.id)
+
+            if main_info:
+                main_info_dict = model_to_dict(*main_info)
+                cover = main_info_dict['cover']
+                main_info.delete()
+                forma = form.save(commit = False)
                 if cover:
-                    forma = form.save(commit = False)
                     forma.cover = cover
                 forma.save()
-            except:
+            else:
                 form.save()
+
             return HttpResponseRedirect('orginfo')
         else:
-            try:
-                object_ = MainInfoDocs.objects.get(user_id = user.id)
-                object_dict = model_to_dict(object_)
-                cover = object_dict['cover']
-            except:
+            main_info = MainInfoDocs.objects.filter(user_id = user.id)
+
+            if main_info:
+                main_info_dict = model_to_dict(*main_info)
+                cover = main_info_dict['cover']
+            else:
                 cover = ''
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title,  'cover': cover, 'delete_cover': 'delete_cover'})
+
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title,  
+                                                        'cover': cover, 
+                                                        'delete_cover': 'delete_cover'})
         
 
 class OrgInfoView(LoginRequiredMixin, FormView):
@@ -413,16 +376,18 @@ class OrgInfoView(LoginRequiredMixin, FormView):
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
         context = {}
-        try:
-            object_ = self.get_model().objects.get(user_id = user.id)
-            object_dict = model_to_dict(object_)
+        objects = self.get_model().objects.filter(user_id = user.id)
+
+        if objects:
+            objects_dict = model_to_dict(*objects)
             if self.get_model() == OrgInfoSam:
-                context['skan_passport'] = object_dict['skan_passport']
-            form = self.get_form_class()(initial = object_dict)
-        except:
+                context['skan_passport'] = objects_dict['skan_passport']
+            form = self.get_form_class()(initial = objects_dict)
+        else:
             if self.get_model() == OrgInfoSam:
                 context['skan_passport'] = ''
             form = self.get_form_class()(initial = {'user': user})
+
         context['delete_skan_passport'] = 'delete_skan_passport'
         context['form'] = form
         context['form_title'] = self.form_title
@@ -434,23 +399,24 @@ class OrgInfoView(LoginRequiredMixin, FormView):
         user = User.objects.get(username = request.user)
         if form.is_valid():
             objects = self.get_model().objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
+
+            if objects:
+                objects.delete()
             form.save() 
-            main_info_docs = MainInfoDocs.objects.get(user_id = user.id)
-            release_type = main_info_docs.release_type
+            main_info = MainInfoDocs.objects.get(user_id = user.id)
+            release_type = main_info.release_type
+
             if release_type == 'SINGLE' or release_type == 'ALBUM':
                 return HttpResponseRedirect(reverse('d_audio'))
             else:
                 return HttpResponseRedirect(reverse('d_video'))                
         else:
             if self.get_model() == OrgInfoSam:
-                try:
-                    object_ = self.get_model().objects.get(user_id = user.id)
-                    object_dict = model_to_dict(object_)
-                    context['skan_passport'] = object_dict['skan_passport']
-                except:
+                orginfosam = OrgInfoSam.objects.filter(user_id = user.id)
+                if orginfosam:
+                    orginfosam_dict = model_to_dict(*orginfosam)
+                    context['skan_passport'] = orginfosam_dict['skan_passport']
+                else:
                     context['skan_passport'] = ''
             context['delete_skan_passport'] = 'delete_skan_passport'
             context['form'] = form
@@ -462,6 +428,7 @@ class AudioDocsView(LoginRequiredMixin, FormView):
     template_name = 'documents/audio.html'
     form_class = AudioDocsForm
     form_title = 'Аудио'
+    fields_for_button = ['songers', 'song_title', 'album_title', 'words_author', 'music_author', 'phon_maker', 'timing', 'release_year']
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -472,7 +439,8 @@ class AudioDocsView(LoginRequiredMixin, FormView):
             'form-INITIAL_FORMS': str(num_songs),
         }
         audio = AudioDocs.objects.filter(user_id = user.id)
-        if len(audio) != 0:
+
+        if audio:
             for song in range(len(audio)):
                 for field in AudioDocsForm._meta.fields:
                     data['form-' + str(song) + '-' + field] = getattr(audio[song], field)
@@ -481,8 +449,11 @@ class AudioDocsView(LoginRequiredMixin, FormView):
         else:
             for num in range(num_songs):
                 data['form-' + str(num) + '-user'] = user.id
+
         formset = audio_formset(data)
-        return render(request, self.template_name, {'button': self.form_class._meta.fields, 'formset': formset, 'form_title': self.form_title})
+        return render(request, self.template_name, {'button': self.fields_for_button, 
+                                                    'formset': formset, 
+                                                    'form_title': self.form_title})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -491,7 +462,7 @@ class AudioDocsView(LoginRequiredMixin, FormView):
         add_video = self.request.POST.get('add_video')
         if formset.is_valid():
             audio = AudioDocs.objects.filter(user_id = user.id)
-            if len(audio) != 0:
+            if audio:
                 for song in audio:
                     song.delete()
             for form in formset:
@@ -501,7 +472,9 @@ class AudioDocsView(LoginRequiredMixin, FormView):
             else:
                 return HttpResponseRedirect(reverse('d_video'))
         else:
-            return render(request, self.template_name, {'button': self.form_class._meta.fields, 'formset': formset, 'form_title': self.form_title})
+            return render(request, self.template_name, {'button': self.fields_for_button, 
+                                                        'formset': formset, 
+                                                        'form_title': self.form_title})
 
 
 class VideoDocsView(LoginRequiredMixin, FormView):
@@ -511,28 +484,28 @@ class VideoDocsView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = VideoDocs.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
+        video = VideoDocs.objects.filter(user_id = user.id)
+        if video:
+            video_dict = model_to_dict(*video)
+            video_dict['user'] = user
+            form = self.form_class(initial = video_dict)
         else:
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = VideoDocs.objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
+            video = VideoDocs.objects.filter(user_id = user.id)
+            if video:
+                video.delete()
             form.save()
             return HttpResponseRedirect(reverse('licence'))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title})
 
 
 class LicenceView(LoginRequiredMixin, FormView):
@@ -543,28 +516,30 @@ class LicenceView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        objects = Licence.objects.filter(user_id = user.id).values()
-        if len(objects) != 0:
-            for item in objects:
-                data = item
-            data['user'] = user
-            form = self.form_class(initial = data)
+        licence = Licence.objects.filter(user_id = user.id)
+        if licence:
+            licence_dict = model_to_dict(*licence)
+            licence_dict['user'] = user
+            form = self.form_class(initial = licence_dict)
         else:
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'form_description': self.form_description})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
-            objects = Licence.objects.filter(user_id = user.id)
-            if len(objects) != 0:
-                for item in objects:
-                    item.delete()
+            licence = Licence.objects.filter(user_id = user.id)
+            if licence:
+                licence.delete()
             form.save()
             return HttpResponseRedirect(reverse('music_author', args=[1]))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description})
 
 
 class MusicAuthorView(LoginRequiredMixin, FormView):
@@ -573,42 +548,52 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
     form_description = ''
 
     def get(self, request, *args, **kwargs):
+        user = User.objects.get(username = request.user)
         num_author = kwargs['num_author']
         self.form_title = 'Автор музыки ' + str(num_author)
-        user = User.objects.get(username = request.user)
-        objects = MusicAuthor.objects.filter(user_id = user.id)
-        if num_author > len(objects) + 1:
+        music_author = MusicAuthor.objects.filter(user_id = user.id)
+
+        if num_author > len(music_author) + 1:
             return HttpResponseNotFound('<h1>Page not found</h1>')
-        if num_author <= len(objects):
-            form = self.form_class(initial = model_to_dict(objects.get(number = num_author)))
+        if num_author <= len(music_author):
+            form = self.form_class(initial = model_to_dict(music_author.get(number = num_author)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_author})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'num_author': num_author})
+
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'num_author': num_author})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
         num_author = kwargs['num_author']
-        objects = MusicAuthor.objects.filter(user_id = user.id)
         self.form_title = 'Автор музыки ' + str(num_author)
+        music_author = MusicAuthor.objects.filter(user_id = user.id)
         form = self.form_class(data = request.POST, files = request.FILES)
+
         if form.is_valid():
-            if num_author <= len(objects):
-                objects.get(number = num_author).delete()
+            if num_author <= len(music_author):
+                music_author.get(number = num_author).delete()
             form.save()
             one_more = request.POST.get('one_more')
-            if num_author < len(objects):
+            if num_author < len(music_author):
                 return HttpResponseRedirect(reverse('music_author', args=[num_author + 1]))
             else:
                 if one_more == 'ONE_MORE_YES':
                     if num_author >= 5:
                         self.form_description = 'Нельзя создать больше пяти авторов музыки.' 
-                        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description, 'num_author': num_author})
+                        return render(request, self.template_name, {'form': form, 
+                                                                    'form_title': self.form_title, 
+                                                                    'form_description': self.form_description, 
+                                                                    'num_author': num_author})
                     else:
                         return HttpResponseRedirect(reverse('music_author', args=[num_author + 1]))
                 else:
                     return HttpResponseRedirect(reverse('words_author', args=[1]))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description})
 
 
 class WordsAuthorView(LoginRequiredMixin, FormView):
@@ -620,37 +605,45 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
         num_author = kwargs['num_author']
         self.form_title = 'Автор слов ' + str(num_author)
         user = User.objects.get(username = request.user)
-        objects = WordsAuthor.objects.filter(user_id = user.id)
-        if num_author <= len(objects):
-            form = self.form_class(initial = model_to_dict(objects.get(number = num_author)))
+        words_author = WordsAuthor.objects.filter(user_id = user.id)
+        if num_author <= len(words_author):
+            form = self.form_class(initial = model_to_dict(words_author.get(number = num_author)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_author})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'num_author': num_author})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'num_author': num_author})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
         num_author = kwargs['num_author']
-        objects = WordsAuthor.objects.filter(user_id = user.id)
+        words_author = WordsAuthor.objects.filter(user_id = user.id)
         self.form_title = 'Автор слов ' + str(num_author)
         form = self.form_class(data = request.POST, files = request.FILES)
+
         if form.is_valid():
-            if num_author <= len(objects):
-                objects.get(number = num_author).delete()
+            if num_author <= len(words_author):
+                words_author.get(number = num_author).delete()
             form.save()
             one_more = request.POST.get('one_more')
-            if num_author < len(objects):
+            if num_author < len(words_author):
                 return HttpResponseRedirect(reverse('words_author', args=[num_author + 1]))
             else:
                 if one_more == 'ONE_MORE_YES':
                     if num_author >= 5:
                         self.form_description = 'Нельзя создать больше пяти авторов слов.' 
-                        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description, 'num_author': num_author})
+                        return render(request, self.template_name, {'form': form, 
+                                                                    'form_title': self.form_title, 
+                                                                    'form_description': self.form_description, 
+                                                                    'num_author': num_author})
                     else:
                         return HttpResponseRedirect(reverse('words_author', args=[num_author + 1]))
                 else:
                     return HttpResponseRedirect(reverse('others', args=[1]))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description})
 
 
 class OthersView(LoginRequiredMixin, FormView):
@@ -662,37 +655,45 @@ class OthersView(LoginRequiredMixin, FormView):
         num_others = kwargs['num_others']
         self.form_title = 'Соисполнитель ' + str(num_others)
         user = User.objects.get(username = request.user)
-        objects = Others.objects.filter(user_id = user.id)
-        if num_others <= len(objects):
-            form = self.form_class(initial = model_to_dict(objects.get(number = num_others)))
+        others = Others.objects.filter(user_id = user.id)
+        if num_others <= len(others):
+            form = self.form_class(initial = model_to_dict(others.get(number = num_others)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_others})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'num_others': num_others})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'num_others': num_others})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
         num_others = kwargs['num_others']
-        objects = Others.objects.filter(user_id = user.id)
+        others = Others.objects.filter(user_id = user.id)
         self.form_title = 'Соисполнитель ' + str(num_others)
         form = self.form_class(data = request.POST, files = request.FILES)
+
         if form.is_valid():
-            if num_others <= len(objects):
-                objects.get(number = num_others).delete()
+            if num_others <= len(others):
+                others.get(number = num_others).delete()
             form.save()
             one_more = request.POST.get('one_more')
-            if num_others < len(objects):
+            if num_others < len(others):
                 return HttpResponseRedirect(reverse('others', args=[num_others + 1]))
             else:
                 if one_more == 'ONE_MORE_YES':
                     if num_others >= 5:
                         self.form_description = 'Нельзя создать больше пяти соисполнителей.' 
-                        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description, 'num_others': num_others})
+                        return render(request, self.template_name, {'form': form, 
+                                                                    'form_title': self.form_title, 
+                                                                    'form_description': self.form_description, 
+                                                                    'num_others': num_others})
                     else:
                         return HttpResponseRedirect(reverse('others', args=[num_others + 1]))
                 else:
                     return HttpResponseRedirect(reverse('phon_maker', args=[1]))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description})
 
 
 class PhonMakerView(LoginRequiredMixin, FormView):
@@ -704,38 +705,46 @@ class PhonMakerView(LoginRequiredMixin, FormView):
         num_phon_maker = kwargs['num_phon_maker']
         self.form_title = 'Изготовитель фонограммы ' + str(num_phon_maker)
         user = User.objects.get(username = request.user)
-        objects = PhonMaker.objects.filter(user_id = user.id)
-        if num_phon_maker <= len(objects):
-            form = self.form_class(initial = model_to_dict(objects.get(number = num_phon_maker)))
+        phon_maker = PhonMaker.objects.filter(user_id = user.id)
+        if num_phon_maker <= len(phon_maker):
+            form = self.form_class(initial = model_to_dict(phon_maker.get(number = num_phon_maker)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_phon_maker})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'num_phon_maker': num_phon_maker})
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'num_phon_maker': num_phon_maker})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
         num_phon_maker = kwargs['num_phon_maker']
-        objects = PhonMaker.objects.filter(user_id = user.id)
+        phon_maker = PhonMaker.objects.filter(user_id = user.id)
         self.form_title = 'Изготовитель фонограммы ' + str(num_phon_maker)
         form = self.form_class(data = request.POST, files = request.FILES)
+
         if form.is_valid():
-            if num_phon_maker <= len(objects):
-                objects.get(number = num_phon_maker).delete()
+            if num_phon_maker <= len(phon_maker):
+                phon_maker.get(number = num_phon_maker).delete()
             form.save()
             one_more = request.POST.get('one_more')
-            if num_phon_maker < len(objects):
+            if num_phon_maker < len(phon_maker):
                 return HttpResponseRedirect(reverse('phon_maker', args=[num_phon_maker + 1]))
             else:
                 if one_more == 'ONE_MORE_YES':
                     if num_phon_maker >= 5:
                         self.form_description = 'Нельзя создать больше пяти соисполнителей.' 
-                        return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description, 'num_phon_maker': num_phon_maker})
+                        return render(request, self.template_name, {'form': form, 
+                                                                    'form_title': self.form_title, 
+                                                                    'form_description': self.form_description, 
+                                                                    'num_phon_maker': num_phon_maker})
                     else:
                         return HttpResponseRedirect(reverse('phon_maker', args=[num_phon_maker + 1]))
                 else:
                     docs_to_sheet(user)
                     return HttpResponseRedirect(reverse('d_success'))
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'form_description': self.form_description})
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description})
 
 
 
@@ -805,12 +814,12 @@ def delete_phon_maker(request, *args, **kwargs):
 
 def delete_cover(request):
     user = User.objects.get(username = request.user)
-    object_ = MainInfoDocs.objects.filter(user_id = user.id).update(cover = '')
+    MainInfoDocs.objects.filter(user_id = user.id).update(cover = '')
     return HttpResponseRedirect(reverse('documents'))
 
 def delete_skan_passport(request):
     user = User.objects.get(username = request.user)
-    object_ = OrgInfoSam.objects.filter(user_id = user.id).update(skan_passport = '')
+    OrgInfoSam.objects.filter(user_id = user.id).update(skan_passport = '')
     return HttpResponseRedirect(reverse('orginfo'))
 
 def success_page(request):

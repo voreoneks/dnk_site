@@ -1,8 +1,8 @@
-from google.oauth2 import service_account
-from googleapiclient.http import MediaFileUpload
-from googleapiclient.discovery import build
 from pathlib import Path
-import time
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
 
 class Drive():
