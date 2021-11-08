@@ -1,7 +1,8 @@
+{% load static %}
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <div class="col-lg-6 col-sm-8 col-6 nav-block-left">
-            <ul class="nav">
+            <ul class="nav nav-list">
                 <li class="nav-item">
                     <a aria-current="page" href="{% url 'main' %}">Главная</a>
                 </li>
@@ -14,12 +15,25 @@
                 <li class="nav-item">
                     <a href="{% url 'news' %}">Новости</a>
                 </li>
-                
             </ul>
+            <ul class="nav-menu">
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{% static '/images/menu_icon.png' %}" alt="">
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <li><a class="dropdown-item" href="{% url 'main' %}">Главная</a></li>
+                      <li><a class="dropdown-item" href="{% url 'lk' %}">Личный кабинет</a></li>
+                      <li><a class="dropdown-item" href="{% url 'calc' %}">Калькулятор авансов</a></li>
+                      <li><a class="dropdown-item" href="{% url 'news' %}">Новости</a></li>
+                      <li><a class="dropdown-item" href="{% url 'logout' %}">Выход</a></li>
+                    </ul>
+                </li>
+            </ul> 
         </div>
         <div class="col-lg-6 col-sm-4 col-6 nav-block-right">
             <ul class="nav justify-content-end">
-                <li class="nav-item">
+                <li class="nav-item nav-list">
                     <a aria-current="page" href="{% url 'logout' %}">Выход</a>
                 </li>
             </ul>

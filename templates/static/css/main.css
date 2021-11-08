@@ -150,14 +150,12 @@ section{
     }
 
     .release-button{
-        flex-direction: column;
+        display: flex;
+        justify-content: space-between;
         margin: auto;
-        width: auto;
+
     }
 
-    .release-button button{
-        margin-top: 10%;
-    }
 }
 
 .calc-form{
@@ -353,6 +351,7 @@ a:focus{
     margin: auto;
     font-family: var(--oswald_light);
     color: white;
+    margin-top: 100px;
 }
 
 .release-form p{
@@ -405,4 +404,39 @@ a:focus{
 
 .modal-content{
     background-color: rgb(63, 68, 73);
+}
+
+.nav-menu{
+    display: none;
+}
+
+@media (max-width: 823px) {
+    .nav-menu{
+        display: block;
+        list-style-type: none;
+        padding-left: 0px;
+    }
+
+    
+    .nav-list{
+        display: none;
+    }
+}
+
+.nav-menu img{
+    width: 40px;
+}
+
+.dropdown-menu{
+    background-color: black;
+}
+
+.dropdown-item{
+    margin-top: 20px;
+}
+
+@media (max-width: 340px) {
+    .release-button{
+        width: auto;
+    }
 }

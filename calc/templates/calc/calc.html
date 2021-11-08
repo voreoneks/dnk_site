@@ -12,7 +12,10 @@
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <div class="col-md-6 col-sm-8 col-10 release-header">
-            <h5>Калькулятор авансов</h5><hr>
+            <h5>{{ form_title }}</h5><hr>
+            {% autoescape off %}
+            <p>{{ form_description }}</p>
+            {% endautoescape %}
             {% if error %}
                 <p style="text-align: center; color: brown;">{{ error }}</p>
             {% endif %}

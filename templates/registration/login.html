@@ -22,18 +22,19 @@
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <div class="col-md-4 auth">
 
-            {% if form.errors %}
-                <p>Your username and password didn't match. Please try again.</p>
-            {% endif %}
-                    
-            {% if next %}
-                {% if user.is_authenticated %}
-                    <p>Your account doesn't have access to this page. To proceed,
-                    please login with an account that has access.</p>
-                {% else %}
-                    <p>Please login to see this page.</p>
+            <div class="errorlist">
+                {% if form.errors %}
+                    <p>Имя или пароль введены неверно.</p>
                 {% endif %}
-            {% endif %}
+                        
+                {% if next %}
+                    {% if user.is_authenticated %}
+                        <p>У аккаунта нет доступа к этой странице.</p>
+                    {% else %}
+                        <p>Войдите в аккаунт чтобы просматривать эту страницу.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
 
             <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
@@ -41,7 +42,7 @@
                         <p>{{ item.label_tag }}</p>
                         <p>{{ item }}</p>
                     {% endfor %}
-                    <button class="btn button" type="submit">Submit form</button>
+                    <button class="btn button" type="submit">Войти</button>
                     <input type="hidden" name="next" value="{{ next }}">
             </form>
 

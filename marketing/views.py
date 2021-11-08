@@ -16,6 +16,7 @@ from lk.models import Lk
 
 from .forms import *
 from .models import *
+import shutil
 
 
 def marketing_to_sheet(user):
@@ -85,6 +86,9 @@ def marketing_to_sheet(user):
         'values': [spaces_values,]
     }
     spaces.append(spaces_data)
+
+    # folder_path = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, 'uploads/'))
+    # shutil.rmtree(folder_path)
 
 
 
