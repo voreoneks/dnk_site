@@ -10,7 +10,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic.edit import FormView
-from dnk_site.settings import BASE_DIR, MEDIA_URL
+from dnk_site.settings import BASE_DIR, MEDIA_URL, MEDIA_ROOT
 from google_drive.google_drive import Drive
 from google_sheets import Sheet
 from lk.models import *
@@ -32,17 +32,17 @@ def release_to_cloud(user):
 
     if main_info_dict['photo']:
         photo = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['photo'].name))
-        up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', photo)['webViewLink']
+        up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', str(photo))['webViewLink']
     else: 
         up_photo = ''
     if main_info_dict['cover']:
         cover = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover'].name))
-        up_cover = drive.upload_file(new_folder['id'], 'Обложка', cover)['webViewLink']
+        up_cover = drive.upload_file(new_folder['id'], 'Обложка', str(cover))['webViewLink']
     else:
         up_cover = ''
     if main_info_dict['cover_psd']:
         cover_psd = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover_psd'].name))
-        up_cover_psd = drive.upload_file(new_folder['id'], 'Обложка_PSD', cover_psd)['webViewLink']
+        up_cover_psd = drive.upload_file(new_folder['id'], 'Обложка_PSD', str(cover_psd))['webViewLink']
     else:
         up_cover_psd = ''
 
@@ -66,28 +66,28 @@ def release_to_cloud(user):
 
             if item['audio']:
                 song = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['audio'].name))
-                up_song = drive.upload_file(new_folder['id'], item['song_title'], song)['webViewLink']
+                up_song = drive.upload_file(new_folder['id'], item['song_title'], str(song))['webViewLink']
             else:
                 up_song = ''
             up_song_tuple = (*up_song_tuple, up_song)
 
             if item['clean_link']:
                 clean_link = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['clean_link'].name))
-                up_clean_link = drive.upload_file(new_folder['id'], item['song_title'] + '_clean', clean_link)['webViewLink']
+                up_clean_link = drive.upload_file(new_folder['id'], item['song_title'] + '_clean', str(clean_link))['webViewLink']
             else:
                 up_clean_link = ''
             up_clean_link_tuple = (*up_clean_link_tuple, up_clean_link)
 
             if item['instrumental']:
                 instrumental = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['instrumental'].name))
-                up_instrumental = drive.upload_file(new_folder['id'], item['song_title'] + '_instrumental', instrumental)['webViewLink']
+                up_instrumental = drive.upload_file(new_folder['id'], item['song_title'] + '_instrumental', str(instrumental))['webViewLink']
             else:
                 up_instrumental = ''
             up_instrumental_tuple = (*up_instrumental_tuple, up_instrumental)
 
             if item['song_text']:
                 song_text = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['song_text'].name))
-                up_song_text = drive.upload_file(new_folder['id'], item['song_title'] + '_text', song_text)['webViewLink']
+                up_song_text = drive.upload_file(new_folder['id'], item['song_title'] + '_text', str(song_text))['webViewLink']
             else:
                 up_song_text = ''
             up_song_text_tuple = (*up_song_text_tuple, up_song_text)
@@ -95,6 +95,9 @@ def release_to_cloud(user):
         audio_values = (
             audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], up_song_tuple[0], up_clean_link_tuple[0], up_instrumental_tuple[0], up_song_text_tuple[0], audio_tuple_dict[0]['release_year']
         )
+
+        for item in audio:
+            item.delete()
     else:
         audio_values = tuple('' for i in range(20))
     
@@ -105,7 +108,7 @@ def release_to_cloud(user):
         video_dict = model_to_dict(video[0])
         if video_dict['video_preview']:
             video_preview = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, video_dict['video_preview'].name))
-            up_video_preview = drive.upload_file(new_folder['id'], 'Превью видео', video_preview)['webViewLink']
+            up_video_preview = drive.upload_file(new_folder['id'], 'Превью видео', str(video_preview))['webViewLink']
         video_values = (
             video_dict['songers'], video_dict['video_title'], video_dict['feat'], video_dict['words_author'], video_dict['music_author'], video_dict['lexis'], video_dict['director'], video_dict['timing'], video_dict['release_year'], video_dict['video_link'], up_video_preview, video_dict['production_country']
         )
@@ -241,7 +244,8 @@ class AudioView(LoginRequiredMixin, FormView):
     template_name = 'release/audio.html'
     form_class = AudioForm
     form_title = 'Аудио'
-    fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'release_year', 'add_video',]
+    fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'release_year']
+    fields = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'audio', 'clean_link', 'instrumental', 'song_text', 'release_year']
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -276,7 +280,7 @@ class AudioView(LoginRequiredMixin, FormView):
 
         if audio:
             for song in range(len(audio)):
-                for field in AudioForm._meta.fields:
+                for field in self.fields:
                     data['form-' + str(song) + '-' + field] = getattr(audio[song], field)
             for song in range(num_songs):
                 data['form-' + str(song) + '-user'] = user
@@ -303,8 +307,8 @@ class AudioView(LoginRequiredMixin, FormView):
         audio_formset = formset_factory(self.form_class)
         formset = audio_formset(data = self.request.POST, files = self.request.FILES)
         add_video = self.request.POST.get('add_video')
+        audio = Audio.objects.filter(user_id = user.id)
         if formset.is_valid():
-            audio = Audio.objects.filter(user_id = user.id)
 
             if audio:
                 songs = tuple()
@@ -322,14 +326,15 @@ class AudioView(LoginRequiredMixin, FormView):
                 for form in range(len(formset)):
                     forma = formset[form].save(commit = False)
 
-                    if not forma.audio:
-                        forma.audio = songs[form]
-                    if not forma.clean_link:
-                        forma.clean_link = clean_links[form]
-                    if not forma.instrumental:
-                        forma.instrumental = instrumentals[form]
-                    if not forma.song_text:
-                        forma.song_text = song_texts[form]
+                    if form < len(audio):
+                        if not forma.audio:
+                            forma.audio = songs[form]
+                        if not forma.clean_link:
+                            forma.clean_link = clean_links[form]
+                        if not forma.instrumental:
+                            forma.instrumental = instrumentals[form]
+                        if not forma.song_text:
+                            forma.song_text = song_texts[form]
 
                     forma.save()
             else:
@@ -342,7 +347,35 @@ class AudioView(LoginRequiredMixin, FormView):
             else:
                 return HttpResponseRedirect(reverse('r_video'))
         else:
-            return render(request, self.template_name, {'button': self.fields_for_button, 'formset': formset, 'form_title': self.form_title})
+            audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
+
+            audio_urls = tuple()
+            for item in audio_tuple_dict:
+                if item['audio']:
+                    audio_urls = (*audio_urls, Path(item['audio'].name).name)
+
+            clean_link_urls = tuple()
+            for item in audio_tuple_dict:
+                if item['clean_link']:
+                    clean_link_urls = (*clean_link_urls, Path(item['clean_link'].name).name)
+
+            instrumental_urls = tuple()
+            for item in audio_tuple_dict:
+                if item['instrumental']:
+                    instrumental_urls = (*instrumental_urls, Path(item['instrumental'].name).name)
+
+            song_text_urls = tuple()
+            for item in audio_tuple_dict:
+                if item['song_text']:
+                    song_text_urls = (*song_text_urls, Path(item['song_text'].name).name)
+
+            return render(request, self.template_name, {'button': self.fields_for_button, 
+                                                        'formset': formset, 
+                                                        'audio_urls': audio_urls, 
+                                                        'clean_link_urls': clean_link_urls, 
+                                                        'instrumental_urls': instrumental_urls, 
+                                                        'song_text_urls': song_text_urls,
+                                                        'form_title': self.form_title})
 
 
 class VideoView(LoginRequiredMixin, FormView):
@@ -391,7 +424,7 @@ class VideoView(LoginRequiredMixin, FormView):
             video = Video.objects.filter(user_id = user.id)
 
             if video:
-                video_dict = model_to_dict(video)
+                video_dict = model_to_dict(*video)
                 preview = video_dict['video_preview']
             else:
                 preview = ''

@@ -429,6 +429,7 @@ class AudioDocsView(LoginRequiredMixin, FormView):
     form_class = AudioDocsForm
     form_title = 'Аудио'
     fields_for_button = ['songers', 'song_title', 'album_title', 'words_author', 'music_author', 'phon_maker', 'timing', 'release_year']
+    fields = ['songers', 'song_title', 'album_title', 'words_author', 'music_author', 'phon_maker', 'timing', 'release_year']
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -442,7 +443,7 @@ class AudioDocsView(LoginRequiredMixin, FormView):
 
         if audio:
             for song in range(len(audio)):
-                for field in AudioDocsForm._meta.fields:
+                for field in self.fields:
                     data['form-' + str(song) + '-' + field] = getattr(audio[song], field)
             for song in range(num_songs):
                 data['form-' + str(song) + '-user'] = user

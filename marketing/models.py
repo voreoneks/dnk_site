@@ -1,5 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
+import os
+from transliterate import translit
+
+def update_filename(instance, filename):
+    path = 'uploads/' + str(instance.user)
+    filename_ = translit(filename, language_code='ru', reversed=True)
+    return os.path.join(path, filename_)
 
 class MainInfoMarketing(models.Model):
     release_type_choices = {
@@ -39,7 +46,7 @@ class Marketing(models.Model):
     where_from = models.CharField(max_length=500, verbose_name='Страна / город')
     affiliation = models.CharField(max_length=500, verbose_name='Принадлежность к музыкальному / творческому сообществу')
     awards = models.CharField(max_length=1024, verbose_name='Основные музыкальные награды и достижения')
-    photo = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Качественные фотографии, которые будут отправлены редакторам площадок', blank=True, null=True)
+    photo = models.ImageField(upload_to = update_filename, verbose_name='Качественные фотографии, которые будут отправлены редакторам площадок', blank=True, null=True)
     photo_link = models.URLField(verbose_name='Качественные фотографии, которые будут отправлены редакторам площадок', blank=True, null=True)
     inspiration = models.CharField(max_length=2048, verbose_name='Источник вдохновения (Артисты, альбомы, фильмы, страны и т.д.)')
     concept = models.CharField(max_length=2048, verbose_name='Концепция записи // Идея, главная задумка')

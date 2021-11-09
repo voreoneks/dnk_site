@@ -1,6 +1,13 @@
 from django.contrib.auth.models import User
 from django.db import models
 from pathlib import Path
+import os
+from transliterate import translit
+
+def update_filename(instance, filename):
+    path = 'uploads/' + str(instance.user)
+    filename_ = translit(filename, language_code='ru', reversed=True)
+    return os.path.join(path, filename_)
 
 class News(models.Model):
     title = models.CharField(max_length=150, verbose_name='Название статьи')
@@ -9,7 +16,7 @@ class News(models.Model):
     updated_at = models.DateTimeField(verbose_name='Дата обновления', auto_now=True)
     is_published = models.BooleanField(verbose_name='Опубликовано', default=True)
     image = models.ImageField(verbose_name='Изображение', upload_to = 'news/%Y/%m/%d', blank=True)
-    file = models.FileField(upload_to = 'news/%Y/%m/%d', blank=True, verbose_name='Файл к новости')
+    file = models.FileField(upload_to = update_filename, blank=True, verbose_name='Файл к новости')
     slug = models.SlugField(verbose_name='Slug', null=True)
     user_visible = models.ManyToManyField(User, verbose_name='Статья для пользователя', blank=True)
 

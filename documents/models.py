@@ -2,6 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.base import Model
 from django.db.models.fields import CharField
+import os
+from transliterate import translit
+
+def update_filename(instance, filename):
+    path = 'uploads/' + str(instance.user)
+    filename_ = translit(filename, language_code='ru', reversed=True)
+    return os.path.join(path, filename_)
 
 class MainInfoDocs(models.Model):
     release_type_choices = {
@@ -24,7 +31,7 @@ class MainInfoDocs(models.Model):
     phone_number = models.CharField(max_length=12, verbose_name='Телефон для связи')
     email = models.EmailField(verbose_name='E-mail')
     socials = models.CharField(max_length=500, verbose_name='Социальные сети', blank=True, null=True)
-    cover = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Обложка (jpg 3000x3000)', blank=True, null=True)
+    cover = models.ImageField(upload_to = update_filename, verbose_name='Обложка (jpg 3000x3000)', blank=True, null=True)
     release_type = models.CharField(max_length=15, choices=release_type_choices, verbose_name='Тип релиза', null=True, default='SINGLE')
     num_songs = models.IntegerField(choices=integer_choices, null=True, default=1, verbose_name='Количество песен для отправки')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -68,7 +75,7 @@ class OrgInfoSam(models.Model):
     k_s = models.CharField(max_length=100, verbose_name='Корреспондентский счет')
     inn = models.CharField(max_length=100, verbose_name='ИНН', blank=True, null=True)
     snils = models.CharField(max_length=100, verbose_name='СНИЛС', blank=True, null=True)
-    skan_passport = models.ImageField(upload_to = 'uploads/%Y/%m/%d/', verbose_name='Скан паспорта',  blank=True, null=True)
+    skan_passport = models.ImageField(upload_to = update_filename, verbose_name='Скан паспорта',  blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class OrgInfoOoo(models.Model):
