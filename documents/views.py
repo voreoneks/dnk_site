@@ -31,7 +31,7 @@ def docs_to_sheet(user):
     new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user) + '_documents')
 
     if main_info_docs_dict['cover']:
-        cover = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_docs_dict['cover'].name))
+        cover = str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_docs_dict['cover'].name)
         up_cover = drive.upload_file(new_folder['id'], 'Обложка', cover)['webViewLink']
     else:
         cover = ''
@@ -71,7 +71,7 @@ def docs_to_sheet(user):
         orginfosam_dict = model_to_dict(*orginfosam)
 
         if orginfosam_dict['skan_passport']:
-            skan_passport = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, orginfosam_dict['skan_passport'].name))
+            skan_passport = str(BASE_DIR) + os.path.join(MEDIA_URL, orginfosam_dict['skan_passport'].name)
             up_skan_passport = drive.upload_file(new_folder['id'], 'Скан пасспорта', skan_passport)['webViewLink']
         else:
             up_skan_passport = ''
@@ -105,7 +105,6 @@ def docs_to_sheet(user):
         audio_docs_values = (
             audio_docs_tuple_dict[0]['songers'], audio_docs_tuple_dict[0]['album_title'], audio_docs_tuple_dict[0]['song_title'], audio_docs_tuple_dict[0]['words_author'], audio_docs_tuple_dict[0]['music_author'], audio_docs_tuple_dict[0]['phon_maker'], audio_docs_tuple_dict[0]['timing'], audio_docs_tuple_dict[0]['release_year']
         )
-        audio_docs.delete()
     else:
         audio_docs_values = tuple('' for i in range(8))
     
@@ -139,7 +138,6 @@ def docs_to_sheet(user):
     )
 
     docs_values += music_author_values
-    music_author.delete()
 
     words_author = WordsAuthor.objects.filter(user_id = user.id)
     words_author_tuple_dict = tuple(model_to_dict(item) for item in words_author)
@@ -148,7 +146,6 @@ def docs_to_sheet(user):
     )
 
     docs_values += words_author_values
-    words_author.delete()
 
     others = Others.objects.filter(user_id = user.id)
     if others:
@@ -156,7 +153,6 @@ def docs_to_sheet(user):
         others_values = (
             others_tuple_dict[0]['creative_name'], others_tuple_dict[0]['songs'], others_tuple_dict[0]['fio'], str(others_tuple_dict[0]['birthday']), others_tuple_dict[0]['citizen'], others_tuple_dict[0]['passport'], others_tuple_dict[0]['birth_place'], others_tuple_dict[0]['reg'], others_tuple_dict[0]['fin_conditions']
         )
-        others.delete()
     else:
         others_values = tuple('' for i in range(9))
 
@@ -168,7 +164,6 @@ def docs_to_sheet(user):
         phon_maker_values = (
             phon_maker_tuple_dict[0]['fio'], str(phon_maker_tuple_dict[0]['birthday']), phon_maker_tuple_dict[0]['citizen'], phon_maker_tuple_dict[0]['passport'], phon_maker_tuple_dict[0]['birth_place'], phon_maker_tuple_dict[0]['reg'], phon_maker_tuple_dict[0]['author_email'], phon_maker_tuple_dict[0]['fin_conditions']
         )
-        phon_maker.delete()
     else:
         phon_maker_values = tuple('' for i in range(8))
 
@@ -190,7 +185,7 @@ def docs_to_sheet(user):
         add_rows_values = tuple('' for i in range(54))
         if len(audio_docs) > i:
             add_audio_docs_value = (
-                audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['phon_maker'], audio_docs_tuple_dict[i]['timing'], '', audio_docs_tuple_dict[i]['release_year']
+                audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['phon_maker'], audio_docs_tuple_dict[i]['timing'], audio_docs_tuple_dict[i]['release_year']
             )
         else:
             add_audio_docs_value = tuple('' for i in range(8))
@@ -214,7 +209,7 @@ def docs_to_sheet(user):
             add_words_author_values = tuple('' for i in range(8))
         add_rows_values += add_words_author_values
 
-        if len(others):
+        if len(others) > i:
             add_others_values = (
                 others_tuple_dict[i]['creative_name'], others_tuple_dict[i]['songs'], others_tuple_dict[i]['fio'], str(others_tuple_dict[i]['birthday']), others_tuple_dict[i]['citizen'], others_tuple_dict[i]['passport'], others_tuple_dict[i]['birth_place'], others_tuple_dict[i]['reg'], others_tuple_dict[i]['author_email'], others_tuple_dict[i]['fin_conditions']
             )
@@ -247,6 +242,15 @@ def docs_to_sheet(user):
         'values': [spaces_values,]
     }
     spaces.append(spaces_data)
+
+    if audio_docs:
+        audio_docs.delete()
+    music_author.delete()
+    words_author.delete()
+    if others:
+        others.delete()
+    if phon_maker:
+        phon_maker.delete()
 
 
 

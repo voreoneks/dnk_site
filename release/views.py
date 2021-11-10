@@ -31,18 +31,18 @@ def release_to_cloud(user):
     new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user) + '_release')
 
     if main_info_dict['photo']:
-        photo = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['photo'].name))
-        up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', str(photo))['webViewLink']
+        photo = str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['photo'].name)
+        up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', photo)['webViewLink']
     else: 
         up_photo = ''
     if main_info_dict['cover']:
-        cover = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover'].name))
-        up_cover = drive.upload_file(new_folder['id'], 'Обложка', str(cover))['webViewLink']
+        cover = str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover'].name)
+        up_cover = drive.upload_file(new_folder['id'], 'Обложка', cover)['webViewLink']
     else:
         up_cover = ''
     if main_info_dict['cover_psd']:
-        cover_psd = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover_psd'].name))
-        up_cover_psd = drive.upload_file(new_folder['id'], 'Обложка_PSD', str(cover_psd))['webViewLink']
+        cover_psd = str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_dict['cover_psd'].name)
+        up_cover_psd = drive.upload_file(new_folder['id'], 'Обложка_PSD', cover_psd)['webViewLink']
     else:
         up_cover_psd = ''
 
@@ -65,29 +65,29 @@ def release_to_cloud(user):
         for item in audio_tuple_dict:
 
             if item['audio']:
-                song = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['audio'].name))
-                up_song = drive.upload_file(new_folder['id'], item['song_title'], str(song))['webViewLink']
+                song = str(BASE_DIR) + os.path.join(MEDIA_URL, item['audio'].name)
+                up_song = drive.upload_file(new_folder['id'], item['song_title'], song)['webViewLink']
             else:
                 up_song = ''
             up_song_tuple = (*up_song_tuple, up_song)
 
             if item['clean_link']:
-                clean_link = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['clean_link'].name))
-                up_clean_link = drive.upload_file(new_folder['id'], item['song_title'] + '_clean', str(clean_link))['webViewLink']
+                clean_link = str(BASE_DIR) + os.path.join(MEDIA_URL, item['clean_link'].name)
+                up_clean_link = drive.upload_file(new_folder['id'], item['song_title'] + '_clean', clean_link)['webViewLink']
             else:
                 up_clean_link = ''
             up_clean_link_tuple = (*up_clean_link_tuple, up_clean_link)
 
             if item['instrumental']:
-                instrumental = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['instrumental'].name))
-                up_instrumental = drive.upload_file(new_folder['id'], item['song_title'] + '_instrumental', str(instrumental))['webViewLink']
+                instrumental = str(BASE_DIR) + os.path.join(MEDIA_URL, item['instrumental'].name)
+                up_instrumental = drive.upload_file(new_folder['id'], item['song_title'] + '_instrumental', instrumental)['webViewLink']
             else:
                 up_instrumental = ''
             up_instrumental_tuple = (*up_instrumental_tuple, up_instrumental)
 
             if item['song_text']:
-                song_text = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, item['song_text'].name))
-                up_song_text = drive.upload_file(new_folder['id'], item['song_title'] + '_text', str(song_text))['webViewLink']
+                song_text = str(BASE_DIR) + os.path.join(MEDIA_URL, item['song_text'].name)
+                up_song_text = drive.upload_file(new_folder['id'], item['song_title'] + '_text', song_text)['webViewLink']
             else:
                 up_song_text = ''
             up_song_text_tuple = (*up_song_text_tuple, up_song_text)
@@ -96,8 +96,6 @@ def release_to_cloud(user):
             audio_tuple_dict[0]['songers'], audio_tuple_dict[0]['song_title'], audio_tuple_dict[0]['album_title'], audio_tuple_dict[0]['feat'], audio_tuple_dict[0]['genre'], audio_tuple_dict[0]['fio_songer'], audio_tuple_dict[0]['words_author'], audio_tuple_dict[0]['music_author'], audio_tuple_dict[0]['owner_citizenship'], audio_tuple_dict[0]['record_country'], audio_tuple_dict[0]['timing'], audio_tuple_dict[0]['song_preview'], audio_tuple_dict[0]['lexis'], audio_tuple_dict[0]['audio_link'], up_song_tuple[0], up_clean_link_tuple[0], up_instrumental_tuple[0], up_song_text_tuple[0], audio_tuple_dict[0]['release_year']
         )
 
-        for item in audio:
-            item.delete()
     else:
         audio_values = tuple('' for i in range(20))
     
@@ -107,8 +105,8 @@ def release_to_cloud(user):
     if video:
         video_dict = model_to_dict(video[0])
         if video_dict['video_preview']:
-            video_preview = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, video_dict['video_preview'].name))
-            up_video_preview = drive.upload_file(new_folder['id'], 'Превью видео', str(video_preview))['webViewLink']
+            video_preview = str(BASE_DIR) + os.path.join(MEDIA_URL, video_dict['video_preview'].name)
+            up_video_preview = drive.upload_file(new_folder['id'], 'Превью видео', video_preview)['webViewLink']
         video_values = (
             video_dict['songers'], video_dict['video_title'], video_dict['feat'], video_dict['words_author'], video_dict['music_author'], video_dict['lexis'], video_dict['director'], video_dict['timing'], video_dict['release_year'], video_dict['video_link'], up_video_preview, video_dict['production_country']
         )
@@ -147,6 +145,9 @@ def release_to_cloud(user):
         'values': spaces_values
     }
     spaces.append(spaces_data)
+
+    if audio:
+         audio.delete()
     
 
 class MainInfoView(LoginRequiredMixin, FormView):

@@ -16,7 +16,6 @@ from lk.models import Lk
 
 from .forms import *
 from .models import *
-import shutil
 
 
 def marketing_to_sheet(user):
@@ -39,7 +38,7 @@ def marketing_to_sheet(user):
     marketing_dict = model_to_dict(*marketing)
 
     if marketing_dict['photo']:
-        photo = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, marketing_dict['photo'].name))
+        photo = str(BASE_DIR) + os.path.join(MEDIA_URL, marketing_dict['photo'].name)
         up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', photo)['webViewLink']
     else:
         photo = ''
@@ -86,10 +85,6 @@ def marketing_to_sheet(user):
         'values': [spaces_values,]
     }
     spaces.append(spaces_data)
-
-    # folder_path = Path(str(BASE_DIR) + os.path.join(MEDIA_URL, 'uploads/'))
-    # shutil.rmtree(folder_path)
-
 
 
 class MainInfoMarketingView(LoginRequiredMixin, FormView):

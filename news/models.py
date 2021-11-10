@@ -5,7 +5,7 @@ import os
 from transliterate import translit
 
 def update_filename(instance, filename):
-    path = 'uploads/' + str(instance.user)
+    path = 'news/' 
     filename_ = translit(filename, language_code='ru', reversed=True)
     return os.path.join(path, filename_)
 
