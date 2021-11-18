@@ -5,7 +5,6 @@ urlpatterns = [
     path('', MainInfoDocsView.as_view(), name='documents'),
     path('delete_cover', delete_cover, name='delete_cover'),
     path('orginfo/', OrgInfoView.as_view(), name='orginfo'),
-    path('delete_skan_passport/', delete_skan_passport, name='delete_skan_passport'),
     path('audio/', AudioDocsView.as_view(), name='d_audio'),
     path('video/', VideoDocsView.as_view(), name='d_video'), 
     path('licence/', LicenceView.as_view(), name='licence'),

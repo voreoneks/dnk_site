@@ -810,10 +810,5 @@ def delete_cover(request):
     MainInfoDocs.objects.filter(user_id = user.id).update(cover = '')
     return HttpResponseRedirect(reverse('documents'))
 
-def delete_skan_passport(request):
-    user = User.objects.get(username = request.user)
-    OrgInfoSam.objects.filter(user_id = user.id).update(skan_passport = '')
-    return HttpResponseRedirect(reverse('orginfo'))
-
 def success_page(request):
     return render(request, 'success.html')

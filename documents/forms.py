@@ -63,7 +63,6 @@ class OrgInfoSamForm(ModelForm):
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
             'when_issued': Input(attrs={'type': 'date'}),
-            'skan_passport': FileInput,
             'user': HiddenInput,
         }
         help_texts = {
@@ -73,7 +72,6 @@ class OrgInfoSamForm(ModelForm):
             'bik': 'Можно найти в личном кабинете приложения любого банка.',
             'inn_bank': 'Можно найти в личном кабинете приложения любого банка.', 
             'k_s': 'Можно найти в личном кабинете приложения любого банка.',
-            'skan_passport': 'Скан или фото. Первая страница и регистрация.',
         }
 
 class OrgInfoOooForm(ModelForm):
