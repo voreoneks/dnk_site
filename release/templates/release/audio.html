@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <!-- <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             <div class="col-md-6 col-sm-8 col-10 release-header">
                 {% if formset.total_error_count %}
                     <ul class="errorList">
@@ -33,7 +33,7 @@
                     </ul>
                 {% endif %}
             </div>
-        </div>
+        </div> -->
 
         <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             <div class="col-md-6 col-sm-8 col-10 table ">
@@ -46,7 +46,6 @@
                     <tr>
                         <td></td>
                         {% for item in formset.form.visible_fields %}
-                        
                             <td class="th">
                                 {{ item.label }}
                                 {% if item.help_text %}
@@ -64,21 +63,25 @@
                             {% with count=forloop.counter %}
                                 <td>{{ forloop.counter }}</td>
                                 {% for item in form.visible_fields %}
-                                    <td>
-                                        {{ item }}
-                                        {% if audio_urls|length >= count and item.name == 'audio'%}
-                                            Загружено: {{ audio_urls|index:item.auto_id }}
-                                        {% endif %}
-                                        {% if item.name == 'clean_link' and clean_link_urls|length >= count %}
-                                            Загружено: {{ clean_link_urls|index:item.auto_id }}
-                                        {% endif %}
-                                        {% if item.name == 'instrumental' and instrumental_urls|length >= count %}
-                                            Загружено: {{ instrumental_urls|index:item.auto_id }}
-                                        {% endif %}
-                                        {% if item.name == 'song_text' and song_text_urls|length >= count %}
-                                            Загружено: {{ song_text_urls|index:item.auto_id }}
-                                        {% endif %}
-                                    </td>
+                                    {% if item.name in form.errors %}
+                                        <td style="border: brown solid 1px;">
+                                    {% else %}
+                                        <td>
+                                    {% endif %}
+                                            {{ item }}
+                                            {% if audio_urls|length >= count and item.name == 'audio'%}
+                                                Загружено: {{ audio_urls|index:item.auto_id }}
+                                            {% endif %}
+                                            {% if item.name == 'clean_link' and clean_link_urls|length >= count %}
+                                                Загружено: {{ clean_link_urls|index:item.auto_id }}
+                                            {% endif %}
+                                            {% if item.name == 'instrumental' and instrumental_urls|length >= count %}
+                                                Загружено: {{ instrumental_urls|index:item.auto_id }}
+                                            {% endif %}
+                                            {% if item.name == 'song_text' and song_text_urls|length >= count %}
+                                                Загружено: {{ song_text_urls|index:item.auto_id }}
+                                            {% endif %}
+                                        </td>
                                     {% if item.name in button %}
                                         <td><input style="width: 20px; padding-top: 5px; margin-right: 15px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
                                     {% endif %}

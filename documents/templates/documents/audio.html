@@ -51,7 +51,13 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             {% for item in form.visible_fields %}
-                                <td>{{ item }}</td>
+                                {% if item.name in form.errors %}
+                                <td style="border: brown solid 1px;">
+                                {% else %}
+                                <td>
+                                {% endif %}
+                                    {{ item }}
+                                </td>
                                 {% if item.name in button %}
                                     <td><input style="width: 20px; padding-top: 5px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
                                 {% endif %}
