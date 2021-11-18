@@ -1,9 +1,10 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.base import Model
-from django.db.models.fields import CharField
 import os
+
+from django.contrib.auth.models import User
+from django.db import models
+from django.db.models.fields import CharField
 from transliterate import translit
+
 
 def update_filename(instance, filename):
     path = 'uploads/' + str(instance.user)
@@ -41,7 +42,7 @@ class OrgInfoIprf(models.Model):
     fio = models.CharField(max_length=100, verbose_name='ФИО')
     ogrnip = models.CharField(max_length=100, verbose_name='ОГРНИП')
     inn = models.CharField(max_length=100, verbose_name='ИНН')
-    bank = models.CharField(max_length=50, verbose_name='Банк')
+    bank = models.CharField(max_length=50, verbose_name='Наименование банка')
     r_s = models.CharField(max_length=100, verbose_name='Расчетный счет')
     bik = models.CharField(max_length=100, verbose_name='БИК')
     inn_bank = models.CharField(max_length=100, verbose_name='ИНН Банка')
@@ -52,7 +53,7 @@ class OrgInfoIpin(models.Model):
     fio = models.CharField(max_length=100, verbose_name='ФИО')
     citizen = models.CharField(max_length=100, verbose_name='Гражданство')
     id_number = models.CharField(max_length=100, verbose_name='Идентификационный номер')
-    bank = models.CharField(max_length=50, verbose_name='Банк')
+    bank = models.CharField(max_length=50, verbose_name='Наименование банка')
     r_s = models.CharField(max_length=100, verbose_name='Расчетный счет')
     bik = models.CharField(max_length=100, verbose_name='БИК')
     inn_bank = models.CharField(max_length=100, verbose_name='ИНН Банка')
@@ -66,16 +67,14 @@ class OrgInfoSam(models.Model):
     who_issued = models.CharField(max_length=500, verbose_name='Кем выдан')
     when_issued = models.DateField(verbose_name='Дата выдачи')
     code_pod = models.CharField(max_length=100, verbose_name='Код подразделения')
-    birth_place = models.CharField(max_length=2024, verbose_name='Место рождения')
     reg = models.CharField(max_length=2024, verbose_name='Регистрация')
-    bank = models.CharField(max_length=50, verbose_name='Банк')
+    bank = models.CharField(max_length=50, verbose_name='Наименование банка')
     r_s = models.CharField(max_length=100, verbose_name='Расчетный счет')
     bik = models.CharField(max_length=100, verbose_name='БИК')
     inn_bank = models.CharField(max_length=100, verbose_name='ИНН Банка')
     k_s = models.CharField(max_length=100, verbose_name='Корреспондентский счет')
     inn = models.CharField(max_length=100, verbose_name='ИНН', blank=True, null=True)
     snils = models.CharField(max_length=100, verbose_name='СНИЛС', blank=True, null=True)
-    skan_passport = models.ImageField(upload_to = update_filename, verbose_name='Скан паспорта',  blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class OrgInfoOoo(models.Model):
@@ -86,7 +85,7 @@ class OrgInfoOoo(models.Model):
     kpp = models.CharField(max_length=100, verbose_name='КПП')
     yur_address = models.CharField(max_length=2024, verbose_name='Юридический адрес')
     fact_address = models.CharField(max_length=2024, verbose_name='Фактический адрес')
-    bank = models.CharField(max_length=50, verbose_name='Банк')
+    bank = models.CharField(max_length=50, verbose_name='Наименование банка')
     r_s = models.CharField(max_length=100, verbose_name='Расчетный счет')
     bik = models.CharField(max_length=100, verbose_name='БИК')
     inn_bank = models.CharField(max_length=100, verbose_name='ИНН Банка')
@@ -133,9 +132,11 @@ class MusicAuthor(models.Model):
     fio = models.CharField(max_length=100, verbose_name='ФИО')
     birthday = models.DateField(verbose_name='Дата рождения')
     citizen = models.CharField(max_length=100, verbose_name='Гражданство')
-    passport = models.CharField(max_length=2024, verbose_name='Паспортные данные')
-    birth_place = models.CharField(max_length=2024, verbose_name='Место рождения')
-    reg = models.CharField(max_length=2024, verbose_name='Регистрация')
+    series_num = models.CharField(max_length=100, verbose_name='Серия и номер паспорта', null=True)
+    who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
+    when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
+    code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
+    reg = models.CharField(max_length=2024, verbose_name='Регистрация', null=True)
     author_email = models.EmailField(verbose_name='Электронная почта автора музыки')
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с автором музыки')
     number = models.IntegerField(null=True)
@@ -145,8 +146,10 @@ class WordsAuthor(models.Model):
     fio = models.CharField(max_length=100, verbose_name='ФИО')
     birthday = models.DateField(verbose_name='Дата рождения')
     citizen = models.CharField(max_length=100, verbose_name='Гражданство')
-    passport = models.CharField(max_length=2024, verbose_name='Паспортные данные')
-    birth_place = models.CharField(max_length=2024, verbose_name='Место рождения')
+    series_num = models.CharField(max_length=100, verbose_name='Серия и номер паспорта', null=True)
+    who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
+    when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
+    code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
     reg = models.CharField(max_length=2024, verbose_name='Регистрация')
     author_email = models.EmailField(verbose_name='Электронная почта автора слов')
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с автором слов')
@@ -159,8 +162,10 @@ class Others(models.Model):
     fio = models.CharField(max_length=100, verbose_name='ФИО', blank=True, null=True)
     birthday = models.DateField(verbose_name='Дата рождения', blank=True, null=True)
     citizen = models.CharField(max_length=100, verbose_name='Гражданство', blank=True, null=True)
-    passport = models.CharField(max_length=2024, verbose_name='Паспортные данные', blank=True, null=True)
-    birth_place = models.CharField(max_length=2024, verbose_name='Место рождения', blank=True, null=True)
+    series_num = models.CharField(max_length=100, verbose_name='Серия и номер паспорта', null=True)
+    who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
+    when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
+    code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
     reg = models.CharField(max_length=2024, verbose_name='Регистрация', blank=True, null=True)
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с соисполнителем', blank=True, null=True)
     number = models.IntegerField(blank=True, null=True)
@@ -170,8 +175,10 @@ class PhonMaker(models.Model):
     fio = models.CharField(max_length=100, verbose_name='ФИО', blank=True, null=True)
     birthday = models.DateField(verbose_name='Дата рождения', blank=True, null=True)
     citizen = models.CharField(max_length=100, verbose_name='Гражданство', blank=True, null=True)
-    passport = models.CharField(max_length=2024, verbose_name='Паспортные данные', blank=True, null=True)
-    birth_place = models.CharField(max_length=2024, verbose_name='Место рождения', blank=True, null=True)
+    series_num = models.CharField(max_length=100, verbose_name='Серия и номер паспорта', null=True)
+    who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
+    when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
+    code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
     reg = models.CharField(max_length=2024, verbose_name='Регистрация', blank=True, null=True)
     author_email = models.EmailField(verbose_name='Электронная почта изготовителя фонограммы', blank=True, null=True)
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с изготовителем фонограммы', blank=True, null=True)

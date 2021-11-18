@@ -17,6 +17,9 @@
             <p>{{ form_description }}</p>
             {% endautoescape %}
         </div>
+        <div>
+            <button class="btn button" type="button">Автозаполнение</button>
+        </div>
     </div>
 
     <form method="POST" action="" novalidate enctype="multipart/form-data">
@@ -57,6 +60,10 @@
                 <div>
                     <button class="btn button" type="button"><a href="{% url 'delete_music_author' %}?num_author={{num_author}}">Удалить автора</a></button>
                     <button class="btn button" type="submit">Далее</button>
+                    <button hidden id="loading" class="btn button" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        Загрузка...
+                    </button>
                 </div>
             </div>
         </div>

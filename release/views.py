@@ -163,7 +163,7 @@ class MainInfoView(LoginRequiredMixin, FormView):
             main_info_dict = model_to_dict(*main_info)
             photo = main_info_dict['photo']
             cover = main_info_dict['cover']
-            cover_psd = main_info_dict['cover_psd']
+            cover_psd = Path(main_info_dict['cover_psd'].name).name
             form = self.form_class(initial = main_info_dict)
         else:
             lk = Lk.objects.filter(user_id = user.id)
@@ -261,23 +261,19 @@ class AudioView(LoginRequiredMixin, FormView):
 
         audio_urls = tuple()
         for item in audio_tuple_dict:
-            if item['audio']:
-                audio_urls = (*audio_urls, Path(item['audio'].name).name)
+            audio_urls = (*audio_urls, Path(item['audio'].name).name)
 
         clean_link_urls = tuple()
         for item in audio_tuple_dict:
-            if item['clean_link']:
-                clean_link_urls = (*clean_link_urls, Path(item['clean_link'].name).name)
+            clean_link_urls = (*clean_link_urls, Path(item['clean_link'].name).name)
 
         instrumental_urls = tuple()
         for item in audio_tuple_dict:
-            if item['instrumental']:
-                instrumental_urls = (*instrumental_urls, Path(item['instrumental'].name).name)
+            instrumental_urls = (*instrumental_urls, Path(item['instrumental'].name).name)
 
         song_text_urls = tuple()
         for item in audio_tuple_dict:
-            if item['song_text']:
-                song_text_urls = (*song_text_urls, Path(item['song_text'].name).name)
+            song_text_urls = (*song_text_urls, Path(item['song_text'].name).name)
 
         if audio:
             for song in range(len(audio)):

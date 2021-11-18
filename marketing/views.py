@@ -41,7 +41,7 @@ def marketing_to_sheet(user):
         photo = str(BASE_DIR) + os.path.join(MEDIA_URL, marketing_dict['photo'].name)
         up_photo = drive.upload_file(new_folder['id'], 'Фото для карточки', photo)['webViewLink']
     else:
-        photo = ''
+        up_photo = ''
 
     marketing_values = (
         marketing_dict['positioning'], marketing_dict['where_from'], marketing_dict['affiliation'], marketing_dict['awards'], up_photo, marketing_dict['photo_link'], marketing_dict['inspiration'], marketing_dict['concept'], marketing_dict['guest_artists']
@@ -236,7 +236,7 @@ class PressReleaseView(LoginRequiredMixin, FormView):
         if press_release:
             press_release_dict = model_to_dict(*press_release)
             press_release_dict['user'] = user
-            form = self.form_class(initial = press_release)
+            form = self.form_class(initial = press_release_dict)
         else:
             form = self.form_class(initial = {'user': user})
         return render(request, self.template_name, {'form': form, 

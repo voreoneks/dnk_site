@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-from pathlib import Path
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -69,19 +68,12 @@ def docs_to_sheet(user):
     orginfosam = OrgInfoSam.objects.filter(user_id = user.id)
     if orginfosam:
         orginfosam_dict = model_to_dict(*orginfosam)
-
-        if orginfosam_dict['skan_passport']:
-            skan_passport = str(BASE_DIR) + os.path.join(MEDIA_URL, orginfosam_dict['skan_passport'].name)
-            up_skan_passport = drive.upload_file(new_folder['id'], 'Скан пасспорта', skan_passport)['webViewLink']
-        else:
-            up_skan_passport = ''
-
         orginfosam_values = (
-            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils'], up_skan_passport
+            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils']
         )
         orginfosam.delete()
     else:
-        orginfosam_values = tuple('' for i in range(16))
+        orginfosam_values = tuple('' for i in range(15))
 
     docs_values += orginfosam_values
 
@@ -182,7 +174,7 @@ def docs_to_sheet(user):
     max_len = max(len(audio_docs), len(music_author), len(words_author), len(others), len(phon_maker))
 
     for i in range(1, max_len):
-        add_rows_values = tuple('' for i in range(54))
+        add_rows_values = tuple('' for i in range(53))
         if len(audio_docs) > i:
             add_audio_docs_value = (
                 audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['phon_maker'], audio_docs_tuple_dict[i]['timing'], audio_docs_tuple_dict[i]['release_year']
@@ -235,7 +227,7 @@ def docs_to_sheet(user):
 
 
     spaces = Sheet('Документы!A3:DC3')
-    spaces_values = tuple('.' for i in range(107))
+    spaces_values = tuple('.' for i in range(106))
     spaces_data = {
         'range': 'Документы!A3:DC3',
         'majorDimension': 'ROWS',
@@ -384,15 +376,23 @@ class OrgInfoView(LoginRequiredMixin, FormView):
 
         if objects:
             objects_dict = model_to_dict(*objects)
-            if self.get_model() == OrgInfoSam:
-                context['skan_passport'] = objects_dict['skan_passport']
             form = self.get_form_class()(initial = objects_dict)
         else:
-            if self.get_model() == OrgInfoSam:
-                context['skan_passport'] = ''
-            form = self.get_form_class()(initial = {'user': user})
+            lk = Lk.objects.filter(user_id = user.id)
+            if lk:
+                lk_dict = model_to_dict(*lk)
+                data = {'user': user,
+                        'fio': lk_dict['fio'],
+                        'birthday': lk_dict['birthday'],
+                        'series_num': lk_dict['series_num'],
+                        'who_issued': lk_dict['who_issued'],
+                        'when_issued': lk_dict['when_issued'],
+                        'code_pod': lk_dict['code_pod'],
+                        'reg': lk_dict['reg'],}
+            else:
+                data = {'user': user}
+            form = self.get_form_class()(initial = data)
 
-        context['delete_skan_passport'] = 'delete_skan_passport'
         context['form'] = form
         context['form_title'] = self.form_title
         return render(request, self.template_name, context)
@@ -415,14 +415,6 @@ class OrgInfoView(LoginRequiredMixin, FormView):
             else:
                 return HttpResponseRedirect(reverse('d_video'))                
         else:
-            if self.get_model() == OrgInfoSam:
-                orginfosam = OrgInfoSam.objects.filter(user_id = user.id)
-                if orginfosam:
-                    orginfosam_dict = model_to_dict(*orginfosam)
-                    context['skan_passport'] = orginfosam_dict['skan_passport']
-                else:
-                    context['skan_passport'] = ''
-            context['delete_skan_passport'] = 'delete_skan_passport'
             context['form'] = form
             context['form_title'] = self.form_title
             return render(request, self.template_name, context)
@@ -756,8 +748,7 @@ class PhonMakerView(LoginRequiredMixin, FormView):
 def delete_music_author(request, *args, **kwargs):
     num_author = int(request.GET.get('num_author'))
     user = User.objects.get(username = request.user)
-    objects = MusicAuthor.objects.filter(user_id = user.id)
-    objects[num_author - 1].delete()
+    MusicAuthor.objects.get(number = num_author).delete()
     objects = MusicAuthor.objects.filter(user_id = user.id)
     for i in range(len(objects)):
         object_ = objects[i]
@@ -772,8 +763,7 @@ def delete_music_author(request, *args, **kwargs):
 def delete_words_author(request, *args, **kwargs):
     num_author = int(request.GET.get('num_author'))
     user = User.objects.get(username = request.user)
-    objects = WordsAuthor.objects.filter(user_id = user.id)
-    objects[num_author - 1].delete()
+    WordsAuthor.objects.get(number = num_author).delete()
     objects = WordsAuthor.objects.filter(user_id = user.id)
     for i in range(len(objects)):
         object_ = objects[i]
@@ -788,8 +778,7 @@ def delete_words_author(request, *args, **kwargs):
 def delete_others(request, *args, **kwargs):
     num_others = int(request.GET.get('num_others'))
     user = User.objects.get(username = request.user)
-    objects = Others.objects.filter(user_id = user.id)
-    objects[num_others - 1].delete()
+    Others.objects.get(number = num_others).delete()
     objects = Others.objects.filter(user_id = user.id)
     for i in range(len(objects)):
         object_ = objects[i]
@@ -804,8 +793,7 @@ def delete_others(request, *args, **kwargs):
 def delete_phon_maker(request, *args, **kwargs):
     num_phon_maker = int(request.GET.get('num_phon_maker'))
     user = User.objects.get(username = request.user)
-    objects = PhonMaker.objects.filter(user_id = user.id)
-    objects[num_phon_maker - 1].delete()
+    PhonMaker.objects.get(number = num_phon_maker).delete()
     objects = PhonMaker.objects.filter(user_id = user.id)
     for i in range(len(objects)):
         object_ = objects[i]

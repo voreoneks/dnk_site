@@ -1,9 +1,8 @@
-from django.db.models import fields
 from django.forms import ModelForm, RadioSelect
-from django.forms import widgets
-from django.forms.widgets import HiddenInput, FileInput, Input, Textarea
+from django.forms.widgets import FileInput, HiddenInput, Input, Textarea
 
 from .models import *
+
 
 class MainInfoDocsForm(ModelForm):
     class Meta:

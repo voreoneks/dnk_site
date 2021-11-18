@@ -10,6 +10,7 @@ class LkForm(ModelForm):
         fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
+            'when_issued': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
         }
         help_texts = {
