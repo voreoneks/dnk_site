@@ -13,6 +13,7 @@ from dnk_site.settings import BASE_DIR, MEDIA_URL
 from google_drive.google_drive import Drive
 from google_sheets import Sheet
 from lk.models import Lk
+from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import *
 from .models import *
@@ -549,17 +550,41 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
         num_author = kwargs['num_author']
         self.form_title = 'Автор музыки ' + str(num_author)
         music_author = MusicAuthor.objects.filter(user_id = user.id)
+        autofill = request.GET.get('self')
+        error = None
 
         if num_author > len(music_author) + 1:
             return HttpResponseNotFound('<h1>Page not found</h1>')
+
         if num_author <= len(music_author):
             form = self.form_class(initial = model_to_dict(music_author.get(number = num_author)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_author})
 
+        if autofill == '1':
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                lk_dict = model_to_dict(lk)
+                data = {
+                    'fio': lk_dict['fio'],
+                    'birthday': lk_dict['birthday'],
+                    'series_num': lk_dict['series_num'],
+                    'who_issued': lk_dict['who_issued'],
+                    'when_issued': lk_dict['when_issued'],
+                    'code_pod': lk_dict['code_pod'],
+                    'reg': lk_dict['reg'],
+                    'author_email': lk_dict['email'],
+                    'number': num_author,
+                    'user': user
+                }
+                form = self.form_class(initial = data)
+            except ObjectDoesNotExist:
+                error = 'Для начала заполните личный кабинет.'
+
         return render(request, self.template_name, {'form': form, 
                                                     'form_title': self.form_title, 
-                                                    'num_author': num_author})
+                                                    'num_author': num_author,
+                                                    'error': error})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -567,6 +592,7 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
         self.form_title = 'Автор музыки ' + str(num_author)
         music_author = MusicAuthor.objects.filter(user_id = user.id)
         form = self.form_class(data = request.POST, files = request.FILES)
+        print('0 str')
 
         if form.is_valid():
             if num_author <= len(music_author):
@@ -574,6 +600,7 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
             form.save()
             one_more = request.POST.get('one_more')
             if num_author < len(music_author):
+                print('1 str')
                 return HttpResponseRedirect(reverse('music_author', args=[num_author + 1]))
             else:
                 if one_more == 'ONE_MORE_YES':
@@ -584,13 +611,15 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
                                                                     'form_description': self.form_description, 
                                                                     'num_author': num_author})
                     else:
+                        print('2 str')
                         return HttpResponseRedirect(reverse('music_author', args=[num_author + 1]))
                 else:
                     return HttpResponseRedirect(reverse('words_author', args=[1]))
         else:
             return render(request, self.template_name, {'form': form, 
                                                         'form_title': self.form_title, 
-                                                        'form_description': self.form_description})
+                                                        'form_description': self.form_description,
+                                                        'num_author': num_author})
 
 
 class WordsAuthorView(LoginRequiredMixin, FormView):
@@ -603,13 +632,41 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
         self.form_title = 'Автор слов ' + str(num_author)
         user = User.objects.get(username = request.user)
         words_author = WordsAuthor.objects.filter(user_id = user.id)
+        autofill = request.GET.get('self')
+        error = None
+
+        if num_author > len(words_author) + 1:
+            return HttpResponseNotFound('<h1>Page not found</h1>')
+
         if num_author <= len(words_author):
             form = self.form_class(initial = model_to_dict(words_author.get(number = num_author)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_author})
+
+        if autofill == '1':
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                lk_dict = model_to_dict(lk)
+                data = {
+                    'fio': lk_dict['fio'],
+                    'birthday': lk_dict['birthday'],
+                    'series_num': lk_dict['series_num'],
+                    'who_issued': lk_dict['who_issued'],
+                    'when_issued': lk_dict['when_issued'],
+                    'code_pod': lk_dict['code_pod'],
+                    'reg': lk_dict['reg'],
+                    'author_email': lk_dict['email'],
+                    'number': num_author,
+                    'user': user
+                }
+                form = self.form_class(initial = data)
+            except ObjectDoesNotExist:
+                error = 'Для начала заполните личный кабинет.'
+
         return render(request, self.template_name, {'form': form, 
                                                     'form_title': self.form_title, 
-                                                    'num_author': num_author})
+                                                    'num_author': num_author,
+                                                    'error': error})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -640,7 +697,8 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
         else:
             return render(request, self.template_name, {'form': form, 
                                                         'form_title': self.form_title, 
-                                                        'form_description': self.form_description})
+                                                        'form_description': self.form_description,
+                                                        'num_author': num_author})
 
 
 class OthersView(LoginRequiredMixin, FormView):
@@ -653,10 +711,15 @@ class OthersView(LoginRequiredMixin, FormView):
         self.form_title = 'Соисполнитель ' + str(num_others)
         user = User.objects.get(username = request.user)
         others = Others.objects.filter(user_id = user.id)
+
+        if num_others > len(others) + 1:
+            return HttpResponseNotFound('<h1>Page not found</h1>')
+
         if num_others <= len(others):
             form = self.form_class(initial = model_to_dict(others.get(number = num_others)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_others})
+
         return render(request, self.template_name, {'form': form, 
                                                     'form_title': self.form_title, 
                                                     'num_others': num_others})
@@ -690,7 +753,8 @@ class OthersView(LoginRequiredMixin, FormView):
         else:
             return render(request, self.template_name, {'form': form, 
                                                         'form_title': self.form_title, 
-                                                        'form_description': self.form_description})
+                                                        'form_description': self.form_description,
+                                                        'num_author': num_others})
 
 
 class PhonMakerView(LoginRequiredMixin, FormView):
@@ -703,13 +767,41 @@ class PhonMakerView(LoginRequiredMixin, FormView):
         self.form_title = 'Изготовитель фонограммы ' + str(num_phon_maker)
         user = User.objects.get(username = request.user)
         phon_maker = PhonMaker.objects.filter(user_id = user.id)
+        autofill = request.GET.get('self')
+        error = None
+
+        if num_phon_maker > len(phon_maker) + 1:
+            return HttpResponseNotFound('<h1>Page not found</h1>')
+
         if num_phon_maker <= len(phon_maker):
             form = self.form_class(initial = model_to_dict(phon_maker.get(number = num_phon_maker)))
         else:
             form = self.form_class(initial = {'user': user, 'number': num_phon_maker})
+
+        if autofill == '1':
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                lk_dict = model_to_dict(lk)
+                data = {
+                    'fio': lk_dict['fio'],
+                    'birthday': lk_dict['birthday'],
+                    'series_num': lk_dict['series_num'],
+                    'who_issued': lk_dict['who_issued'],
+                    'when_issued': lk_dict['when_issued'],
+                    'code_pod': lk_dict['code_pod'],
+                    'reg': lk_dict['reg'],
+                    'author_email': lk_dict['email'],
+                    'number': num_phon_maker,
+                    'user': user
+                }
+                form = self.form_class(initial = data)
+            except ObjectDoesNotExist:
+                error = 'Для начала заполните личный кабинет.'
+
         return render(request, self.template_name, {'form': form, 
                                                     'form_title': self.form_title, 
-                                                    'num_phon_maker': num_phon_maker})
+                                                    'num_phon_maker': num_phon_maker,
+                                                    'error': error})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -741,7 +833,8 @@ class PhonMakerView(LoginRequiredMixin, FormView):
         else:
             return render(request, self.template_name, {'form': form, 
                                                         'form_title': self.form_title, 
-                                                        'form_description': self.form_description})
+                                                        'form_description': self.form_description,
+                                                        'num_author': num_phon_maker})
 
 
 

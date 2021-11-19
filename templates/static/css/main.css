@@ -98,6 +98,15 @@ section{
     margin-bottom: 20px;
 }
 
+.release-form p{
+    margin: 20px 20px 20px 20px;
+}
+
+.autofill{
+    margin: auto;
+    margin-top: 24px;
+}
+
 .calc label{
     display: block;
     width: 50%;
@@ -352,10 +361,6 @@ a:focus{
     font-family: var(--oswald_light);
     color: white;
     margin-top: 100px;
-}
-
-.release-form p{
-    margin: 20px 20px 20px 20px;
 }
 
 .table td{

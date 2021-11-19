@@ -16,6 +16,15 @@
             {% autoescape off %}
             <p>{{ form_description }}</p>
             {% endautoescape %}
+            {% if error %}
+                <p style="text-align: center; color: brown;">{{ error }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+        <div class="col-md-6 col-sm-8 col-10 autofill">
+            <button class="btn button" type="button" onclick="document.location.href = '{% url 'words_author' num_author %}?self=1';">Я сам являюсь автором слов</button>
         </div>
     </div>
 

@@ -136,6 +136,7 @@ class MusicAuthorForm(ModelForm):
         fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
+            'when_issued': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }
@@ -151,6 +152,7 @@ class WordsAuthorForm(ModelForm):
         fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
+            'when_issued': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }
@@ -165,6 +167,7 @@ class OthersForm(ModelForm):
         fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
+            'when_issued': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }
@@ -179,6 +182,7 @@ class PhonMakerForm(ModelForm):
         fields = '__all__'
         widgets = {
             'birthday': Input(attrs={'type': 'date'}),
+            'when_issued': Input(attrs={'type': 'date'}),
             'user': HiddenInput,
             'number': HiddenInput,
         }
