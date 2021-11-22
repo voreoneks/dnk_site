@@ -34,7 +34,7 @@ def docs_to_sheet(user):
         cover = str(BASE_DIR) + os.path.join(MEDIA_URL, main_info_docs_dict['cover'].name)
         up_cover = drive.upload_file(new_folder['id'], 'Обложка', cover)['webViewLink']
     else:
-        cover = ''
+        up_cover = ''
 
     main_info_docs_values = (
         date_time, main_info_docs_dict['you_are'], main_info_docs_dict['partners_value'], main_info_docs_dict['artist_fio'], main_info_docs_dict['artist_name'], main_info_docs_dict['phone_number'], main_info_docs_dict['email'], main_info_docs_dict['socials'], up_cover, main_info_docs_dict['release_type']
@@ -70,11 +70,11 @@ def docs_to_sheet(user):
     if orginfosam:
         orginfosam_dict = model_to_dict(*orginfosam)
         orginfosam_values = (
-            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['birth_place'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils']
+            orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils']
         )
         orginfosam.delete()
     else:
-        orginfosam_values = tuple('' for i in range(15))
+        orginfosam_values = tuple('' for i in range(14))
 
     docs_values += orginfosam_values
 
@@ -127,7 +127,7 @@ def docs_to_sheet(user):
     music_author = MusicAuthor.objects.filter(user_id = user.id)
     music_author_tuple_dict = tuple(model_to_dict(item) for item in music_author)
     music_author_values = (
-        music_author_tuple_dict[0]['fio'], str(music_author_tuple_dict[0]['birthday']), music_author_tuple_dict[0]['citizen'], music_author_tuple_dict[0]['passport'], music_author_tuple_dict[0]['birth_place'], music_author_tuple_dict[0]['reg'], music_author_tuple_dict[0]['author_email'], music_author_tuple_dict[0]['fin_conditions']
+        music_author_tuple_dict[0]['fio'], str(music_author_tuple_dict[0]['birthday']), music_author_tuple_dict[0]['citizen'], music_author_tuple_dict[0]['series_num'], music_author_tuple_dict[0]['who_issued'], str(music_author_tuple_dict[0]['when_issued']), music_author_tuple_dict[0]['code_pod'], music_author_tuple_dict[0]['reg'], music_author_tuple_dict[0]['author_email'], music_author_tuple_dict[0]['fin_conditions']
     )
 
     docs_values += music_author_values
@@ -135,32 +135,32 @@ def docs_to_sheet(user):
     words_author = WordsAuthor.objects.filter(user_id = user.id)
     words_author_tuple_dict = tuple(model_to_dict(item) for item in words_author)
     words_author_values = (
-        words_author_tuple_dict[0]['fio'], str(words_author_tuple_dict[0]['birthday']), words_author_tuple_dict[0]['citizen'], words_author_tuple_dict[0]['passport'], words_author_tuple_dict[0]['birth_place'], words_author_tuple_dict[0]['reg'], words_author_tuple_dict[0]['author_email'], words_author_tuple_dict[0]['fin_conditions']
+        words_author_tuple_dict[0]['fio'], str(words_author_tuple_dict[0]['birthday']), words_author_tuple_dict[0]['citizen'], words_author_tuple_dict[0]['series_num'], words_author_tuple_dict[0]['who_issued'], str(words_author_tuple_dict[0]['when_issued']), words_author_tuple_dict[0]['code_pod'], words_author_tuple_dict[0]['reg'], words_author_tuple_dict[0]['author_email'], words_author_tuple_dict[0]['fin_conditions']
     )
 
     docs_values += words_author_values
-
-    others = Others.objects.filter(user_id = user.id)
-    if others:
-        others_tuple_dict = tuple(model_to_dict(item) for item in others)
-        others_values = (
-            others_tuple_dict[0]['creative_name'], others_tuple_dict[0]['songs'], others_tuple_dict[0]['fio'], str(others_tuple_dict[0]['birthday']), others_tuple_dict[0]['citizen'], others_tuple_dict[0]['passport'], others_tuple_dict[0]['birth_place'], others_tuple_dict[0]['reg'], others_tuple_dict[0]['fin_conditions']
-        )
-    else:
-        others_values = tuple('' for i in range(9))
-
-    docs_values += others_values
 
     phon_maker = PhonMaker.objects.filter(user_id = user.id)
     if phon_maker:
         phon_maker_tuple_dict = tuple(model_to_dict(item) for item in phon_maker)
         phon_maker_values = (
-            phon_maker_tuple_dict[0]['fio'], str(phon_maker_tuple_dict[0]['birthday']), phon_maker_tuple_dict[0]['citizen'], phon_maker_tuple_dict[0]['passport'], phon_maker_tuple_dict[0]['birth_place'], phon_maker_tuple_dict[0]['reg'], phon_maker_tuple_dict[0]['author_email'], phon_maker_tuple_dict[0]['fin_conditions']
+            phon_maker_tuple_dict[0]['fio'], str(phon_maker_tuple_dict[0]['birthday']), phon_maker_tuple_dict[0]['citizen'], phon_maker_tuple_dict[0]['series_num'], phon_maker_tuple_dict[0]['who_issued'], str(phon_maker_tuple_dict[0]['when_issued']), phon_maker_tuple_dict[0]['code_pod'], phon_maker_tuple_dict[0]['reg'], phon_maker_tuple_dict[0]['author_email'], phon_maker_tuple_dict[0]['fin_conditions']
         )
     else:
-        phon_maker_values = tuple('' for i in range(8))
+        phon_maker_values = tuple('' for i in range(10))
 
     docs_values += phon_maker_values
+
+    others = Others.objects.filter(user_id = user.id)
+    if others:
+        others_tuple_dict = tuple(model_to_dict(item) for item in others)
+        others_values = (
+            others_tuple_dict[0]['creative_name'], others_tuple_dict[0]['songs'], others_tuple_dict[0]['fio'], str(others_tuple_dict[0]['birthday']), others_tuple_dict[0]['citizen'], others_tuple_dict[0]['series_num'], others_tuple_dict[0]['who_issued'], str(others_tuple_dict[0]['when_issued']), others_tuple_dict[0]['code_pod'],  others_tuple_dict[0]['reg'], others_tuple_dict[0]['fin_conditions']
+        )
+    else:
+        others_values = tuple('' for i in range(11))
+
+    docs_values += others_values
 
     docs_data = {
         'range': 'Документы!A3:DC3',
@@ -175,7 +175,7 @@ def docs_to_sheet(user):
     max_len = max(len(audio_docs), len(music_author), len(words_author), len(others), len(phon_maker))
 
     for i in range(1, max_len):
-        add_rows_values = tuple('' for i in range(53))
+        add_rows_values = tuple('' for i in range(52))
         if len(audio_docs) > i:
             add_audio_docs_value = (
                 audio_docs_tuple_dict[i]['songers'], audio_docs_tuple_dict[i]['album_title'], audio_docs_tuple_dict[i]['song_title'], audio_docs_tuple_dict[i]['words_author'], audio_docs_tuple_dict[i]['music_author'], audio_docs_tuple_dict[i]['phon_maker'], audio_docs_tuple_dict[i]['timing'], audio_docs_tuple_dict[i]['release_year']
@@ -188,35 +188,35 @@ def docs_to_sheet(user):
         
         if len(music_author) > i:
             add_music_author_values = (
-                music_author_tuple_dict[i]['fio'], str(music_author_tuple_dict[i]['birthday']), music_author_tuple_dict[i]['citizen'], music_author_tuple_dict[i]['passport'], music_author_tuple_dict[i]['birth_place'], music_author_tuple_dict[i]['reg'], music_author_tuple_dict[i]['author_email'], music_author_tuple_dict[i]['fin_conditions']
+                music_author_tuple_dict[i]['fio'], str(music_author_tuple_dict[i]['birthday']), music_author_tuple_dict[i]['citizen'], music_author_tuple_dict[i]['series_num'], music_author_tuple_dict[i]['who_issued'], str(music_author_tuple_dict[i]['when_issued']), music_author_tuple_dict[i]['code_pod'], music_author_tuple_dict[i]['reg'], music_author_tuple_dict[i]['author_email'], music_author_tuple_dict[i]['fin_conditions']
             )
         else:
-            add_music_author_values = tuple('' for i in range(8))
+            add_music_author_values = tuple('' for i in range(10))
         add_rows_values += add_music_author_values
 
         if len(words_author) > i:
             add_words_author_values = (
-                words_author_tuple_dict[i]['fio'], str(words_author_tuple_dict[i]['birthday']), words_author_tuple_dict[i]['citizen'], words_author_tuple_dict[i]['passport'], words_author_tuple_dict[i]['birth_place'], words_author_tuple_dict[i]['reg'], words_author_tuple_dict[i]['author_email'], words_author_tuple_dict[i]['fin_conditions']
+                words_author_tuple_dict[i]['fio'], str(words_author_tuple_dict[i]['birthday']), words_author_tuple_dict[i]['citizen'], words_author_tuple_dict[i]['series_num'], words_author_tuple_dict[i]['who_issued'], str(words_author_tuple_dict[i]['when_issued']), words_author_tuple_dict[i]['code_pod'], words_author_tuple_dict[i]['reg'], words_author_tuple_dict[i]['author_email'], words_author_tuple_dict[i]['fin_conditions']
             )
         else:
-            add_words_author_values = tuple('' for i in range(8))
+            add_words_author_values = tuple('' for i in range(10))
         add_rows_values += add_words_author_values
-
-        if len(others) > i:
-            add_others_values = (
-                others_tuple_dict[i]['creative_name'], others_tuple_dict[i]['songs'], others_tuple_dict[i]['fio'], str(others_tuple_dict[i]['birthday']), others_tuple_dict[i]['citizen'], others_tuple_dict[i]['passport'], others_tuple_dict[i]['birth_place'], others_tuple_dict[i]['reg'], others_tuple_dict[i]['author_email'], others_tuple_dict[i]['fin_conditions']
-            )
-        else:
-            add_others_values = tuple('' for i in range(9))
-        add_rows_values += add_others_values
 
         if len(phon_maker) > i:
             add_phon_maker_values = (
-                phon_maker_tuple_dict[i]['fio'], str(phon_maker_tuple_dict[i]['birthday']), phon_maker_tuple_dict[i]['citizen'], phon_maker_tuple_dict[i]['passport'], phon_maker_tuple_dict[i]['birth_place'], phon_maker_tuple_dict[i]['reg'], phon_maker_tuple_dict[i]['author_email'], phon_maker_tuple_dict[i]['fin_conditions']
+                phon_maker_tuple_dict[i]['fio'], str(phon_maker_tuple_dict[i]['birthday']), phon_maker_tuple_dict[i]['citizen'], phon_maker_tuple_dict[i]['series_num'], phon_maker_tuple_dict[i]['who_issued'], str(phon_maker_tuple_dict[i]['when_issued']), phon_maker_tuple_dict[i]['code_pod'], phon_maker_tuple_dict[i]['reg'], phon_maker_tuple_dict[i]['author_email'], phon_maker_tuple_dict[i]['fin_conditions']
             )
         else:
-            add_phon_maker_values = tuple('' for i in range(8))
+            add_phon_maker_values = tuple('' for i in range(10))
         add_rows_values += add_phon_maker_values
+
+        if len(others) > i:
+            add_others_values = (
+                others_tuple_dict[i]['creative_name'], others_tuple_dict[i]['songs'], others_tuple_dict[i]['fio'], str(others_tuple_dict[i]['birthday']), others_tuple_dict[i]['citizen'], others_tuple_dict[i]['series_num'], others_tuple_dict[i]['who_issued'], str(others_tuple_dict[i]['when_issued']), others_tuple_dict[i]['code_pod'], others_tuple_dict[i]['reg'], others_tuple_dict[i]['fin_conditions']
+            )
+        else:
+            add_others_values = tuple('' for i in range(11))
+        add_rows_values += add_others_values
 
         add_rows_data = {
             'range': 'Документы!A3:DC3',
@@ -228,7 +228,7 @@ def docs_to_sheet(user):
 
 
     spaces = Sheet('Документы!A3:DC3')
-    spaces_values = tuple('.' for i in range(106))
+    spaces_values = tuple('.' for i in range(113))
     spaces_data = {
         'range': 'Документы!A3:DC3',
         'majorDimension': 'ROWS',
@@ -348,7 +348,7 @@ class OrgInfoView(LoginRequiredMixin, FormView):
             self.form_title = 'ИП РФ'
             return OrgInfoIprfForm
         elif you_are == 'IPIN':
-            self.form_title = 'ИП Иностранный'
+            self.form_title = 'Иностранная организация или ИП'
             return OrgInfoIpinForm
         elif you_are == 'SAM':
             self.form_title = 'Самозанятый'
@@ -510,7 +510,7 @@ class LicenceView(LoginRequiredMixin, FormView):
     template_name = 'documents/licence.html'
     form_class = LicenceForm
     form_title = 'Права на материал'
-    form_description = '<p>Отчуждение - это когда авторы текста/музыки отчуждают тебе права на текст/музыку, исключительные права передаются в полном объеме без ограничения по способам, сроку и территории использования.<br>Варианты: ты не платишь им роялти за использование текста, платишь фиксированную сумму, платишь процент роялти в период действия договора.</p> <p>Лицензия - авторы текста/музыки передают тебе права на текст на срок действиях нашего договора с тобой (5 лет + пролонгация), предоставляется только право использования определенными способами, на определенной территории и в течение установленного срока, ты платишь им процент роялти за использование, либо выплачиваешь вознаграждение один раз.</p>'
+    form_description = '<p>Отчуждение - условно говоря «продажа» прав. То есть авторы/исполнители передают вам в полном объеме права без ограничений по срокам, территории и способам использования.</p><p>Варианты: отчуждение может быть за фиксированную сумму / роялти / безвозмездное / за упоминание в соцсетях.</p><p>Лицензию условно можно назвать «арендой» прав. Этот способ передачи прав на использование песни в определенных пределах. Обычно на 5 лет с возможностью пролонгации.</p><p>Варианты: лицензия также может быть предоставлена за фиксированную сумму / за роялти / безвозмездно / за упоминание в соцсетях.</p>'
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -568,6 +568,7 @@ class MusicAuthorView(LoginRequiredMixin, FormView):
                 data = {
                     'fio': lk_dict['fio'],
                     'birthday': lk_dict['birthday'],
+                    'citizen': lk_dict['citizen'],
                     'series_num': lk_dict['series_num'],
                     'who_issued': lk_dict['who_issued'],
                     'when_issued': lk_dict['when_issued'],
@@ -650,6 +651,7 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
                 data = {
                     'fio': lk_dict['fio'],
                     'birthday': lk_dict['birthday'],
+                    'citizen': lk_dict['citizen'],
                     'series_num': lk_dict['series_num'],
                     'who_issued': lk_dict['who_issued'],
                     'when_issued': lk_dict['when_issued'],
@@ -693,12 +695,93 @@ class WordsAuthorView(LoginRequiredMixin, FormView):
                     else:
                         return HttpResponseRedirect(reverse('words_author', args=[num_author + 1]))
                 else:
-                    return HttpResponseRedirect(reverse('others', args=[1]))
+                    return HttpResponseRedirect(reverse('phon_maker', args=[1]))
         else:
             return render(request, self.template_name, {'form': form, 
                                                         'form_title': self.form_title, 
                                                         'form_description': self.form_description,
                                                         'num_author': num_author})
+
+
+class PhonMakerView(LoginRequiredMixin, FormView):
+    template_name = 'documents/phon_maker.html'
+    form_description = '<p>Пожалуйста, укажите данные изготовителя фонограммы.</p> <p>Изготовитель фонограммы - тот, кто взял на себя осуществление сведения с творческой составляющей, то есть тот, кто продумал финальное звучание трека (это может быть сам артист, продюсер и тд)</p>'
+    form_class = PhonMakerForm
+
+    def get(self, request, *args, **kwargs):
+        num_phon_maker = kwargs['num_phon_maker']
+        self.form_title = 'Изготовитель фонограммы ' + str(num_phon_maker)
+        user = User.objects.get(username = request.user)
+        phon_maker = PhonMaker.objects.filter(user_id = user.id)
+        autofill = request.GET.get('self')
+        error = None
+
+        if num_phon_maker > len(phon_maker) + 1:
+            return HttpResponseNotFound('<h1>Page not found</h1>')
+
+        if num_phon_maker <= len(phon_maker):
+            form = self.form_class(initial = model_to_dict(phon_maker.get(number = num_phon_maker)))
+        else:
+            form = self.form_class(initial = {'user': user, 'number': num_phon_maker})
+
+        if autofill == '1':
+            try:
+                lk = Lk.objects.get(user_id = user.id)
+                lk_dict = model_to_dict(lk)
+                data = {
+                    'fio': lk_dict['fio'],
+                    'birthday': lk_dict['birthday'],
+                    'citizen': lk_dict['citizen'],
+                    'series_num': lk_dict['series_num'],
+                    'who_issued': lk_dict['who_issued'],
+                    'when_issued': lk_dict['when_issued'],
+                    'code_pod': lk_dict['code_pod'],
+                    'reg': lk_dict['reg'],
+                    'author_email': lk_dict['email'],
+                    'number': num_phon_maker,
+                    'user': user
+                }
+                form = self.form_class(initial = data)
+            except ObjectDoesNotExist:
+                error = 'Для начала заполните личный кабинет.'
+
+        return render(request, self.template_name, {'form': form, 
+                                                    'form_title': self.form_title, 
+                                                    'num_phon_maker': num_phon_maker,
+                                                    'error': error})
+
+    def post(self, request, *args, **kwargs):
+        user = User.objects.get(username = request.user)
+        num_phon_maker = kwargs['num_phon_maker']
+        phon_maker = PhonMaker.objects.filter(user_id = user.id)
+        self.form_title = 'Изготовитель фонограммы ' + str(num_phon_maker)
+        form = self.form_class(data = request.POST, files = request.FILES)
+
+        if form.is_valid():
+            if num_phon_maker <= len(phon_maker):
+                phon_maker.get(number = num_phon_maker).delete()
+            form.save()
+            one_more = request.POST.get('one_more')
+            if num_phon_maker < len(phon_maker):
+                return HttpResponseRedirect(reverse('phon_maker', args=[num_phon_maker + 1]))
+            else:
+                if one_more == 'ONE_MORE_YES':
+                    if num_phon_maker >= 5:
+                        self.form_description = 'Нельзя создать больше пяти соисполнителей.' 
+                        return render(request, self.template_name, {'form': form, 
+                                                                    'form_title': self.form_title, 
+                                                                    'form_description': self.form_description, 
+                                                                    'num_phon_maker': num_phon_maker})
+                    else:
+                        return HttpResponseRedirect(reverse('phon_maker', args=[num_phon_maker + 1]))
+                else:
+                    return HttpResponseRedirect(reverse('others', args=[1]))
+        else:
+            return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description,
+                                                        'num_author': num_phon_maker})
+
 
 
 class OthersView(LoginRequiredMixin, FormView):
@@ -749,93 +832,13 @@ class OthersView(LoginRequiredMixin, FormView):
                     else:
                         return HttpResponseRedirect(reverse('others', args=[num_others + 1]))
                 else:
-                    return HttpResponseRedirect(reverse('phon_maker', args=[1]))
-        else:
-            return render(request, self.template_name, {'form': form, 
-                                                        'form_title': self.form_title, 
-                                                        'form_description': self.form_description,
-                                                        'num_author': num_others})
-
-
-class PhonMakerView(LoginRequiredMixin, FormView):
-    template_name = 'documents/phon_maker.html'
-    form_description = '<p>Пожалуйста, укажите данные изготовителя фонограммы.</p> <p>Изготовитель фонограммы - тот, кто взял на себя осуществление сведения с творческой составляющей, то есть тот, кто продумал финальное звучание трека (это может быть сам артист, продюсер и тд)</p>'
-    form_class = PhonMakerForm
-
-    def get(self, request, *args, **kwargs):
-        num_phon_maker = kwargs['num_phon_maker']
-        self.form_title = 'Изготовитель фонограммы ' + str(num_phon_maker)
-        user = User.objects.get(username = request.user)
-        phon_maker = PhonMaker.objects.filter(user_id = user.id)
-        autofill = request.GET.get('self')
-        error = None
-
-        if num_phon_maker > len(phon_maker) + 1:
-            return HttpResponseNotFound('<h1>Page not found</h1>')
-
-        if num_phon_maker <= len(phon_maker):
-            form = self.form_class(initial = model_to_dict(phon_maker.get(number = num_phon_maker)))
-        else:
-            form = self.form_class(initial = {'user': user, 'number': num_phon_maker})
-
-        if autofill == '1':
-            try:
-                lk = Lk.objects.get(user_id = user.id)
-                lk_dict = model_to_dict(lk)
-                data = {
-                    'fio': lk_dict['fio'],
-                    'birthday': lk_dict['birthday'],
-                    'series_num': lk_dict['series_num'],
-                    'who_issued': lk_dict['who_issued'],
-                    'when_issued': lk_dict['when_issued'],
-                    'code_pod': lk_dict['code_pod'],
-                    'reg': lk_dict['reg'],
-                    'author_email': lk_dict['email'],
-                    'number': num_phon_maker,
-                    'user': user
-                }
-                form = self.form_class(initial = data)
-            except ObjectDoesNotExist:
-                error = 'Для начала заполните личный кабинет.'
-
-        return render(request, self.template_name, {'form': form, 
-                                                    'form_title': self.form_title, 
-                                                    'num_phon_maker': num_phon_maker,
-                                                    'error': error})
-
-    def post(self, request, *args, **kwargs):
-        user = User.objects.get(username = request.user)
-        num_phon_maker = kwargs['num_phon_maker']
-        phon_maker = PhonMaker.objects.filter(user_id = user.id)
-        self.form_title = 'Изготовитель фонограммы ' + str(num_phon_maker)
-        form = self.form_class(data = request.POST, files = request.FILES)
-
-        if form.is_valid():
-            if num_phon_maker <= len(phon_maker):
-                phon_maker.get(number = num_phon_maker).delete()
-            form.save()
-            one_more = request.POST.get('one_more')
-            if num_phon_maker < len(phon_maker):
-                return HttpResponseRedirect(reverse('phon_maker', args=[num_phon_maker + 1]))
-            else:
-                if one_more == 'ONE_MORE_YES':
-                    if num_phon_maker >= 5:
-                        self.form_description = 'Нельзя создать больше пяти соисполнителей.' 
-                        return render(request, self.template_name, {'form': form, 
-                                                                    'form_title': self.form_title, 
-                                                                    'form_description': self.form_description, 
-                                                                    'num_phon_maker': num_phon_maker})
-                    else:
-                        return HttpResponseRedirect(reverse('phon_maker', args=[num_phon_maker + 1]))
-                else:
                     docs_to_sheet(user)
                     return HttpResponseRedirect(reverse('d_success'))
         else:
             return render(request, self.template_name, {'form': form, 
                                                         'form_title': self.form_title, 
                                                         'form_description': self.form_description,
-                                                        'num_author': num_phon_maker})
-
+                                                        'num_author': num_others})
 
 
 def delete_music_author(request, *args, **kwargs):

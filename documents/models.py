@@ -19,7 +19,7 @@ class MainInfoDocs(models.Model):
     }
     org_type_choices = [
         ('IPRF', 'ИП РФ'),
-        ('IPIN', 'ИП Иностранный'),
+        ('IPIN', 'Иностранная организация или ИП'),
         ('SAM', 'Самозанятый'), 
         ('OOO', 'ООО'),
     ]
@@ -67,14 +67,14 @@ class OrgInfoSam(models.Model):
     who_issued = models.CharField(max_length=500, verbose_name='Кем выдан')
     when_issued = models.DateField(verbose_name='Дата выдачи')
     code_pod = models.CharField(max_length=100, verbose_name='Код подразделения')
-    reg = models.CharField(max_length=2024, verbose_name='Регистрация')
+    reg = models.CharField(max_length=2024, verbose_name='Адрес регистрации')
+    inn = models.CharField(max_length=100, verbose_name='ИНН', blank=True, null=True)
+    snils = models.CharField(max_length=100, verbose_name='СНИЛС', blank=True, null=True)
     bank = models.CharField(max_length=50, verbose_name='Наименование банка')
     r_s = models.CharField(max_length=100, verbose_name='Расчетный счет')
     bik = models.CharField(max_length=100, verbose_name='БИК')
     inn_bank = models.CharField(max_length=100, verbose_name='ИНН Банка')
     k_s = models.CharField(max_length=100, verbose_name='Корреспондентский счет')
-    inn = models.CharField(max_length=100, verbose_name='ИНН', blank=True, null=True)
-    snils = models.CharField(max_length=100, verbose_name='СНИЛС', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class OrgInfoOoo(models.Model):
@@ -136,7 +136,7 @@ class MusicAuthor(models.Model):
     who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
     when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
     code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
-    reg = models.CharField(max_length=2024, verbose_name='Регистрация', null=True)
+    reg = models.CharField(max_length=2024, verbose_name='Адрес регистрации', null=True)
     author_email = models.EmailField(verbose_name='Электронная почта автора музыки')
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с автором музыки')
     number = models.IntegerField(null=True)
@@ -150,7 +150,7 @@ class WordsAuthor(models.Model):
     who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
     when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
     code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
-    reg = models.CharField(max_length=2024, verbose_name='Регистрация')
+    reg = models.CharField(max_length=2024, verbose_name='Адрес регистрации')
     author_email = models.EmailField(verbose_name='Электронная почта автора слов')
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с автором слов')
     number = models.IntegerField(null=True)
@@ -166,7 +166,7 @@ class Others(models.Model):
     who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
     when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
     code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
-    reg = models.CharField(max_length=2024, verbose_name='Регистрация', blank=True, null=True)
+    reg = models.CharField(max_length=2024, verbose_name='Адрес регистрации', blank=True, null=True)
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с соисполнителем', blank=True, null=True)
     number = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -179,7 +179,7 @@ class PhonMaker(models.Model):
     who_issued = models.CharField(max_length=500, verbose_name='Кем выдан', null=True)
     when_issued = models.DateField(verbose_name='Дата выдачи', null=True)
     code_pod = models.CharField(max_length=100, verbose_name='Код подразделения', null=True)
-    reg = models.CharField(max_length=2024, verbose_name='Регистрация', blank=True, null=True)
+    reg = models.CharField(max_length=2024, verbose_name='Адрес регистрации', blank=True, null=True)
     author_email = models.EmailField(verbose_name='Электронная почта изготовителя фонограммы', blank=True, null=True)
     fin_conditions = models.CharField(max_length=2024, verbose_name='Финансовые условия с изготовителем фонограммы', blank=True, null=True)
     number = models.IntegerField(blank=True, null=True)
