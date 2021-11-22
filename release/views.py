@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from pathlib import Path
+from django import http
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -215,11 +216,20 @@ class MainInfoView(LoginRequiredMixin, FormView):
             else:
                 form.save()
 
-            if form.cleaned_data['content_type'] == 'SINGLE' or form.cleaned_data['content_type'] == 'ALBUM':
-                self.next = 'r_audio'
+            audio = Audio.objects.filter(user_id = user.id)
+            if audio:
+                if len(audio > 1):
+                    self.next = 'r_audio_album'
+                else:
+                    self.next = 'r_audio_single'
             else:
-                self.next = 'r_video'
-
+                if form.cleaned_data['content_type'] == 'SINGLE':
+                    self.next = 'r_audio_single'
+                elif form.cleaned_data['content_type'] == 'ALBUM':
+                    self.next = 'r_audio_album'
+                else:
+                    self.next = 'r_video'
+            print(form.cleaned_data['content_type'])
             return HttpResponseRedirect(reverse(self.next))
         else:
             main_info = MainInfo.objects.filter(user_id = user.id)
@@ -241,8 +251,45 @@ class MainInfoView(LoginRequiredMixin, FormView):
                                                         'cover_psd': cover_psd})
 
 
-class AudioView(LoginRequiredMixin, FormView):
-    template_name = 'release/audio.html'
+class AudioSingleView(LoginRequiredMixin, FormView):
+    template_name = 'release/audio_single.html'
+    form_class = AudioForm
+    form_title = 'Аудио'
+
+    def get(self, request, *args, **kwargs):
+        user = User.objects.get(username = request.user)
+        audio = Audio.objects.filter(user_id = user.id)
+        if audio:
+            audio_dict = model_to_dict(*audio)
+            form = self.form_class(initial = audio_dict)
+        else:
+            form = self.form_class(initial = {'user': user})
+        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data = request.POST, files = request.FILES)
+        user = User.objects.get(username = request.user)
+        add_video = self.request.POST.get('add_video')
+        if form.is_valid():
+            audio = Audio.objects.filter(user_id = user.id)
+            if audio:
+                audio.delete()
+            form.save()
+
+            if add_video == 'NO':
+                release_to_cloud(user)
+                return HttpResponseRedirect(reverse('r_success'))
+            else:
+                return HttpResponseRedirect(reverse('r_video'))
+        
+        else:
+            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+
+
+
+
+class AudioAlbumView(LoginRequiredMixin, FormView):
+    template_name = 'release/audio_album.html'
     form_class = AudioForm
     form_title = 'Аудио'
     fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'release_year']

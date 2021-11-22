@@ -1,4 +1,14 @@
+{% extends 'base.html' %}
 {% load static %}
+
+{% block header %}
+
+{% include '_nav.html' %}
+
+{% endblock %}
+
+{% block body %}
+
 <div class="container-xxl !direction !spacing">
     <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
         <div class="col-md-6 col-sm-8 col-10 release-header">
@@ -23,11 +33,25 @@
                         <p>{{ item }}</p>
                     </div>
                 {% endfor %}
+
+                <div>
+                    <p>Добавить видеоклип?</p>
+                    <p>
+                        <input type="radio" id="video_choice_1" name="add_video" value="NO" checked>
+                        <label for="video_choice_1">Нет</label>
+                    </p>
+                    <p>
+                        <input type="radio" id="video_choice_2" name="add_video" value="YES">
+                        <label for="video_choice_2">Да</label>
+                    </p>
+                </div>
+                
             </div>
             {% for item in form.hidden_fields %}
                 {{ item }}
             {% endfor %}
         </div>
+
         <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
             <div class="col-md-6 col-sm-8 col-10 release-button">
                 <button class="btn button" type="button" onclick="history.back();">Назад</button>
@@ -40,3 +64,5 @@
         </div>
     </form>
 </div>
+
+{% endblock %}
