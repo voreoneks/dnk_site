@@ -1,0 +1,73 @@
+:root{
+    --oswald_ex_light: 'OswaldExtraLight', sans-serif;
+    --oswald_light: 'OswaldLight', sans-serif;
+    --oswald_regular: 'OswaldRegular', sans-serif;
+    --oswald_medium: 'OswaldMedium', sans-serif;
+    --oswald_semi_bold: 'OswaldSemiBold', sans-serif;
+    --oswald_bold: 'OswaldBold', sans-serif;
+
+    --montserrat_ex_light: 'MontserratExtraLight', serif;
+    --montserrat_regular: 'MontserratRegular', serif;
+    --montserrat_bold: 'MontserratBold', serif;
+}
+
+
+/* Montserrat */
+
+@font-face {
+    font-family: 'MontserratExtraLight'; 
+    src: url('fonts/Montserrat-ExtraLight.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 200; 
+} 
+@font-face {
+    font-family: 'MontserratRegular'; 
+    src: url('fonts/Montserrat-Regular.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 400; 
+} 
+@font-face {
+    font-family: 'MontserratBold'; 
+    src: url('fonts/Montserrat-Bold.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 700; 
+} 
+
+/* Oswald */
+
+@font-face {
+    font-family: 'OswaldExtraLight'; 
+    src: url('fonts/Oswald-ExtraLight.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 200; 
+} 
+@font-face {
+    font-family: 'OswaldLight'; 
+    src: url('fonts/Oswald-Light.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 300; 
+} 
+@font-face {
+    font-family: 'OswaldRegular'; 
+    src: url('fonts/Oswald-Regular.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 400; 
+} 
+@font-face {
+    font-family: 'OswaldMedium'; 
+    src: url('fonts/Oswald-Medium.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 500; 
+} 
+@font-face {
+    font-family: 'OswaldSemiBold'; 
+    src: url('fonts/Oswald-SemiBold.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 600; 
+} 
+@font-face {
+    font-family: 'OswaldBold'; 
+    src: url('fonts/Oswald-Bold.ttf') format('truetype'); 
+    font-style: normal; 
+    font-weight: 700; 
+} 

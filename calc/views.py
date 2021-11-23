@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from google_sheets import Sheet
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def calc(request):
     form_title = 'Калькулятор потенциального дохода'
     form_description = 'Добавьте информацию по прослушиваниям ваших релизов за последние 6 месяцев. <br>Информацию по прослушиваниям вы можете получить от вашего музыкального издательства, агрегатора и в приложениях Apple Music for Artists / Spotify for Artists'

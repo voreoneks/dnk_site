@@ -316,7 +316,7 @@ class MainInfoDocsView(LoginRequiredMixin, FormView):
                 cover = main_info_dict['cover']
                 main_info.delete()
                 forma = form.save(commit = False)
-                if cover:
+                if request.FILES.get('cover') == None and cover:
                     forma.cover = cover
                 forma.save()
             else:

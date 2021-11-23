@@ -31,17 +31,53 @@
                         <p style="font-size: 15px;">{{ item.help_text }}</p>
                         {% endautoescape %}
                         <p>{{ item }}</p>
+                        {% if item.name == 'audio' %}
+                            {% if song_url %}
+                                <p>Загружено:</p>
+                                <p style="font-size: 12px;">{{ song_url }}</p>
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url 'delete_audio' %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% if item.name == 'clean_link' %}
+                            {% if clean_link_url %}
+                                <p>Загружено:</p>
+                                <p style="font-size: 12px;">{{ clean_link_url }}</p>
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url 'delete_clean_link' %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% if item.name == 'instrumental' %}
+                            {% if instrumental_url %}
+                                <p>Загружено:</p>
+                                <p style="font-size: 12px;">{{ instrumental_url }}</p>
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url 'delete_instrumental' %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% if item.name == 'song_text' %}
+                            {% if song_text_url %}
+                                <p>Загружено:</p>
+                                <p style="font-size: 12px;">{{ song_text_url }}</p>
+                                <div class="clear">
+                                    <button class="btn button" type="button" onclick="document.location.href = '{% url 'delete_song_text' %}';">Очистить</button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 {% endfor %}
 
                 <div>
                     <p>Добавить видеоклип?</p>
                     <p>
-                        <input type="radio" id="video_choice_1" name="add_video" value="NO" checked>
+                        <input type="radio" id="video_choice_1" name="add_video" value="NO">
                         <label for="video_choice_1">Нет</label>
                     </p>
                     <p>
-                        <input type="radio" id="video_choice_2" name="add_video" value="YES">
+                        <input type="radio" id="video_choice_2" name="add_video" value="YES" checked>
                         <label for="video_choice_2">Да</label>
                     </p>
                 </div>

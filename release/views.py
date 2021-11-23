@@ -15,6 +15,7 @@ from dnk_site.settings import BASE_DIR, MEDIA_URL, MEDIA_ROOT
 from google_drive.google_drive import Drive
 from google_sheets import Sheet
 from lk.models import *
+from silk.profiling.profiler import silk_profile
 
 from .forms import *
 from .models import *
@@ -164,7 +165,10 @@ class MainInfoView(LoginRequiredMixin, FormView):
             main_info_dict = model_to_dict(*main_info)
             photo = main_info_dict['photo']
             cover = main_info_dict['cover']
-            cover_psd = Path(main_info_dict['cover_psd'].name).name
+            if main_info_dict['cover_psd']:
+                cover_psd = Path(main_info_dict['cover_psd'].name).name
+            else:
+                cover_psd = ''
             form = self.form_class(initial = main_info_dict)
         else:
             lk = Lk.objects.filter(user_id = user.id)
@@ -218,7 +222,7 @@ class MainInfoView(LoginRequiredMixin, FormView):
 
             audio = Audio.objects.filter(user_id = user.id)
             if audio:
-                if len(audio > 1):
+                if len(audio) > 1:
                     self.next = 'r_audio_album'
                 else:
                     self.next = 'r_audio_single'
@@ -229,7 +233,6 @@ class MainInfoView(LoginRequiredMixin, FormView):
                     self.next = 'r_audio_album'
                 else:
                     self.next = 'r_video'
-            print(form.cleaned_data['content_type'])
             return HttpResponseRedirect(reverse(self.next))
         else:
             main_info = MainInfo.objects.filter(user_id = user.id)
@@ -238,7 +241,10 @@ class MainInfoView(LoginRequiredMixin, FormView):
                 main_info_dict = model_to_dict(*main_info)
                 photo = main_info_dict['photo']
                 cover = main_info_dict['cover']
-                cover_psd = main_info_dict['cover_psd']
+                if main_info_dict['cover_psd']:
+                    cover_psd = Path(main_info_dict['cover_psd'].name).name
+                else:
+                    cover_psd = ''
             else:
                 photo = ''
                 cover = ''
@@ -253,7 +259,7 @@ class MainInfoView(LoginRequiredMixin, FormView):
 
 class AudioSingleView(LoginRequiredMixin, FormView):
     template_name = 'release/audio_single.html'
-    form_class = AudioForm
+    form_class = AudioSingleForm
     form_title = 'Аудио'
 
     def get(self, request, *args, **kwargs):
@@ -261,20 +267,61 @@ class AudioSingleView(LoginRequiredMixin, FormView):
         audio = Audio.objects.filter(user_id = user.id)
         if audio:
             audio_dict = model_to_dict(*audio)
+
+            if audio_dict['audio']:
+                song_url = Path(audio_dict['audio'].name).name
+            if audio_dict['clean_link']:
+                clean_link_url = Path(audio_dict['clean_link'].name).name
+            if audio_dict['instrumental']:
+                instrumental_url = Path(audio_dict['instrumental'].name).name
+            if audio_dict['song_text']:
+                song_text_url = Path(audio_dict['song_text'].name).name
+
             form = self.form_class(initial = audio_dict)
         else:
+            song_url = None
+            clean_link_url = None
+            instrumental_url = None
+            song_text_url = None
             form = self.form_class(initial = {'user': user})
-        return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+
+        return render(request, self.template_name, {
+            'form': form, 
+            'form_title': self.form_title,
+            'delete_audio': 'delete_audio',
+            'delete_clean_link': 'delete_clean_link',
+            'delete_instrumental': 'delete_instrumental',
+            'delete_song_text': 'delete_song_text',
+            'song_url': song_url,
+            'clean_link_url': clean_link_url,
+            'instrumental_url': instrumental_url,
+            'song_text_url': song_text_url})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         add_video = self.request.POST.get('add_video')
+        audio = Audio.objects.filter(user_id = user.id)
         if form.is_valid():
-            audio = Audio.objects.filter(user_id = user.id)
             if audio:
+                audio_dict = model_to_dict(*audio)
+                song = audio_dict['audio']
+                clean = audio_dict['clean_link']
+                instrumental = audio_dict['instrumental']
+                text = audio_dict['song_text'] 
                 audio.delete()
-            form.save()
+                forma = form.save(commit = False)
+                if request.FILES.get('audio') == None and audio:
+                    forma.audio = song
+                if request.FILES.get('clean_link') == None and clean:
+                    forma.clean_link = clean
+                if request.FILES.get('instrumental') == None and instrumental:
+                    forma.instrumental = instrumental
+                if request.FILES.get('song_text') == None and text:
+                    forma.song_text = text
+                forma.save()
+            else:
+                form.save()
 
             if add_video == 'NO':
                 release_to_cloud(user)
@@ -283,14 +330,41 @@ class AudioSingleView(LoginRequiredMixin, FormView):
                 return HttpResponseRedirect(reverse('r_video'))
         
         else:
-            return render(request, self.template_name, {'form': form, 'form_title': self.form_title})
+            if audio:
+                audio_dict = model_to_dict(*audio)
+                if audio_dict['audio']:
+                    song_url = Path(audio_dict['audio'].name).name
+                if audio_dict['clean_link']:
+                    clean_link_url = Path(audio_dict['clean_link'].name).name
+                if audio_dict['instrumental']:
+                    instrumental_url = Path(audio_dict['instrumental'].name).name
+                if audio_dict['song_text']:
+                    song_text_url = Path(audio_dict['song_text'].name).name
+            else:
+                song_url = None
+                clean_link_url = None
+                instrumental_url = None
+                song_text_url = None
+
+                
+            return render(request, self.template_name, {
+            'form': form, 
+            'form_title': self.form_title,
+            'delete_audio': 'delete_audio',
+            'delete_clean_link': 'delete_clean_link',
+            'delete_instrumental': 'delete_instrumental',
+            'delete_song_text': 'delete_song_text',
+            'song_url': song_url,
+            'clean_link_url': clean_link_url,
+            'instrumental_url': instrumental_url,
+            'song_text_url': song_text_url})
 
 
 
 
 class AudioAlbumView(LoginRequiredMixin, FormView):
     template_name = 'release/audio_album.html'
-    form_class = AudioForm
+    form_class = AudioAlbumForm
     form_title = 'Аудио'
     fields_for_button = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'release_year']
     fields = ['songers', 'song_title', 'album_title', 'feat', 'genre', 'fio_songer', 'words_author', 'music_author', 'owner_citizenship', 'record_country', 'timing', 'song_preview', 'lexis', 'audio_link', 'audio', 'clean_link', 'instrumental', 'song_text', 'release_year']
@@ -444,6 +518,7 @@ class VideoView(LoginRequiredMixin, FormView):
                                                     'delete_preview': 'delete_preview', 
                                                     'preview':preview})
 
+    @silk_profile(name='Video View Post')
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
@@ -456,7 +531,7 @@ class VideoView(LoginRequiredMixin, FormView):
                 preview = video_dict['video_preview']
                 video.delete()
                 forma = form.save(commit = False)
-                if request.FILES.get('video_preview') == None and preview:
+                if request.FILES.get('video_preview') == None:
                     forma.video_preview = preview
                 forma.save()
             else:
@@ -496,6 +571,26 @@ def delete_preview(request):
     user = User.objects.get(username = request.user)
     Video.objects.filter(user_id = user.id).update(video_preview = '')
     return HttpResponseRedirect(reverse('r_video'))
+
+def delete_audio(request):
+    user = User.objects.get(username = request.user)
+    Audio.objects.filter(user_id = user.id).update(audio = '')
+    return HttpResponseRedirect(reverse('r_audio_single'))
+
+def delete_clean_link(request):
+    user = User.objects.get(username = request.user)
+    Audio.objects.filter(user_id = user.id).update(clean_link = '')
+    return HttpResponseRedirect(reverse('r_audio_single'))
+
+def delete_instrumental(request):
+    user = User.objects.get(username = request.user)
+    Audio.objects.filter(user_id = user.id).update(instrumental = '')
+    return HttpResponseRedirect(reverse('r_audio_single'))
+
+def delete_song_text(request):
+    user = User.objects.get(username = request.user)
+    Audio.objects.filter(user_id = user.id).update(song_text = '')
+    return HttpResponseRedirect(reverse('r_audio_single'))
 
 def clear_table(request):
     user = User.objects.get(username = request.user)

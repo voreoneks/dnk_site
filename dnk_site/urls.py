@@ -21,6 +21,7 @@ from django.urls import path, include
 from news.views import *
 from release.views import *
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', LoginView.as_view(), name='login'),
@@ -35,5 +36,15 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    import debug_toolbar
+
+    import mimetypes
+    mimetypes.add_type("application/javascript", ".js", True)
+
+    # urlpatterns = [
+    #     path('__debug__/', include(debug_toolbar.urls)),
+    # ] + urlpatterns
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
+
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
