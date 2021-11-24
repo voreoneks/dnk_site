@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.forms import formset_factory
 from django.forms.models import model_to_dict
 from django.http.response import HttpResponseNotFound, HttpResponseRedirect
@@ -10,10 +11,10 @@ from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic.edit import FormView
 from dnk_site.settings import BASE_DIR, MEDIA_URL
+from docxtpl import DocxTemplate
 from google_drive.google_drive import Drive
 from google_sheets import Sheet
 from lk.models import Lk
-from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import *
 from .models import *
@@ -26,6 +27,7 @@ def docs_to_sheet(user):
 
     main_info_docs = MainInfoDocs.objects.get(user_id = user.id)
     main_info_docs_dict = model_to_dict(main_info_docs)
+    org = main_info_docs_dict['you_are']
     docs_values = tuple()
 
     new_folder = drive.create_folder('1SDzis3xsoSCG57DDngYWyYVLd41cWj3m', str(user) + '_documents')
@@ -40,51 +42,46 @@ def docs_to_sheet(user):
         date_time, main_info_docs_dict['you_are'], main_info_docs_dict['partners_value'], main_info_docs_dict['artist_fio'], main_info_docs_dict['artist_name'], main_info_docs_dict['phone_number'], main_info_docs_dict['email'], main_info_docs_dict['socials'], up_cover, main_info_docs_dict['release_type']
     )
     docs_values += main_info_docs_values
-    main_info_docs.delete()
 
-    orginfoiprf = OrgInfoIprf.objects.filter(user_id = user.id)
-    if orginfoiprf:
+    if org == 'IPRF':
+        orginfoiprf = OrgInfoIprf.objects.filter(user_id = user.id)
         orginfoiprf_dict = model_to_dict(*orginfoiprf)
         orginfoiprf_values = (
             orginfoiprf_dict['fio'], orginfoiprf_dict['ogrnip'], orginfoiprf_dict['inn'], orginfoiprf_dict['bank'], orginfoiprf_dict['r_s'], orginfoiprf_dict['bik'], orginfoiprf_dict['inn_bank'], orginfoiprf_dict['k_s']
         )
-        orginfoiprf.delete()
     else:
         orginfoiprf_values = tuple('' for i in range(8))
 
     docs_values += orginfoiprf_values
 
-    orginfoipin = OrgInfoIpin.objects.filter(user_id = user.id)
-    if orginfoipin:
+    if org == 'IPIN':
+        orginfoipin = OrgInfoIpin.objects.filter(user_id = user.id)
         orginfoipin_dict = model_to_dict(*orginfoipin)
         orginfoipin_values = (
             orginfoipin_dict['fio'], orginfoipin_dict['citizen'], orginfoipin_dict['id_number'], orginfoipin_dict['bank'], orginfoipin_dict['r_s'], orginfoipin_dict['bik'], orginfoipin_dict['inn_bank'], orginfoipin_dict['k_s']
         )
-        orginfoipin.delete()
     else:
         orginfoipin_values = tuple('' for i in range(8))
 
     docs_values += orginfoipin_values
 
-    orginfosam = OrgInfoSam.objects.filter(user_id = user.id)
-    if orginfosam:
+    if org == 'SAM':
+        orginfosam = OrgInfoSam.objects.filter(user_id = user.id)
         orginfosam_dict = model_to_dict(*orginfosam)
         orginfosam_values = (
             orginfosam_dict['fio'], str(orginfosam_dict['birthday']), orginfosam_dict['series_num'], orginfosam_dict['who_issued'], str(orginfosam_dict['when_issued']), orginfosam_dict['code_pod'], orginfosam_dict['reg'], orginfosam_dict['bank'], orginfosam_dict['r_s'], orginfosam_dict['bik'], orginfosam_dict['inn_bank'], orginfosam_dict['k_s'], orginfosam_dict['inn'], orginfosam_dict['snils']
         )
-        orginfosam.delete()
     else:
         orginfosam_values = tuple('' for i in range(14))
 
     docs_values += orginfosam_values
 
-    orginfoooo = OrgInfoOoo.objects.filter(user_id = user.id)
-    if orginfoooo:
+    if org == 'OOO':
+        orginfoooo = OrgInfoOoo.objects.filter(user_id = user.id)
         orginfoooo_dict = model_to_dict(*orginfoooo)
         orginfoooo_values = (
             orginfoooo_dict['name'], orginfoooo_dict['fio_gen_dir'], orginfoooo_dict['ogrn'], orginfoooo_dict['inn'], orginfoooo_dict['kpp'], orginfoooo_dict['yur_address'], orginfoooo_dict['fact_address'], orginfoooo_dict['bank'], orginfoooo_dict['r_s'], orginfoooo_dict['bik'], orginfoooo_dict['inn_bank'], orginfoooo_dict['k_s']
         )
-        orginfoooo.delete()
     else:
         orginfoooo_values = tuple('' for i in range(12))
 
@@ -109,7 +106,6 @@ def docs_to_sheet(user):
         video_docs_values = (
             video_docs_dict['songers'], video_docs_dict['video_title'], video_docs_dict['words_author'], video_docs_dict['music_author'], video_docs_dict['phon_maker'], video_docs_dict['director'], video_docs_dict['timing'], video_docs_dict['release_year'], video_docs_dict['production_country']
         )
-        video_docs.delete()
     else:
         video_docs_values = tuple('' for i in range(9))
 
@@ -121,7 +117,6 @@ def docs_to_sheet(user):
         licence_dict['music_author'], licence_dict['words_author'], licence_dict['phon_maker']
     )
     docs_values += licence_values
-    licence.delete()
 
 
     music_author = MusicAuthor.objects.filter(user_id = user.id)
@@ -236,8 +231,93 @@ def docs_to_sheet(user):
     }
     spaces.append(spaces_data)
 
+    if org != 'IPIN':
+        if org == 'IPRF':
+            path = str(BASE_DIR / 'word' / 'IP.docx')
+            tpl = DocxTemplate(path)
+            context = {
+                'fio': orginfoiprf_dict['fio'],
+                'ogrnip': orginfoiprf_dict['ogrnip'],
+                'inn': orginfoiprf_dict['inn'],
+                'bank': orginfoiprf_dict['bank'],
+                'r_s': orginfoiprf_dict['r_s'],
+                'bik': orginfoiprf_dict['bik'],
+                'k_s': orginfoiprf_dict['k_s'],
+                'inn_bank': orginfoiprf_dict['inn_bank']    
+            }
+            orginfoiprf.delete()
+
+        if org == 'SAM':
+            path = str(BASE_DIR / 'word' / 'SAM.docx')
+            tpl = DocxTemplate(path)
+            context = {
+                'fio': orginfosam_dict['fio'],
+                'series_num': orginfosam_dict['series_num'],
+                'inn': orginfosam_dict['inn'],
+                'r_s': orginfosam_dict['r_s'],
+                'bank': orginfosam_dict['bank'],
+                'bik': orginfosam_dict['bik'],
+                'k_s': orginfosam_dict['k_s'],
+                'inn_bank': orginfosam_dict['inn_bank'],
+                'who_issued': orginfosam_dict['who_issued'],
+                'when_issued': orginfosam_dict['when_issued'],
+                'code_pod': orginfosam_dict['code_pod'],
+                'reg': orginfosam_dict['reg'],
+                'artist_name': main_info_docs_dict['artist_name']
+            }
+            orginfosam.delete()
+
+        if org == 'OOO':
+            path = str(BASE_DIR / 'word' / 'OOO.docx')
+            tpl = DocxTemplate(path)
+            context = {
+                'name': orginfoooo_dict['name'],
+                'fio_gen_dir': orginfoooo_dict['fio_gen_dir'],
+                'kpp': orginfoooo_dict['kpp'],
+                'yur_address': orginfoooo_dict['yur_address'],
+                'fact_address': orginfoooo_dict['fact_address'],
+                'inn': orginfoooo_dict['inn'],
+                'ogrn': orginfoooo_dict['ogrn'],
+                'r_s': orginfoooo_dict['r_s'],
+                'bank': orginfoooo_dict['bank'],
+                'bik': orginfoooo_dict['bik'],
+                'k_s': orginfoooo_dict['k_s'],
+                'inn_bank': orginfoooo_dict['inn_bank']
+            }
+            orginfoooo.delete()
+
+        context = {
+            **context,
+            'col_labels': [
+                '№', 'Название Произведения Фонограммы', 'Автор музыки', 'Автор слов', 'Исполнитель (творческий псевдоним)', 'Изготовитель Фонограммы/ хронометраж', 'Доля Лицензиара от 100% авторских прав на Произведение', 'Доля Лицензиара от 100% смежных прав на Фонограмму и Исполнение'
+            ],
+            'email': main_info_docs_dict['email']
+        }
+
+        cols = []
+        for song in range(len(audio_docs)):
+            row = {'cols': [song + 1, audio_docs_tuple_dict[song]['song_title'], audio_docs_tuple_dict[song]['music_author'], audio_docs_tuple_dict[song]['words_author'], audio_docs_tuple_dict[song]['songers'], audio_docs_tuple_dict[song]['phon_maker'] + ' / ' + audio_docs_tuple_dict[song]['timing'] + ' мин.', '100%', '100%']}
+            cols.append(row)
+        context = {
+            **context, 
+            'tbl_contents': cols
+        }
+
+        tpl.render(context)
+        save_path = str(BASE_DIR / 'media' / 'uploads' / user.username / 'contract.docx')
+        tpl.save(save_path)
+
+        up_contract = drive.upload_file(new_folder['id'], 'Договор', save_path)
+
+
+    main_info_docs.delete()
+    if org == 'IPIN':
+        orginfoipin.delete()
     if audio_docs:
         audio_docs.delete()
+    if video_docs:
+        video_docs.delete()
+    licence.delete()
     music_author.delete()
     words_author.delete()
     if others:

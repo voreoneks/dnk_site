@@ -597,7 +597,7 @@ def clear_table(request):
     audio = Audio.objects.filter(user_id = user.id)
     for song in audio:
         song.delete()
-    return HttpResponseRedirect(reverse('r_audio'))
+    return HttpResponseRedirect(reverse('r_audio_album'))
 
 def success_page(request):
     return render(request, 'success.html')
