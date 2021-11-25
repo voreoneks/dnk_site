@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block header %}
+
+{% include '_nav.html' %}
+
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container-xxl !direction !spacing">
+    <form method="POST" enctype="multipart/form-data" action="" id="audio-form">
+        {% csrf_token %}
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 release-header">
+                <h5>{{ form_title }}</h5><hr>
+                {% autoescape off %}
+                <p>{{ form_description }}</p>
+                {% endautoescape %}
+                {% if error %}
+                    <p style="text-align: center; color: brown;">{{ error }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 table ">
+
+                <table>
+                    {{ formset.management_form }}
+                    <tr>
+                        <td></td>
+                        {% for item in formset.form.visible_fields %}
+                        
+                            <td class="th">
+                                {{ item.label }}
+                                {% if item.help_text %}
+                                    <a class="info" data-bs-toggle="tooltip" title="{{ item.help_text }}"><img src="{% static '/images/info-white.png' %}" alt=""></a>
+                                {% endif %}
+                            </td>
+                            {% if item.name in button %}
+                            <td></td>
+                            {% endif %}
+                        
+                        {% endfor %}
+                    </tr>
+                    {% for form in formset %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            {% for item in form.visible_fields %}
+                                {% if item.name in form.errors %}
+                                <td style="border: brown solid 1px;">
+                                {% else %}
+                                <td>
+                                {% endif %}
+                                    {{ item }}
+                                </td>
+                                {% if item.name in button %}
+                                    <td><input style="width: 20px; padding-top: 5px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
+                                {% endif %}
+                            {% endfor %}
+                            {% for item in form.hidden_fields %}
+                                {{ item }}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+                
+            </div>
+        </div>
+            
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+
+            <div class="col-md-6 col-sm-8 col-10 release-form">
+                <div>
+                    <p>Добавить видеоклип?</p>
+                    <p>
+                        <input type="radio" id="video_choice_1" name="add_video" value="NO">
+                        <label for="video_choice_1">Нет</label>
+                    </p>
+                    <p>
+                        <input type="radio" id="video_choice_2" name="add_video" value="YES" checked>
+                        <label for="video_choice_2">Да</label>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}"></div>
+        
+            <div class="col-md-6 col-sm-8 col-10 release-button">
+                <button class="btn button" type="button" onclick="history.back();">Назад</button>
+                <div>
+                    <button class="btn button" type="button" onclick="document.location.href = '{% url 'clear_table' %}';">Очистить таблицу</button>
+                    <button class="btn button" form="audio-form" type="submit">Далее</button>
+                    <button hidden id="loading" class="btn button" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        Загрузка...
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </form>
+</div>
+
+{% endblock %}

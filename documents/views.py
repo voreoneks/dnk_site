@@ -330,7 +330,7 @@ def docs_to_sheet(user):
 class MainInfoDocsView(LoginRequiredMixin, FormView):
     template_name = 'documents/documents.html'
     form_class = MainInfoDocsForm
-    form_title = 'Для лицензиара'
+    form_title = 'Главная информация'
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -490,19 +490,71 @@ class OrgInfoView(LoginRequiredMixin, FormView):
             form.save() 
             main_info = MainInfoDocs.objects.get(user_id = user.id)
             release_type = main_info.release_type
-
-            if release_type == 'SINGLE' or release_type == 'ALBUM':
-                return HttpResponseRedirect(reverse('d_audio'))
+            audio_docs = AudioDocs.objects.filter(user_id = user.id)
+            if audio_docs:
+                if len(audio_docs) > 1:
+                    return HttpResponseRedirect(reverse('d_audio_album'))
+                else:
+                    return HttpResponseRedirect(reverse('d_audio_single'))
             else:
-                return HttpResponseRedirect(reverse('d_video'))                
+                if release_type == 'SINGLE':
+                    return HttpResponseRedirect(reverse('d_audio_single'))
+                elif release_type == 'ALBUM':
+                    return HttpResponseRedirect(reverse('d_audio_album'))
+                else:
+                    return HttpResponseRedirect(reverse('d_video'))                
         else:
             context['form'] = form
             context['form_title'] = self.form_title
             return render(request, self.template_name, context)
 
 
-class AudioDocsView(LoginRequiredMixin, FormView):
-    template_name = 'documents/audio.html'
+class AudioDocsSingleView(LoginRequiredMixin, FormView):
+    template_name = 'documents/audio_single.html'
+    form_class = AudioDocsForm
+    form_title = 'Аудио'
+
+    def get(self, request, *args, **kwargs):
+        user = User.objects.get(username = request.user)
+        main_info = MainInfoDocs.objects.get(user_id = user.id)
+        release_type = main_info.release_type
+        if release_type == 'ALBUM':
+            error = 'Для заполнения альбома необходимо сначала очистить форму сингла.'
+        else:
+            error = ''
+        audio_docs = AudioDocs.objects.filter(user_id = user.id)
+        if audio_docs:
+            audio_dict = model_to_dict(*audio_docs)
+            form = self.form_class(initial = audio_dict)
+        else:
+            form = self.form_class(initial = {'user': user})
+        return render(request, self.template_name, {
+            'form': form, 
+            'form_title': self.form_title,
+            'error': error
+        })
+
+    def post(self, request, *args, **kwargs):
+        user = User.objects.get(username = request.user)
+        add_video = self.request.POST.get('add_video')
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            audio_docs = AudioDocs.objects.filter(user_id = user.id)
+            if audio_docs:
+                audio_docs.delete()
+            form.save()
+            if add_video == 'NO':
+                return HttpResponseRedirect(reverse('licence'))
+            else:
+                return HttpResponseRedirect(reverse('d_video'))
+        else:
+            return render(request, self.template_name, {
+            'form': form, 
+            'form_title': self.form_title
+        })
+
+class AudioDocsAlbumView(LoginRequiredMixin, FormView):
+    template_name = 'documents/audio_album.html'
     form_class = AudioDocsForm
     form_title = 'Аудио'
     fields_for_button = ['songers', 'song_title', 'album_title', 'words_author', 'music_author', 'phon_maker', 'timing', 'release_year']
@@ -510,6 +562,12 @@ class AudioDocsView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
+        main_info = MainInfoDocs.objects.get(user_id = user.id)
+        release_type = main_info.release_type
+        if release_type == 'SINGLE':
+            error = 'Для заполнения сингла необходимо сначала очистить таблицу альбома.'
+        else:
+            error = ''
         num_songs = MainInfoDocs.objects.get(user_id = user.id).num_songs
         audio_formset = formset_factory(self.form_class)
         data = {
@@ -531,7 +589,8 @@ class AudioDocsView(LoginRequiredMixin, FormView):
         formset = audio_formset(data)
         return render(request, self.template_name, {'button': self.fields_for_button, 
                                                     'formset': formset, 
-                                                    'form_title': self.form_title})
+                                                    'form_title': self.form_title,
+                                                    'error': error})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -985,6 +1044,20 @@ def delete_cover(request):
     user = User.objects.get(username = request.user)
     MainInfoDocs.objects.filter(user_id = user.id).update(cover = '')
     return HttpResponseRedirect(reverse('documents'))
+
+def clear_table(request):
+    user = User.objects.get(username = request.user)
+    audio = AudioDocs.objects.filter(user_id = user.id)
+    for song in audio:
+        song.delete()
+    return HttpResponseRedirect(reverse('d_audio_album'))
+
+def clear_form(request):
+    user = User.objects.get(username = request.user)
+    audio = AudioDocs.objects.filter(user_id = user.id)
+    for song in audio:
+        song.delete()
+    return HttpResponseRedirect(reverse('d_audio_single'))
 
 def success_page(request):
     return render(request, 'success.html')

@@ -264,18 +264,32 @@ class AudioSingleView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
+        main_info = MainInfo.objects.get(user_id = user.id)
+        release_type = main_info.content_type
+        if release_type == 'ALBUM':
+            error = 'Для заполнения альбома необходимо сначала очистить форму сингла.'
+        else:
+            error = ''
         audio = Audio.objects.filter(user_id = user.id)
         if audio:
             audio_dict = model_to_dict(*audio)
 
             if audio_dict['audio']:
                 song_url = Path(audio_dict['audio'].name).name
+            else:
+                song_url = None
             if audio_dict['clean_link']:
                 clean_link_url = Path(audio_dict['clean_link'].name).name
+            else:
+                clean_link_url = None
             if audio_dict['instrumental']:
                 instrumental_url = Path(audio_dict['instrumental'].name).name
+            else:
+                instrumental_url = None
             if audio_dict['song_text']:
                 song_text_url = Path(audio_dict['song_text'].name).name
+            else:
+                song_text_url = None
 
             form = self.form_class(initial = audio_dict)
         else:
@@ -295,7 +309,8 @@ class AudioSingleView(LoginRequiredMixin, FormView):
             'song_url': song_url,
             'clean_link_url': clean_link_url,
             'instrumental_url': instrumental_url,
-            'song_text_url': song_text_url})
+            'song_text_url': song_text_url,
+            'error': error})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data = request.POST, files = request.FILES)
@@ -371,6 +386,12 @@ class AudioAlbumView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
+        main_info = MainInfo.objects.get(user_id = user.id)
+        release_type = main_info.content_type
+        if release_type == 'SINGLE':
+            error = 'Для заполнения сингла необходимо сначала очистить таблицу альбома.'
+        else:
+            error = ''
         num_songs = MainInfo.objects.get(user_id = user.id).num_songs
         audio_formset = formset_factory(self.form_class)
         data = {
@@ -418,7 +439,8 @@ class AudioAlbumView(LoginRequiredMixin, FormView):
                                                     'clean_link_urls': clean_link_urls, 
                                                     'instrumental_urls': instrumental_urls, 
                                                     'song_text_urls': song_text_urls,
-                                                    'form_title': self.form_title})
+                                                    'form_title': self.form_title,
+                                                    'error': error})
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
@@ -598,6 +620,13 @@ def clear_table(request):
     for song in audio:
         song.delete()
     return HttpResponseRedirect(reverse('r_audio_album'))
+
+def clear_form(request):
+    user = User.objects.get(username = request.user)
+    audio = Audio.objects.filter(user_id = user.id)
+    for song in audio:
+        song.delete()
+    return HttpResponseRedirect(reverse('r_audio_single'))
 
 def success_page(request):
     return render(request, 'success.html')

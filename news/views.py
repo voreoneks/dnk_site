@@ -26,7 +26,7 @@ class NewsPage(ListView):
         return news
 
     
-def download(slug_):
+def download(request, slug_):
     news = News.objects.get(slug = slug_)
     file_path = str(Path(__file__).parent.parent) + str(Path(news.file.url)) 
     filename = str(Path(file_path).name)

@@ -20,6 +20,9 @@
                 {% autoescape off %}
                 <p>{{ form_description }}</p>
                 {% endautoescape %}
+                {% if error %}
+                    <p style="text-align: center; color: brown;">{{ error }}</p>
+                {% endif %}
             </div>
         </div>
 
