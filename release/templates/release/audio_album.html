@@ -74,7 +74,7 @@
                                             {% endif %}
                                         </td>
                                     {% if item.name in button %}
-                                        <td><input style="width: 20px; padding-top: 5px; margin-right: 15px;" class="copy" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
+                                        <td><input style="width: 20px; padding-top: 5px; margin-right: 15px;" class="copy info" data-bs-toggle="tooltip" title="Продублировать данные в ячейки ниже" type="image" onclick="return false;" src="{% static '/images/arrow-down.png' %}"></td>
                                     {% endif %}
                                 {% endfor %}
                                     {% for item in form.hidden_fields %}

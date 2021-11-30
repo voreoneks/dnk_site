@@ -243,7 +243,9 @@ def docs_to_sheet(user):
                 'r_s': orginfoiprf_dict['r_s'],
                 'bik': orginfoiprf_dict['bik'],
                 'k_s': orginfoiprf_dict['k_s'],
-                'inn_bank': orginfoiprf_dict['inn_bank']    
+                'inn_bank': orginfoiprf_dict['inn_bank'],
+                'artist_fio': main_info_docs_dict['artist_fio'],
+                'artist_name': main_info_docs_dict['artist_name']  
             }
             orginfoiprf.delete()
 
@@ -263,6 +265,7 @@ def docs_to_sheet(user):
                 'when_issued': orginfosam_dict['when_issued'],
                 'code_pod': orginfosam_dict['code_pod'],
                 'reg': orginfosam_dict['reg'],
+                'artist_fio': main_info_docs_dict['artist_fio'],
                 'artist_name': main_info_docs_dict['artist_name']
             }
             orginfosam.delete()
@@ -282,7 +285,9 @@ def docs_to_sheet(user):
                 'bank': orginfoooo_dict['bank'],
                 'bik': orginfoooo_dict['bik'],
                 'k_s': orginfoooo_dict['k_s'],
-                'inn_bank': orginfoooo_dict['inn_bank']
+                'inn_bank': orginfoooo_dict['inn_bank'],
+                'artist_fio': main_info_docs_dict['artist_fio'],
+                'artist_name': main_info_docs_dict['artist_name']
             }
             orginfoooo.delete()
 
@@ -304,10 +309,12 @@ def docs_to_sheet(user):
         }
 
         tpl.render(context)
-        save_path = str(BASE_DIR / 'media' / 'uploads' / user.username / 'contract.docx')
-        tpl.save(save_path)
+        save_path = str(BASE_DIR / 'media' / 'uploads' / user.username)
+        if not os.path.exists(save_path):
+            os.mkdir(save_path)
+        tpl.save(save_path + '/contract.docx')
 
-        up_contract = drive.upload_file(new_folder['id'], 'Договор', save_path)
+        up_contract = drive.upload_file(new_folder['id'], 'Договор', save_path + '/contract.docx')
 
 
     main_info_docs.delete()
@@ -649,7 +656,7 @@ class LicenceView(LoginRequiredMixin, FormView):
     template_name = 'documents/licence.html'
     form_class = LicenceForm
     form_title = 'Права на материал'
-    form_description = '<p>Отчуждение - условно говоря «продажа» прав. То есть авторы/исполнители передают вам в полном объеме права без ограничений по срокам, территории и способам использования.</p><p>Варианты: отчуждение может быть за фиксированную сумму / роялти / безвозмездное / за упоминание в соцсетях.</p><p>Лицензию условно можно назвать «арендой» прав. Этот способ передачи прав на использование песни в определенных пределах. Обычно на 5 лет с возможностью пролонгации.</p><p>Варианты: лицензия также может быть предоставлена за фиксированную сумму / за роялти / безвозмездно / за упоминание в соцсетях.</p>'
+    form_description = '<p>Лицензия - предоставление права на использование музыкального произведения в определенном объеме, аналогичном тому, который вы предоставляете издательству (можно сравнить с арендой).</p><p>Отчуждение - передача права на использование музыкального произведения в полном объеме и без каких-либо ограничений (схоже со сделкой купли-продажи)</p><p>Варианты финансовых условий в договоре:</p> <ul><li>разовый платеж в виде фиксированной суммы;</li><li>периодические выплаты роялти (% от того, что вы будете получать от издательства);</li><li>безвозмездно (без выплаты вознаграждения);</li><li>иные, например, за упоминание в соц сетях и т.д. (указать в комментариях).</li></ul>'
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
