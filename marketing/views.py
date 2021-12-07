@@ -86,9 +86,11 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
                                               'tiktok': tiktok,
                                               'other': other})
         return render(request, self.template_name, {'form': form, 
-                                                    'form_title': self.form_title})
+                                                    'form_title': self.form_title,
+                                                    'prev': 'main'})
 
     def post(self, request, *args, **kwargs):
+        politics = request.POST.get('politics')
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         if form.is_valid():
@@ -96,11 +98,19 @@ class MainInfoMarketingView(LoginRequiredMixin, FormView):
             if main_info:
                 main_info.delete()
             form.save()
+            if not politics:
+                politics_error = 'Чтобы продолжить необходимо согласиться с политикой конфиденциальности.'
+                return render(request, self.template_name, {'form': form, 
+                                                            'form_title': self.form_title,
+                                                            'prev': 'main',
+                                                            'politics_error': politics_error})
+
             marketing_to_sheet(user)
             return HttpResponseRedirect(reverse('m_success'))
         else:
             return render(request, self.template_name, {'form': form, 
-                                                        'form_title': self.form_title})
+                                                        'form_title': self.form_title,
+                                                        'prev': 'main'})
 
 
 

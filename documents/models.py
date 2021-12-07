@@ -1,5 +1,5 @@
 import os
-
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.fields import CharField
@@ -7,7 +7,7 @@ from transliterate import translit
 
 
 def update_filename(instance, filename):
-    path = 'uploads/' + str(instance.user)
+    path = 'uploads/' + str(instance.user) + '/documents/'
     filename_ = translit(filename, language_code='ru', reversed=True)
     return os.path.join(path, filename_)
 
@@ -95,11 +95,11 @@ class OrgInfoOoo(models.Model):
 class AudioDocs(models.Model):
     songers = models.CharField(max_length=100, verbose_name='Исполнитель')
     song_title = models.CharField(max_length=100, verbose_name='Название песни')
-    album_title = models.CharField(max_length=100, verbose_name='Название альбома', blank=True, null=True)
+    album_title = models.CharField(max_length=100, verbose_name='Название релиза', blank=True, null=True)
     words_author = models.CharField(max_length=100, verbose_name='Автор слов')
     music_author = models.CharField(max_length=100, verbose_name='Автор музыки')
     phon_maker = models.CharField(max_length=100, verbose_name='Изготовитель фонограммы')
-    timing = models.CharField(max_length=5, verbose_name='Хронометраж')
+    timing = models.CharField(max_length=5, verbose_name='Хронометраж', validators=[RegexValidator(regex='[0-9]{2}:[0-9]{2}'),])
     release_year = models.CharField(max_length=4, verbose_name='Год выпуска')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 

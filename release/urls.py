@@ -17,5 +17,5 @@ urlpatterns = [
     path('audio/single/delete_instrumental/', delete_instrumental, name='delete_instrumental'),
     path('audio/single/delete_song_text/', delete_song_text, name='delete_song_text'),
     path('success/', success_page, name='r_success'),
-    path('video/', VideoView.as_view(), name='r_video')
+    path('video/', VideoView.as_view(), name='r_video'),
 ]

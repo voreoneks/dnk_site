@@ -51,14 +51,34 @@ section{
 
 .release-header{
     margin: auto;
-    font-family: var(--oswald_light);
     color: white;
 }
 
+.release-header p{
+    font-family: var(--fira_light);
+    font-size: 17px;
+}
+
 .release-header h5{
+    font-family: var(--oswald_light);
     text-align: center;
     text-transform: uppercase;
     margin-bottom: 40px;
+}
+
+.release-footer{
+    margin: auto;
+    color: white;
+    font-family: var(--fira_light);
+    padding: 0px 20px 60px 35px;
+}
+
+.audio-footer{
+    display: none;
+}
+
+.release-footer span{
+    margin-left: 10px;
 }
 
 .release-form{
@@ -71,7 +91,7 @@ section{
     border-radius: 5px;
     background-color: #0f0f0f;
     margin-bottom: 60px;
-    font-family: var(--oswald_light);
+    font-family: var(--fira_light);
     color: white;
 }
 
@@ -83,7 +103,7 @@ section{
 }
 
 .release-form input{
-    width: 40%;
+    width: 60%;
 }
 
 .release-form input[type = 'radio']{
@@ -125,7 +145,7 @@ section{
 
 .calc div{
     margin: auto;
-    font-family: var(--oswald_light);
+    font-family: var(--fira_light);
     color: white;
 }
 
@@ -246,17 +266,17 @@ a:focus{
 }
 
 .news h3{
-    font-family: var(--oswald_semi_bold);
+    font-family: var(--fira_bold);
 }
 
 .news p{
-    font-family: var(--montserrat_regular);
+    font-family: var(--fira_light);
     margin-top: 20px;
 }
 
 .news-footer{
     padding: 5px 0px 60px 0px;
-    font-family: var(--montserrat_regular);
+    font-family: var(--fira_regular);
     color: white;
     font-size: 13px;
     position: relative;
@@ -377,7 +397,7 @@ a:focus{
     margin-top: 5%;
     font-size: 15px;
     margin-bottom: 5%;
-    font-family: var(--oswald_light);
+    font-family: var(--fira_light);
 }
 
 .table::-webkit-scrollbar {
@@ -408,6 +428,11 @@ a:focus{
 
 .modal-content{
     background-color: rgb(63, 68, 73);
+}
+
+.modal-title{
+    color: white;
+    font-family: var(--fira_bold);
 }
 
 .nav-menu{
@@ -443,4 +468,12 @@ a:focus{
     .release-button{
         width: auto;
     }
+}
+
+.turn-back{
+    text-align: center;
+    font-family: var(--fira_light);
+    color: white;
+    margin-top: 50px;
+    font-size: 16px;
 }

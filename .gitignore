@@ -1,1 +1,4 @@
 /media
+/.vscode
+/__pycache__
+/db.sqlite3

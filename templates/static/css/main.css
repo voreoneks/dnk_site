@@ -66,6 +66,21 @@ section{
     margin-bottom: 40px;
 }
 
+.release-footer{
+    margin: auto;
+    color: white;
+    font-family: var(--fira_light);
+    padding: 0px 20px 60px 35px;
+}
+
+.audio-footer{
+    display: none;
+}
+
+.release-footer span{
+    margin-left: 10px;
+}
+
 .release-form{
     margin: auto;
     margin-top: 40px;
@@ -415,6 +430,11 @@ a:focus{
     background-color: rgb(63, 68, 73);
 }
 
+.modal-title{
+    color: white;
+    font-family: var(--fira_bold);
+}
+
 .nav-menu{
     display: none;
 }
@@ -448,4 +468,12 @@ a:focus{
     .release-button{
         width: auto;
     }
+}
+
+.turn-back{
+    text-align: center;
+    font-family: var(--fira_light);
+    color: white;
+    margin-top: 50px;
+    font-size: 16px;
 }

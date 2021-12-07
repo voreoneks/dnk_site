@@ -5,7 +5,7 @@ import os
 from transliterate import translit
 
 def update_filename(instance, filename):
-    path = 'uploads/' + str(instance.user)
+    path = 'uploads/' + str(instance.user) + '/release/'
     filename_ = translit(filename, language_code='ru', reversed=True)
     return os.path.join(path, filename_)
 
@@ -55,7 +55,7 @@ class Audio(models.Model):
     
     songers = models.CharField(max_length=100, verbose_name='Исполнитель')
     song_title = models.CharField(max_length=100, verbose_name='Название песни')
-    album_title = models.CharField(max_length=100, verbose_name='Название альбома', blank=True, null=True)
+    album_title = models.CharField(max_length=100, verbose_name='Название релиза', blank=True, null=True)
     feat = models.CharField(max_length=100, verbose_name='feat.', blank=True, null=True)
     genre = models.CharField(max_length=25, choices=genre_choices, default='NONE', verbose_name='Жанр')
     fio_songer = models.CharField(max_length=100, verbose_name='ФИО Исполнителя')
@@ -87,7 +87,7 @@ class Video(models.Model):
     feat = models.CharField(max_length=100, verbose_name='feat.', blank=True, null=True)
     words_author = models.CharField(max_length=100, verbose_name='Автор слов')
     music_author = models.CharField(max_length=100, verbose_name='Автор музыки')
-    lexis = models.CharField(max_length=15, choices=exist_choices, default='NONE', verbose_name='Ненормативная лексика в песне')
+    lexis = models.CharField(max_length=15, choices=exist_choices, default='NONE', verbose_name='Ненормативная лексика в видео')
     director = models.CharField(max_length=100, verbose_name='Режиссер')
     timing = models.CharField(max_length=5, verbose_name='Хронометраж')
     release_year = models.CharField(max_length=4, verbose_name='Год выпуска')

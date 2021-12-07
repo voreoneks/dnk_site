@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import shutil
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -231,6 +232,8 @@ def docs_to_sheet(user):
     }
     spaces.append(spaces_data)
 
+    save_path = str(BASE_DIR / 'media' / 'uploads' / user.username / 'documents')
+
     if org != 'IPIN':
         if org == 'IPRF':
             path = str(BASE_DIR / 'word' / 'IP.docx')
@@ -309,7 +312,6 @@ def docs_to_sheet(user):
         }
 
         tpl.render(context)
-        save_path = str(BASE_DIR / 'media' / 'uploads' / user.username)
         if not os.path.exists(save_path):
             os.mkdir(save_path)
         tpl.save(save_path + '/contract.docx')
@@ -332,6 +334,7 @@ def docs_to_sheet(user):
     if phon_maker:
         phon_maker.delete()
 
+    shutil.rmtree(save_path)
 
 
 class MainInfoDocsView(LoginRequiredMixin, FormView):
@@ -939,6 +942,10 @@ class OthersView(LoginRequiredMixin, FormView):
         num_others = kwargs['num_others']
         self.form_title = 'Соисполнитель ' + str(num_others)
         user = User.objects.get(username = request.user)
+        try:
+            main_info_docs = MainInfoDocs.objects.get(user_id = user.id)
+        except:
+            return render(request, 'turn_back.html')
         others = Others.objects.filter(user_id = user.id)
 
         if num_others > len(others) + 1:
@@ -954,6 +961,7 @@ class OthersView(LoginRequiredMixin, FormView):
                                                     'num_others': num_others})
 
     def post(self, request, *args, **kwargs):
+        politics = request.POST.get('politics')
         user = User.objects.get(username = request.user)
         num_others = kwargs['num_others']
         others = Others.objects.filter(user_id = user.id)
@@ -978,6 +986,13 @@ class OthersView(LoginRequiredMixin, FormView):
                     else:
                         return HttpResponseRedirect(reverse('others', args=[num_others + 1]))
                 else:
+                    if not politics:
+                        politics_error = 'Чтобы продолжить необходимо согласиться с политикой конфиденциальности.'
+                        return render(request, self.template_name, {'form': form, 
+                                                        'form_title': self.form_title, 
+                                                        'form_description': self.form_description,
+                                                        'num_author': num_others,
+                                                        'politics_error': politics_error})
                     docs_to_sheet(user)
                     return HttpResponseRedirect(reverse('d_success'))
         else:

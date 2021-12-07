@@ -15,7 +15,8 @@ from dnk_site.settings import BASE_DIR, MEDIA_URL, MEDIA_ROOT
 from google_drive.google_drive import Drive
 from google_sheets import Sheet
 from lk.models import *
-from silk.profiling.profiler import silk_profile
+# from silk.profiling.profiler import silk_profile
+import shutil
 
 from .forms import *
 from .models import *
@@ -99,7 +100,7 @@ def release_to_cloud(user):
         )
 
     else:
-        audio_values = tuple('' for i in range(20))
+        audio_values = tuple('' for i in range(19))
     
     release_values += audio_values
 
@@ -150,6 +151,10 @@ def release_to_cloud(user):
 
     if audio:
          audio.delete()
+
+    save_path = str(BASE_DIR / 'media' / 'uploads' / user.username / 'release')
+    shutil.rmtree(save_path)
+    
     
 
 class MainInfoView(LoginRequiredMixin, FormView):
@@ -264,7 +269,10 @@ class AudioSingleView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        main_info = MainInfo.objects.get(user_id = user.id)
+        try:
+            main_info = MainInfo.objects.get(user_id = user.id)
+        except:
+            return render(request, 'turn_back.html')
         release_type = main_info.content_type
         if release_type == 'ALBUM':
             error = 'Для заполнения альбома необходимо сначала очистить форму сингла.'
@@ -313,6 +321,7 @@ class AudioSingleView(LoginRequiredMixin, FormView):
             'error': error})
 
     def post(self, request, *args, **kwargs):
+        politics = request.POST.get('politics')
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
         add_video = self.request.POST.get('add_video')
@@ -339,6 +348,35 @@ class AudioSingleView(LoginRequiredMixin, FormView):
                 form.save()
 
             if add_video == 'NO':
+                if not politics:
+                    politics_error = 'Чтобы продолжить необходимо согласиться с политикой конфиденциальности.'
+                    if audio:
+                        audio_dict = model_to_dict(*audio)
+                        if audio_dict['audio']:
+                            song_url = Path(audio_dict['audio'].name).name
+                        if audio_dict['clean_link']:
+                            clean_link_url = Path(audio_dict['clean_link'].name).name
+                        if audio_dict['instrumental']:
+                            instrumental_url = Path(audio_dict['instrumental'].name).name
+                        if audio_dict['song_text']:
+                            song_text_url = Path(audio_dict['song_text'].name).name
+                    else:
+                        song_url = None
+                        clean_link_url = None
+                        instrumental_url = None
+                        song_text_url = None
+                        return render(request, self.template_name, {
+                        'form': form, 
+                        'form_title': self.form_title,
+                        'delete_audio': 'delete_audio',
+                        'delete_clean_link': 'delete_clean_link',
+                        'delete_instrumental': 'delete_instrumental',
+                        'delete_song_text': 'delete_song_text',
+                        'song_url': song_url,
+                        'clean_link_url': clean_link_url,
+                        'instrumental_url': instrumental_url,
+                        'song_text_url': song_text_url,
+                        'politics_error': politics_error})
                 release_to_cloud(user)
                 return HttpResponseRedirect(reverse('r_success'))
             else:
@@ -386,7 +424,10 @@ class AudioAlbumView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
-        main_info = MainInfo.objects.get(user_id = user.id)
+        try:
+            main_info = MainInfo.objects.get(user_id = user.id)
+        except:
+            return render(request, 'turn_back.html')
         release_type = main_info.content_type
         if release_type == 'SINGLE':
             error = 'Для заполнения сингла необходимо сначала очистить таблицу альбома.'
@@ -443,6 +484,7 @@ class AudioAlbumView(LoginRequiredMixin, FormView):
                                                     'error': error})
 
     def post(self, request, *args, **kwargs):
+        politics = request.POST.get('politics')
         user = User.objects.get(username = request.user)
         audio_formset = formset_factory(self.form_class)
         formset = audio_formset(data = self.request.POST, files = self.request.FILES)
@@ -482,6 +524,39 @@ class AudioAlbumView(LoginRequiredMixin, FormView):
                     form.save()
 
             if add_video == 'NO':
+                if not politics:
+                    politics_error = 'Чтобы продолжить необходимо согласиться с политикой конфиденциальности.'
+                    audio_tuple_dict = tuple(model_to_dict(item) for item in audio)
+
+                    audio_urls = tuple()
+                    for item in audio_tuple_dict:
+                        if item['audio']:
+                            audio_urls = (*audio_urls, Path(item['audio'].name).name)
+                            print(audio_urls)
+
+                    clean_link_urls = tuple()
+                    for item in audio_tuple_dict:
+                        if item['clean_link']:
+                            clean_link_urls = (*clean_link_urls, Path(item['clean_link'].name).name)
+
+                    instrumental_urls = tuple()
+                    for item in audio_tuple_dict:
+                        if item['instrumental']:
+                            instrumental_urls = (*instrumental_urls, Path(item['instrumental'].name).name)
+
+                    song_text_urls = tuple()
+                    for item in audio_tuple_dict:
+                        if item['song_text']:
+                            song_text_urls = (*song_text_urls, Path(item['song_text'].name).name)
+
+                    return render(request, self.template_name, {'button': self.fields_for_button, 
+                                                                'formset': formset, 
+                                                                'audio_urls': audio_urls, 
+                                                                'clean_link_urls': clean_link_urls, 
+                                                                'instrumental_urls': instrumental_urls, 
+                                                                'song_text_urls': song_text_urls,
+                                                                'form_title': self.form_title,
+                                                                'politics_error': politics_error})
                 release_to_cloud(user)
                 return HttpResponseRedirect(reverse('r_success'))
             else:
@@ -525,10 +600,14 @@ class VideoView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(username = request.user)
+        try:
+            main_info = MainInfo.objects.get(user_id = user.id)
+        except:
+            return render(request, 'turn_back.html')
         video = Video.objects.filter(user_id = user.id)
 
         if video:
-            video_dict = model_to_dict(video)
+            video_dict = model_to_dict(*video)
             preview = video_dict['video_preview']
             form = self.form_class(initial = video_dict)
         else:
@@ -540,8 +619,10 @@ class VideoView(LoginRequiredMixin, FormView):
                                                     'delete_preview': 'delete_preview', 
                                                     'preview':preview})
 
-    @silk_profile(name='Video View Post')
+    # @silk_profile(name='Video View Post')
     def post(self, request, *args, **kwargs):
+        politics = request.POST.get('politics')
+        
         form = self.form_class(data = request.POST, files = request.FILES)
         user = User.objects.get(username = request.user)
 
@@ -557,7 +638,12 @@ class VideoView(LoginRequiredMixin, FormView):
                     forma.video_preview = preview
                 forma.save()
             else:
+                preview = ''
                 form.save()
+            
+            if not politics:
+                politics_error = 'Чтобы продолжить необходимо согласиться с политикой конфиденциальности.'
+                return render(request, self.template_name, {'form': form, 'form_title': self.form_title, 'delete_preview': 'delete_preview', 'preview':preview, 'politics_error': politics_error})
 
             release_to_cloud(user)
             return HttpResponseRedirect(reverse('r_success'))

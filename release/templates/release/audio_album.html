@@ -23,6 +23,9 @@
                 {% if error %}
                     <p style="text-align: center; color: brown;">{{ error }}</p>
                 {% endif %}
+                {% if politics_error %}
+                    <p style="text-align: center; color: brown;">{{ politics_error }}</p>
+                {% endif %}
             </div>
         </div>
 
@@ -105,14 +108,19 @@
             </div>
 
         </div>
+        <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}">
+            <div class="col-md-6 col-sm-8 col-10 release-footer audio-footer">
+                {% include 'politics.html' %}
+            </div>
+        </div>
 
         <div class="row ${1| ,row-cols-2,row-cols-3, auto,justify-content-md-center,|}"></div>
         
             <div class="col-md-6 col-sm-8 col-10 release-button">
-                <button class="btn button" type="button" onclick="history.back();">Назад</button>
+                <button class="btn button" type="button" id="back" onclick="history.back();">Назад</button>
                 <div>
                     <button class="btn button" type="button" onclick="document.location.href = '{% url 'clear_table' %}';">Очистить таблицу</button>
-                    <button class="btn button" form="audio-form" type="submit">Далее</button>
+                    <button class="btn button" form="audio-form" id="send" type="submit">Далее</button>
                     <button hidden id="loading" class="btn button" type="button" disabled>
                         <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                         Загрузка...
